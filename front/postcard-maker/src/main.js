@@ -13,6 +13,8 @@ import {
   Input,
   Form,
   FormItem,
+  Layout,
+  Menu,
 } from "ant-design-vue";
 import "ant-design-vue/lib/card/style";
 import "ant-design-vue/lib/button/style";
@@ -21,7 +23,8 @@ import "ant-design-vue/lib/row/style";
 import "ant-design-vue/lib/col/style";
 import "ant-design-vue/lib/input/style";
 import "ant-design-vue/lib/form/style";
-// import "ant-design-vue/lib/FormItem/style";
+import "ant-design-vue/lib/layout/style";
+import "ant-design-vue/lib/menu/style";
 
 const app = createApp(App);
 app
@@ -32,5 +35,7 @@ app
   .use(Col)
   .use(Form)
   .use(FormItem)
-  .use(Input);
+  .use(Input)
+  .use(Layout)
+  .use(Menu);
 app.use(store).use(router).mount("#app");
