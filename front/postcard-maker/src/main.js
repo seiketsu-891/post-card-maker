@@ -15,6 +15,7 @@ import {
   FormItem,
   Layout,
   Menu,
+  Avatar,
 } from "ant-design-vue";
 import "ant-design-vue/lib/card/style";
 import "ant-design-vue/lib/button/style";
@@ -25,6 +26,7 @@ import "ant-design-vue/lib/input/style";
 import "ant-design-vue/lib/form/style";
 import "ant-design-vue/lib/layout/style";
 import "ant-design-vue/lib/menu/style";
+import "ant-design-vue/lib/avatar/style";
 
 const app = createApp(App);
 app
@@ -37,5 +39,6 @@ app
   .use(FormItem)
   .use(Input)
   .use(Layout)
-  .use(Menu);
+  .use(Menu)
+  .use(Avatar);
 app.use(store).use(router).mount("#app");

@@ -10,7 +10,11 @@
             >M<span class="header__sitename--speicalchar">a</span>ker</span
           >
         </h1>
+        <!-- 按钮 -->
         <div class="header__btns">
+          <a-avatar class="header__avatar" style="background-color: #82c646"
+            >K</a-avatar
+          >
           <a-button class="header__btn--get-premium header__btn">
             <template #icon> <CrownFilled class="icon--crown" /> </template>
             成为会员</a-button
@@ -114,11 +118,14 @@ export default {
   &__btns
      display: flex
      align-items: center
+  &__avatar
+     margin-right: 15px
+     cursor: pointer
   &__btn
       outline: none
       border: none
       height: 40px
-      margin-left: 40px
+      margin-right: 40px
       padding: 0 20px
       &--get-premium
          color: #fff
@@ -134,6 +141,7 @@ export default {
             color: #fff
       &--download
          color: #4A4A4A
+         margin-right: 0
 .main
     margin-top: 60px
     margin-left: 120px
