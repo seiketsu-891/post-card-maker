@@ -10,6 +10,18 @@
             >M<span class="header__sitename--speicalchar">a</span>ker</span
           >
         </h1>
+        <div class="header__btns">
+          <a-button class="header__btn--get-premium header__btn">
+            <template #icon> <CrownFilled class="icon--crown" /> </template>
+            成为会员</a-button
+          >
+          <a-button class="header__btn--download header__btn">
+            <template #icon>
+              <CloudDownloadOutlined class="icon--downloand" />
+            </template>
+            下载文件</a-button
+          >
+        </div>
         <!-- 头部菜单 -->
       </a-layout-header>
     </a-layout>
@@ -62,6 +74,8 @@ import {
   SolutionOutlined,
   AppstoreOutlined,
   CopyOutlined,
+  CrownFilled,
+  CloudDownloadOutlined,
 } from "@ant-design/icons-vue";
 export default {
   components: {
@@ -70,6 +84,8 @@ export default {
     SolutionOutlined,
     AppstoreOutlined,
     CopyOutlined,
+    CrownFilled,
+    CloudDownloadOutlined,
   },
 };
 </script>
@@ -85,6 +101,8 @@ export default {
   height: 60px
   position: fixed
   width: 100%
+  display: flex
+  justify-content: space-between
   &__sitename
       color: #fff
       &--speicalchar
@@ -93,6 +111,29 @@ export default {
         text-decoration: underline
         text-underline-offset: 4px
         text-decoration-color: #C2C2EE
+  &__btns
+     display: flex
+     align-items: center
+  &__btn
+      outline: none
+      border: none
+      height: 40px
+      margin-left: 40px
+      padding: 0 20px
+      &--get-premium
+         color: #fff
+         background-color: rgba(255,255,255,.2)
+         &:hover
+            background-color: rgba(255,255,255,.2)
+            color: #fff
+         &:active
+            background-color: rgba(255,255,255,.2)
+            color: #fff
+         &:focus
+            background-color: rgba(255,255,255,.2)
+            color: #fff
+      &--download
+         color: #4A4A4A
 .main
     margin-top: 60px
     margin-left: 120px
@@ -105,4 +146,7 @@ export default {
       padding: 10px
       height: 100vh
       width: 120px
+.icon
+  &--crown
+    color: #FFD039
 </style>
