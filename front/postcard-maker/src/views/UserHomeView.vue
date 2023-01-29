@@ -79,7 +79,9 @@ export default {
     height: 100vh
     position: fixed
 .header
-  background-color: #4c71cd
+  background: #3494E6
+  background: -webkit-linear-gradient(to right, #EC6EAD, #3494E6)
+  background: linear-gradient(to left, #EC6EAD, #3494E6)
   height: 60px
   position: fixed
   width: 100%
@@ -103,5 +105,4 @@ export default {
       padding: 10px
       height: 100vh
       width: 120px
-    //   width: min-content
 </style>
