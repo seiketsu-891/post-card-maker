@@ -4,9 +4,9 @@
     <a-row class="sitename-container">
       <a-col>
         <h1 class="site-name">
-          POST<span class="site-name--speicalchar">C</span>ARD
+          POST<span class="site-name--specialchar">C</span>ARD
           <span class="site-name--underlined"
-            >M<span class="site-name--speicalchar">A</span>KER</span
+            >M<span class="site-name--specialchar">A</span>KER</span
           >
         </h1>
       </a-col>
@@ -79,7 +79,7 @@ export default {
 .site-name
   margin: 20px
   color: #fff
-  &--speicalchar
+  &--specialchar
     color: #F1C2EC
   &--underlined
     text-decoration: underline

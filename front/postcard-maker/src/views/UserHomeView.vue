@@ -5,9 +5,9 @@
       <a-layout-header class="header">
         <!-- 网站标题 -->
         <h1 class="header__sitename">
-          Post<span class="header__sitename--speicalchar">C</span>ard
+          Post<span class="header__sitename--specialchar">C</span>ard
           <span class="header__sitename--underlined"
-            >M<span class="header__sitename--speicalchar">a</span>ker</span
+            >M<span class="header__sitename--specialchar">a</span>ker</span
           >
         </h1>
         <!-- 按钮 -->
@@ -109,7 +109,7 @@ export default {
   justify-content: space-between
   &__sitename
       color: #fff
-      &--speicalchar
+      &--specialchar
         color: #F1C2EC
       &--underlined
         text-decoration: underline
