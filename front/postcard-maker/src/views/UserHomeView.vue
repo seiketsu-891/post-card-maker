@@ -34,31 +34,35 @@
       <!-- 侧边导航 -->
       <a-layout-sider class="side" width="min-content">
         <a-menu class="side__menu">
-          <a-menu-item key="1">
+          <a-menu-item key="1" @click="handleSideMenuItemClicked(0)">
             <template #icon>
               <CopyOutlined />
             </template>
             画布
           </a-menu-item>
-          <a-menu-item key="2">
+          <a-menu-item key="2" @click="handleSideMenuItemClicked(1)">
             <template #icon>
               <AppstoreOutlined />
             </template>
             素材
           </a-menu-item>
-          <a-menu-item key="3">
+          <a-menu-item key="3" @click="handleSideMenuItemClicked(2)">
             <template #icon>
               <FontSizeOutlined />
             </template>
             文字
           </a-menu-item>
-          <a-menu-item key="4">
+          <a-menu-item key="4" @click="handleSideMenuItemClicked(3)">
             <template #icon>
               <UploadOutlined />
             </template>
-            素材
+            上传
           </a-menu-item>
-          <a-menu-item key="5" class="menu-item">
+          <a-menu-item
+            key="5"
+            class="menu-item"
+            @click="handleSideMenuItemClicked(4)"
+          >
             <template #icon>
               <solutionOutlined />
             </template>
@@ -69,8 +73,19 @@
       <!-- 主要内容区 -->
       <a-layout-content class="main">
         <!-- 资源选择区域（可折叠） -->
-        <div class="resource" v-show="reesourceAreaVisible">
-          resource
+        <div class="resource" v-show="resourceAreaVisible">
+          <div class="resource__container">
+            <!-- 画布设置 -->
+            <CanvasSetting v-show="activeMenu == menus[0]" />
+            <!-- 素材选择 -->
+            <ResourceLib v-show="activeMenu == menus[1]" />
+            <!-- 文字框选择 -->
+            <TextBoxLib v-show="activeMenu == menus[2]" />
+            <!-- 自定义上传素材 -->
+            <CustomResourceLib v-show="activeMenu == menus[3]" />
+            <!-- 已保存的文件 -->
+            <MyPostcards v-show="activeMenu == menus[4]" />
+          </div>
           <!-- 折叠按钮 -->
           <button class="resource__collapsebtn" @click="collapeResourceArea">
             <LeftOutlined />
@@ -84,8 +99,13 @@
     </a-layout>
   </div>
 </template>
-
 <script>
+import CanvasSetting from "@/components/CanvasSetting";
+import ResourceLib from "@/components/ResourceLib";
+import TextBoxLib from "@/components/TextBoxLib";
+import CustomResourceLib from "@/components/CustomResourceLib";
+import MyPostcards from "@/components/MyPostcards";
+// 图标
 import {
   FontSizeOutlined,
   UploadOutlined,
@@ -106,15 +126,38 @@ export default {
     CrownFilled,
     CloudDownloadOutlined,
     LeftOutlined,
+    CanvasSetting,
+    ResourceLib,
+    TextBoxLib,
+    CustomResourceLib,
+    MyPostcards,
   },
   data() {
     return {
-      reesourceAreaVisible: true,
+      menus: [
+        "canvasSetting",
+        "resoureLib",
+        "textBox",
+        "customResource",
+        "myPostcards",
+      ], // 菜单名，主要用于切换菜单右侧展开部分
+      activeMenu: "canvasSetting", // 当前点击的菜单
+      resourceAreaVisible: true, // 侧边可折叠资源菜单区是否可见
     };
   },
   methods: {
+    /**
+     * 隐藏侧边可折叠菜单区
+     */
     collapeResourceArea() {
-      this.reesourceAreaVisible = false;
+      this.resourceAreaVisible = false;
+    },
+    /**
+     * 点击侧边菜单项的处理
+     * @param {*} menuItemIndex // 菜单项的index，根据index值设置当前active的菜单
+     */
+    handleSideMenuItemClicked(menuItemIndex) {
+      this.activeMenu = this.menus[menuItemIndex];
     },
   },
 };
