@@ -26,8 +26,7 @@
         </div>
       </a-form-item>
       <div class="canvasform__btns">
-        <a-button class="canvasform__btn--preview">预览</a-button
-        ><a-button type="primary">保存</a-button>
+        <a-button type="primary" @click="handleSumbitBtnClicked">提交</a-button>
       </div>
     </a-form>
   </div>
@@ -46,6 +45,17 @@ export default {
         currColor: "#eb4165", // 画布背景色
       },
     };
+  },
+  methods: {
+    /**
+     * 点击画布设置提交按钮的处理
+     */
+    handleSumbitBtnClicked() {
+      // 传值给canvas组件以改变画布样式
+      this.emitter.emit("canvasChange", {
+        canvasInfo: this.canvasInfo,
+      });
+    },
   },
 };
 </script>

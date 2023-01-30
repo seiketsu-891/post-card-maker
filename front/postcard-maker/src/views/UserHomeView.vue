@@ -93,9 +93,10 @@
         </div>
         <!-- 明信片编辑区 -->
         <div class="editor">
-          <div class="canvas-container"><div class="canvas">canvas</div></div>
-        </div></a-layout-content
-      >
+          <div class="canvas-container">
+            <div class="canvas"><CanvasBox /></div>
+          </div></div
+      ></a-layout-content>
     </a-layout>
   </div>
 </template>
@@ -105,6 +106,7 @@ import ResourceLib from "@/components/ResourceLib";
 import TextBoxLib from "@/components/TextBoxLib";
 import CustomResourceLib from "@/components/CustomResourceLib";
 import MyPostcards from "@/components/MyPostcards";
+import CanvasBox from "@/components/editor/CanvasBox";
 // 图标
 import {
   FontSizeOutlined,
@@ -131,6 +133,7 @@ export default {
     TextBoxLib,
     CustomResourceLib,
     MyPostcards,
+    CanvasBox,
   },
   data() {
     return {
@@ -230,21 +233,21 @@ export default {
       // background-color: #343536
       position: relative
       padding: 40px 25px
+      box-shadow: 25px 0 20px -20px rgba(101, 138, 216, 0.2)
       &__collapsebtn
-        background-color: #fff
-        // background-color: #343536
+        background-color: rgba(101, 138, 216, 1)
         position: absolute
         right: -30px
         top: 50%
         margin-top: -50px
         width: 30px
-        height: 100px
+        height: 70px
         border: 0
-        border-radius: 0 20px 20px 0
+        border-radius: 0 10px 10px 0
         text-align: center
         cursor: pointer
-        &:hover
-          color: #4661F4
+        color: #fff
+        // box-shadow: 25px 0 20px -20px rgba(101, 138, 216, 0.)
     .editor
       width: 100%
       height: 100%
@@ -261,8 +264,6 @@ export default {
         float: left
       .canvas
         flex-shrink: 0
-        width: 900px
-        height: 900px
         background: #fff
         box-shadow: rgba(33, 35, 38, 0.2) 0px 10px 10px -10px
 .side

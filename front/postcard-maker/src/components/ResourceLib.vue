@@ -32,6 +32,9 @@ export default {
       activeTabKey: 1,
     };
   },
+  methods: {
+    onSearch() {},
+  },
 };
 </script>
 <style lang="sass" scoped>

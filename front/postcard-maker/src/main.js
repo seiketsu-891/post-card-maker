@@ -2,6 +2,10 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+// mitt
+import mitt from "mitt";
+const emitter = mitt();
+
 // colorPicker
 import Vue3ColorPicker from "vue3-colorpicker";
 import "vue3-colorpicker/style.css";
@@ -37,6 +41,7 @@ import "ant-design-vue/lib/checkbox/style";
 import "ant-design-vue/lib/tabs/style";
 
 const app = createApp(App);
+app.config.globalProperties.emitter = emitter;
 app
   .use(Grid)
   .use(Button)
