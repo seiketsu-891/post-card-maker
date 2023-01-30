@@ -33,33 +33,33 @@
     <a-layout>
       <!-- 侧边导航 -->
       <a-layout-sider class="side" width="min-content">
-        <a-menu class="side__menu">
-          <a-menu-item key="1" @click="handleSideMenuItemClicked(0)">
+        <a-menu class="side__menu" v-model:selectedKeys="selectedMenuItemKey">
+          <a-menu-item key="0" @click="handleSideMenuItemClicked(0)">
             <template #icon>
               <CopyOutlined />
             </template>
             画布
           </a-menu-item>
-          <a-menu-item key="2" @click="handleSideMenuItemClicked(1)">
+          <a-menu-item key="1" @click="handleSideMenuItemClicked(1)">
             <template #icon>
               <AppstoreOutlined />
             </template>
             素材
           </a-menu-item>
-          <a-menu-item key="3" @click="handleSideMenuItemClicked(2)">
+          <a-menu-item key="2" @click="handleSideMenuItemClicked(2)">
             <template #icon>
               <FontSizeOutlined />
             </template>
             文字
           </a-menu-item>
-          <a-menu-item key="4" @click="handleSideMenuItemClicked(3)">
+          <a-menu-item key="3" @click="handleSideMenuItemClicked(3)">
             <template #icon>
               <UploadOutlined />
             </template>
             上传
           </a-menu-item>
           <a-menu-item
-            key="5"
+            key="4"
             class="menu-item"
             @click="handleSideMenuItemClicked(4)"
           >
@@ -134,6 +134,7 @@ export default {
   },
   data() {
     return {
+      selectedMenuItemKey: ["0"], // 用于设置默认选中项
       menus: [
         "canvasSetting",
         "resoureLib",
@@ -145,6 +146,7 @@ export default {
       resourceAreaVisible: true, // 侧边可折叠资源菜单区是否可见
     };
   },
+
   methods: {
     /**
      * 隐藏侧边可折叠菜单区
@@ -157,6 +159,9 @@ export default {
      * @param {*} menuItemIndex // 菜单项的index，根据index值设置当前active的菜单
      */
     handleSideMenuItemClicked(menuItemIndex) {
+      if (!this.resourceAreaVisible) {
+        this.resourceAreaVisible = true;
+      }
       this.activeMenu = this.menus[menuItemIndex];
     },
   },
@@ -225,8 +230,8 @@ export default {
       // background-color: #343536
       position: relative
       &__collapsebtn
-        // background-color: #343536
         background-color: #fff
+        // background-color: #343536
         position: absolute
         right: -30px
         top: 50%
