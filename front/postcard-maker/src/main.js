@@ -26,6 +26,7 @@ import {
   Checkbox,
   Tabs,
   TabPane,
+  Divider,
 } from "ant-design-vue";
 import "ant-design-vue/lib/card/style";
 import "ant-design-vue/lib/button/style";
@@ -39,6 +40,7 @@ import "ant-design-vue/lib/menu/style";
 import "ant-design-vue/lib/avatar/style";
 import "ant-design-vue/lib/checkbox/style";
 import "ant-design-vue/lib/tabs/style";
+import "ant-design-vue/lib/divider/style";
 
 const app = createApp(App);
 app.config.globalProperties.emitter = emitter;
@@ -56,6 +58,7 @@ app
   .use(Avatar)
   .use(Checkbox)
   .use(Tabs)
-  .use(TabPane);
+  .use(TabPane)
+  .use(Divider);
 app.use(Vue3ColorPicker);
 app.use(store).use(router).mount("#app");

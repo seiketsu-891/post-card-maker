@@ -42,7 +42,7 @@
           </a-menu-item>
           <a-menu-item key="1" @click="handleSideMenuItemClicked(1)">
             <template #icon>
-              <AppstoreOutlined />
+              <FileImageOutlined />
             </template>
             素材
           </a-menu-item>
@@ -80,7 +80,7 @@
             <!-- 素材选择 -->
             <ResourceLib v-show="activeMenu == menus[1]" />
             <!-- 文字框选择 -->
-            <TextBoxLib v-show="activeMenu == menus[2]" />
+            <TextInsertion v-show="activeMenu == menus[2]" />
             <!-- 自定义上传素材 -->
             <CustomResourceLib v-show="activeMenu == menus[3]" />
             <!-- 已保存的文件 -->
@@ -103,7 +103,7 @@
 <script>
 import CanvasSetting from "@/components/CanvasSetting";
 import ResourceLib from "@/components/ResourceLib";
-import TextBoxLib from "@/components/TextBoxLib";
+import TextInsertion from "@/components/TextInsertion";
 import CustomResourceLib from "@/components/CustomResourceLib";
 import MyPostcards from "@/components/MyPostcards";
 import CanvasBox from "@/components/editor/CanvasBox";
@@ -112,25 +112,26 @@ import {
   FontSizeOutlined,
   UploadOutlined,
   SolutionOutlined,
-  AppstoreOutlined,
+  // AppstoreOutlined,
   CopyOutlined,
   CrownFilled,
   CloudDownloadOutlined,
   LeftOutlined,
+  FileImageOutlined,
 } from "@ant-design/icons-vue";
 export default {
   components: {
     FontSizeOutlined,
     UploadOutlined,
     SolutionOutlined,
-    AppstoreOutlined,
+    TextInsertion,
     CopyOutlined,
     CrownFilled,
     CloudDownloadOutlined,
+    FileImageOutlined,
     LeftOutlined,
     CanvasSetting,
     ResourceLib,
-    TextBoxLib,
     CustomResourceLib,
     MyPostcards,
     CanvasBox,
