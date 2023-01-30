@@ -229,6 +229,7 @@ export default {
       background-color: #fff
       // background-color: #343536
       position: relative
+      padding: 25px
       &__collapsebtn
         background-color: #fff
         // background-color: #343536
@@ -264,7 +265,6 @@ export default {
         height: 900px
         background: #fff
         box-shadow: rgba(33, 35, 38, 0.2) 0px 10px 10px -10px
-
 .side
     top:60px
     position: fixed

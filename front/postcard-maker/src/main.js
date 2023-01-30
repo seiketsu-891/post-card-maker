@@ -2,7 +2,10 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-
+// colorPicker
+import Vue3ColorPicker from "vue3-colorpicker";
+import "vue3-colorpicker/style.css";
+import "@/assets/style/colorPickerOverride.sass";
 // ant-degign-vue components
 import {
   Button,
@@ -16,6 +19,7 @@ import {
   Layout,
   Menu,
   Avatar,
+  Checkbox,
 } from "ant-design-vue";
 import "ant-design-vue/lib/card/style";
 import "ant-design-vue/lib/button/style";
@@ -27,6 +31,7 @@ import "ant-design-vue/lib/form/style";
 import "ant-design-vue/lib/layout/style";
 import "ant-design-vue/lib/menu/style";
 import "ant-design-vue/lib/avatar/style";
+import "ant-design-vue/lib/checkbox/style";
 
 const app = createApp(App);
 app
@@ -40,5 +45,7 @@ app
   .use(Input)
   .use(Layout)
   .use(Menu)
-  .use(Avatar);
+  .use(Avatar)
+  .use(Checkbox)
+  .use(Vue3ColorPicker);
 app.use(store).use(router).mount("#app");
