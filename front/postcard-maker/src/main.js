@@ -20,6 +20,8 @@ import {
   Menu,
   Avatar,
   Checkbox,
+  Tabs,
+  TabPane,
 } from "ant-design-vue";
 import "ant-design-vue/lib/card/style";
 import "ant-design-vue/lib/button/style";
@@ -32,6 +34,7 @@ import "ant-design-vue/lib/layout/style";
 import "ant-design-vue/lib/menu/style";
 import "ant-design-vue/lib/avatar/style";
 import "ant-design-vue/lib/checkbox/style";
+import "ant-design-vue/lib/tabs/style";
 
 const app = createApp(App);
 app
@@ -47,5 +50,7 @@ app
   .use(Menu)
   .use(Avatar)
   .use(Checkbox)
-  .use(Vue3ColorPicker);
+  .use(Tabs)
+  .use(TabPane);
+app.use(Vue3ColorPicker);
 app.use(store).use(router).mount("#app");

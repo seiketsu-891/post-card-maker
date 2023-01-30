@@ -229,7 +229,7 @@ export default {
       background-color: #fff
       // background-color: #343536
       position: relative
-      padding: 25px
+      padding: 40px 25px
       &__collapsebtn
         background-color: #fff
         // background-color: #343536
