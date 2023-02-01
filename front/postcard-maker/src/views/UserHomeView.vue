@@ -33,6 +33,7 @@
     <a-layout>
       <!-- 侧边导航 -->
       <a-layout-sider class="side" width="min-content">
+        <!-- 画布项 -->
         <a-menu class="side__menu" v-model:selectedKeys="selectedMenuItemKey">
           <a-menu-item key="0" @click="handleSideMenuItemClicked(0)">
             <template #icon>
@@ -40,28 +41,39 @@
             </template>
             画布
           </a-menu-item>
+          <!-- 插图项 -->
           <a-menu-item key="1" @click="handleSideMenuItemClicked(1)">
             <template #icon>
               <FileImageOutlined />
             </template>
-            素材
+            插图
           </a-menu-item>
+          <!-- 形状项 -->
           <a-menu-item key="2" @click="handleSideMenuItemClicked(2)">
+            <template #icon>
+              <StarOutlined />
+            </template>
+            形状
+          </a-menu-item>
+          <!-- 文字项 -->
+          <a-menu-item key="3" @click="handleSideMenuItemClicked(3)">
             <template #icon>
               <FontSizeOutlined />
             </template>
             文字
           </a-menu-item>
-          <a-menu-item key="3" @click="handleSideMenuItemClicked(3)">
+          <!-- 上传项 -->
+          <a-menu-item key="4" @click="handleSideMenuItemClicked(4)">
             <template #icon>
               <UploadOutlined />
             </template>
             上传
           </a-menu-item>
+          <!-- 我的项 -->
           <a-menu-item
-            key="4"
+            key="5"
             class="menu-item"
-            @click="handleSideMenuItemClicked(4)"
+            @click="handleSideMenuItemClicked(5)"
           >
             <template #icon>
               <solutionOutlined />
@@ -79,12 +91,14 @@
             <CanvasSetting v-show="activeMenu == menus[0]" />
             <!-- 素材选择 -->
             <ResourceLib v-show="activeMenu == menus[1]" />
+            <!-- 形状选择 -->
+            <ShapeLib v-show="activeMenu == menus[2]" />
             <!-- 文字框选择 -->
-            <TextInsertion v-show="activeMenu == menus[2]" />
+            <TextInsertion v-show="activeMenu == menus[3]" />
             <!-- 自定义上传素材 -->
-            <CustomResourceLib v-show="activeMenu == menus[3]" />
+            <CustomResourceLib v-show="activeMenu == menus[4]" />
             <!-- 已保存的文件 -->
-            <MyPostcards v-show="activeMenu == menus[4]" />
+            <MyPostcards v-show="activeMenu == menus[5]" />
           </div>
           <!-- 折叠按钮 -->
           <button class="resource__collapsebtn" @click="collapeResourceArea">
@@ -103,6 +117,7 @@
 <script>
 import CanvasSetting from "@/components/CanvasSetting";
 import ResourceLib from "@/components/ResourceLib";
+import ShapeLib from "@/components/ShapeLib";
 import TextInsertion from "@/components/TextInsertion";
 import CustomResourceLib from "@/components/CustomResourceLib";
 import MyPostcards from "@/components/MyPostcards";
@@ -112,7 +127,7 @@ import {
   FontSizeOutlined,
   UploadOutlined,
   SolutionOutlined,
-  // AppstoreOutlined,
+  StarOutlined,
   CopyOutlined,
   CrownFilled,
   CloudDownloadOutlined,
@@ -129,12 +144,14 @@ export default {
     CrownFilled,
     CloudDownloadOutlined,
     FileImageOutlined,
+    StarOutlined,
     LeftOutlined,
     CanvasSetting,
     ResourceLib,
     CustomResourceLib,
     MyPostcards,
     CanvasBox,
+    ShapeLib,
   },
   data() {
     return {
