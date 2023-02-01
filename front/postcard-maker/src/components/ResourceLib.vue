@@ -14,8 +14,8 @@
     <a-tabs v-model:activeKey="activeTabKey">
       <!-- 素材集 -->
       <a-tab-pane key="1">
-        <template #tab> <span> 风格分类</span></template
-        >tab1</a-tab-pane
+        <template #tab> <span> 风格分类</span></template>
+        <div><a href="#" @click="addStock()">点击插入图片</a></div></a-tab-pane
       >
       <!-- 主题分类 -->
       <a-tab-pane key="2">
@@ -34,6 +34,29 @@ export default {
   },
   methods: {
     onSearch() {},
+    /**
+     * 在画布上插入所点击的图片素材
+     */
+    addStock() {
+      const _this = this;
+      const imgSource =
+        "https://cdn4.buysellads.net/uu/1/23814/1542656925-explore-themes-1.jpg";
+      // 这个函数是静态函数
+      // 第二个参数是callback
+      // 第三个函数是图片设置信息
+      this.fabric.Image.fromURL(
+        imgSource,
+        function (img) {
+          _this.emitter.emit("addImg", { img });
+        },
+        {
+          width: 100,
+          height: 300,
+          left: 0,
+          top: 10,
+        }
+      );
+    },
   },
 };
 </script>
