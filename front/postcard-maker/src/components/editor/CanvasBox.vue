@@ -17,20 +17,6 @@ export default {
       backgroundColor: "#fff",
     };
   },
-  //   props: {
-  //     width: {
-  //       type: Number,
-  //       default: 700,
-  //     },
-  //     height: {
-  //       type: Number,
-  //       default: 500,
-  //     },
-  //     backgroundColor: {
-  //       type: String,
-  //       default: "#fff",
-  //     },
-  //   },
   created() {
     this.emitter.on("canvasChange", (arg) => {
       const data = arg.canvasInfo;
@@ -38,6 +24,7 @@ export default {
       this.height = data.height;
       this.backgroundColor = data.currColor;
     });
+    console.log(this.fabric);
   },
 };
 </script>

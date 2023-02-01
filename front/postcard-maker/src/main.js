@@ -6,6 +6,9 @@ import store from "./store";
 import mitt from "mitt";
 const emitter = mitt();
 
+// fabric.js
+import { fabric } from "fabric";
+
 // colorPicker
 import Vue3ColorPicker from "vue3-colorpicker";
 import "vue3-colorpicker/style.css";
@@ -44,6 +47,7 @@ import "ant-design-vue/lib/divider/style";
 
 const app = createApp(App);
 app.config.globalProperties.emitter = emitter;
+app.config.globalProperties.fabric = fabric;
 app
   .use(Grid)
   .use(Button)
