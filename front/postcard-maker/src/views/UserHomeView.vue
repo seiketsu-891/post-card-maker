@@ -106,9 +106,13 @@
           </button>
         </div>
         <!-- 明信片编辑区 -->
-        <div class="editor">
+        <div class="editor" @wheel.prevent="onWheelScrolledInEditor($event)">
           <div class="canvas-container">
             <div class="canvas"><CanvasBox /></div>
+          </div>
+          <!-- 放大缩小的条 -->
+          <div class="zoomBar">
+            <ZoomBar ref="zoomBar" />
           </div></div
       ></a-layout-content>
     </a-layout>
@@ -122,6 +126,7 @@ import TextInsertion from "@/components/TextInsertion";
 import CustomResourceLib from "@/components/CustomResourceLib";
 import MyPostcards from "@/components/MyPostcards";
 import CanvasBox from "@/components/editor/CanvasBox";
+import ZoomBar from "@/components/editor/ZoomBar";
 // 图标
 import {
   FontSizeOutlined,
@@ -152,6 +157,7 @@ export default {
     MyPostcards,
     CanvasBox,
     ShapeLib,
+    ZoomBar,
   },
   data() {
     return {
@@ -184,6 +190,23 @@ export default {
         this.resourceAreaVisible = true;
       }
       this.activeMenu = this.menus[menuItemIndex];
+    },
+    /**
+     * 在画布编辑区域容器内滑动鼠标滚轮后的处理
+     * 计算出zoom的新值，如果是有效值则传递给ZoomBar组件
+     */
+    onWheelScrolledInEditor(e) {
+      e.stopPropagation();
+      const delta = e.deltaY;
+      // 拿到上次的zoom值，在上次的zoom值基础上判定新的zoom值
+      let zoom = this.$refs.zoomBar.zoomBarValue / 100;
+      zoom *= 0.999 ** delta;
+      // 设定在25%到200%的范围内缩放
+      if (zoom > 2) zoom = 2;
+      if (zoom < 0.25) zoom = 0.25;
+      // 如果先toFixed(2)，然后乘以100的话，有时会出现末尾还是有0.00000000000001的情况，所以这里用Math.round
+      zoom = Math.round(zoom * 100);
+      this.emitter.emit("zoomValueChange", { zoom });
     },
   },
 };
@@ -267,6 +290,7 @@ export default {
         color: #fff
         // box-shadow: 25px 0 20px -20px rgba(101, 138, 216, 0.)
     .editor
+      position: relative
       width: 100%
       height: 100%
       overflow: scroll
@@ -284,6 +308,15 @@ export default {
         flex-shrink: 0
         background: #fff
         box-shadow: rgba(33, 35, 38, 0.2) 0px 10px 10px -10px
+      .zoomBar
+         position: absolute
+         display: flex
+         bottom: 30px
+         right: 30px
+         background: #fff
+         padding: 15px 10px
+         border-radius: 30px
+         box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px
 .side
     top:60px
     position: fixed
