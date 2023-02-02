@@ -32,6 +32,7 @@ import {
   TabPane,
   Divider,
   Slider,
+  Select,
 } from "ant-design-vue";
 import "ant-design-vue/lib/card/style";
 import "ant-design-vue/lib/button/style";
@@ -47,6 +48,7 @@ import "ant-design-vue/lib/checkbox/style";
 import "ant-design-vue/lib/tabs/style";
 import "ant-design-vue/lib/divider/style";
 import "ant-design-vue/lib/slider/style";
+import "ant-design-vue/lib/select/style";
 
 const app = createApp(App);
 app.config.globalProperties.emitter = emitter;
@@ -67,7 +69,8 @@ app
   .use(Tabs)
   .use(TabPane)
   .use(Divider)
-  .use(Slider);
+  .use(Slider)
+  .use(Select);
 app.use(Vue3ColorPicker);
 app.use(ContextMenu);
 app.use(store).use(router).mount("#app");

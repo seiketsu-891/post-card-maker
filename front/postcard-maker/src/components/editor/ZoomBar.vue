@@ -14,13 +14,7 @@
 </template>
 <script>
 export default {
-  props: {
-    // zoomBarPassedValue: {
-    //   type: Number,
-    //   required: true,
-    //   default: 100,
-    // },
-  },
+  props: {},
   watch: {
     zoomBarValue(value) {
       // zoom值改变后提醒画布组件进行缩放
@@ -49,6 +43,10 @@ export default {
     align-items: center
     justify-content: center
     width: 300px
+    background: #fff
+    padding: 15px 10px
+    border-radius: 30px
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px
     .slider
         width: 70%
         margin-right: 10px

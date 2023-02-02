@@ -8,14 +8,6 @@
       <a-form-item label="画布高度">
         <a-input v-model:value="canvasInfo.height"></a-input>
       </a-form-item>
-      <a-form-item>
-        <a-checkbox
-          value="1"
-          name="keepRatio"
-          v-model:checked="formSetting.keepRatio"
-          >保持比例</a-checkbox
-        ></a-form-item
-      >
       <a-form-item label="画布背景">
         <div class="canvasform__color-picker-wrapper">
           <color-picker
