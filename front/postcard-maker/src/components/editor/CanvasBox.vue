@@ -1,20 +1,58 @@
 <template>
-  <div class="canvas-wrapper">
+  <div class="canvas-wrapper" @contextmenu.prevent="onRightClick">
     <canvas ref="canvas"></canvas>
+    <div>
+      <context-menu
+        v-model:show="elementContextMenuVisibility"
+        :options="contextMemuOptions"
+      >
+        <context-menu-item label="删除元素" @click="delObj()" />
+        <context-menu-sperator />
+        <context-menu-item label="调整元素为最上层" />
+        <context-menu-sperator />
+        <context-menu-item label="调整元素为最下层" />
+      </context-menu>
+    </div>
   </div>
 </template>
 <script>
 export default {
   data() {
     return {
+      elementContextMenuVisibility: false,
       backgroundColor: "#fff",
+      // 画布当前被设置的宽高（每次zoom时以此为基准）
       currDimension: {
         width: 600,
         height: 400,
       },
+      contextMemuOptions: { zIndex: 3, minWidth: 230, x: 500, y: 200 },
+      selectedEle: null, // 当前被选中的画布元素
+      objects: [], // todo 存储画布元素，目前还没开始用
     };
   },
   methods: {
+    /**
+     * 右键点击后的处理
+     */
+    onRightClick(e) {
+      // 如果当前有元素被选中，在点击位置显示菜单
+      const activeObj = this.canvas.getActiveObject();
+      if (activeObj) {
+        this.elementContextMenuVisibility = true;
+        this.contextMemuOptions.x = e.x;
+        this.contextMemuOptions.y = e.y;
+      }
+    },
+    /**
+     * 删除画布元素
+     */
+    delObj() {
+      const activObj = this.canvas.getActiveObject();
+      if (activObj) {
+        this.canvas.remove(activObj);
+      }
+    },
     /**
      * 设置画布尺寸
      * @param {*} w 宽度
@@ -60,6 +98,7 @@ export default {
     // 监听插入图形事件，插入图形
     this.emitter.on("addShape", (args) => {
       const shape = args.shape;
+      this.objects.push(shape);
       this.canvas.add(shape);
     });
     // 监听文本框插入事件
@@ -79,4 +118,6 @@ export default {
 <style lang="sass" scoped>
 .canvas-wrapper
     background-color: #fff
+    .context-menu
+      positon: absolute
 </style>

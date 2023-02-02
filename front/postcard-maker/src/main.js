@@ -5,10 +5,11 @@ import store from "./store";
 // mitt
 import mitt from "mitt";
 const emitter = mitt();
-
+// context-menu
+import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
+import ContextMenu from "@imengyu/vue3-context-menu";
 // fabric.js
 import { fabric } from "fabric";
-
 // colorPicker
 import Vue3ColorPicker from "vue3-colorpicker";
 import "vue3-colorpicker/style.css";
@@ -68,4 +69,5 @@ app
   .use(Divider)
   .use(Slider);
 app.use(Vue3ColorPicker);
+app.use(ContextMenu);
 app.use(store).use(router).mount("#app");
