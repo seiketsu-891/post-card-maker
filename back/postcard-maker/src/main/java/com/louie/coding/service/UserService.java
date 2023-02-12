@@ -1,5 +1,6 @@
 package com.louie.coding.service;
 
+import com.louie.coding.constants.MailConstants;
 import com.louie.coding.dao.UserDao;
 import com.louie.coding.entity.User;
 import com.louie.coding.exception.BusinessException;
@@ -7,15 +8,25 @@ import com.louie.coding.exception.BusinessExceptionCode;
 import com.louie.coding.util.MD5Util;
 import com.louie.coding.util.RSAUtil;
 import com.louie.coding.util.TokenUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 @Service
 public class UserService {
+    @Value("${spring.mail.username}")
+    String MAIL_FROM_ADDRESS;
     @Resource
     private UserDao userDao;
+    @Resource
+    private JavaMailSender mailSender;
 
     public String addUser(User user) {
         String email = user.getEmail();
@@ -64,5 +75,25 @@ public class UserService {
             throw new BusinessException(BusinessExceptionCode.ERROR_PASSWORD_DECRYPTION);
         }
         return MD5Util.sign(passwordRaw, String.valueOf(salt), "UTF-8");
+    }
+
+    public void sendVerificationCodeByMail(String email) {
+        /*
+           邮箱验证一般有两种类型，一种是点击链接，一种是发送验证码，这里是发送验证码
+           如果是点击链接，则需要生成生成一个链接，链接内可以添加一个设置了有效期的token
+           同时还需要添加链接
+         */
+        String content = "您的验证码是123";
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        try {
+            helper.setFrom(MAIL_FROM_ADDRESS, MailConstants.SENDER_NAME);
+            helper.setTo(email);
+            helper.setSubject(MailConstants.EMAIL_SUBJECT);
+            helper.setText(content, true);
+            mailSender.send(message);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new BusinessException(BusinessExceptionCode.ERROR_SENDING_MAIL);
+        }
     }
 }

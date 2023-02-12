@@ -5,6 +5,7 @@ import com.louie.coding.entity.User;
 import com.louie.coding.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -21,6 +22,19 @@ public class UserController {
     public JsonResponse<String> addUser(@RequestBody User user) {
         String token = userService.addUser(user);
         return JsonResponse.success(token);
+    }
+
+
+    /**
+     * 发送邮箱验证码
+     *
+     * @param email
+     * @return
+     */
+    @PostMapping("/verification-codes")
+    public JsonResponse<String> sendVerificationCode(@RequestParam String email) {
+        userService.sendVerificationCodeByMail(email);
+        return JsonResponse.success();
     }
 
     /**

@@ -6,7 +6,8 @@ public enum BusinessExceptionCode {
     ERROR_GET_RSA_KEY("获取RSA密钥失败"),
     TOKEN_EXPIRED("token已过期"),
     TOKEN_ILLEGAL("非法token"),
-    ERROR_PASSWORD_DECRYPTION("密码解密失败");
+    ERROR_PASSWORD_DECRYPTION("密码解密失败"),
+    ERROR_SENDING_MAIL("邮件发送失败");
 
     private String desc;
 
