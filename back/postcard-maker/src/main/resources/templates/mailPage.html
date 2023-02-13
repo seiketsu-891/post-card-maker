@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Spring boot eamil teplate with Thymeleaf</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <style>
+        body {
+            font-size: 30px;
+            padding: 20px;
+        }
+
+        .code-wrapper {
+            background-color: #F5F5F5;
+            padding: 20px 50px;
+            width: max-content;
+            letter-spacing: 30px;
+        }
+    </style>
+</head>
+<body>
+<p>您好,<span th:text="${name}"></span></p>
+<p>
+    欢迎使用postcard-maker，您的验证码是:
+<div class="code">
+    <p class="code-wrapper"><span th:text="${code}"></span></p></div>
+<p>祝您生活愉快！</p>
+</body>
+</html>

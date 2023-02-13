@@ -8,25 +8,19 @@ import com.louie.coding.exception.BusinessExceptionCode;
 import com.louie.coding.util.MD5Util;
 import com.louie.coding.util.RSAUtil;
 import com.louie.coding.util.TokenUtil;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 @Service
 public class UserService {
-    @Value("${spring.mail.username}")
-    String MAIL_FROM_ADDRESS;
     @Resource
     private UserDao userDao;
     @Resource
-    private JavaMailSender mailSender;
+    private RedisService redisService;
+    @Resource
+    private MailService mailService;
 
     public String addUser(User user) {
         String email = user.getEmail();
@@ -78,22 +72,15 @@ public class UserService {
     }
 
     public void sendVerificationCodeByMail(String email) {
-        /*
-           邮箱验证一般有两种类型，一种是点击链接，一种是发送验证码，这里是发送验证码
-           如果是点击链接，则需要生成生成一个链接，链接内可以添加一个设置了有效期的token
-           同时还需要添加链接
-         */
-        String content = "您的验证码是123";
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        try {
-            helper.setFrom(MAIL_FROM_ADDRESS, MailConstants.SENDER_NAME);
-            helper.setTo(email);
-            helper.setSubject(MailConstants.EMAIL_SUBJECT);
-            helper.setText(content, true);
-            mailSender.send(message);
-        } catch (MessagingException | UnsupportedEncodingException e) {
-            throw new BusinessException(BusinessExceptionCode.ERROR_SENDING_MAIL);
+        String redisKey = MailConstants.REDIS_KEY_MAIL_CODE_PREFIX + email;
+        // 检查用户1分钟之内是否已经发送了邮件
+        Long leftValidTimeInSeconds = redisService.getLeftValidTimeInSeconds(redisKey);
+        if (leftValidTimeInSeconds > MailConstants.MAIL_CODE_VALID_TIME - MailConstants.MAIL_CODE_RESEND_MIN_INTERVAL) {
+            throw new BusinessException(BusinessExceptionCode.MAIL_SEND_TOO_OFTEN);
         }
+        // 生成验证码并发送邮件;
+        String code = mailService.sendEmail(email);
+        // 将验证码存入redis
+        redisService.setValue(redisKey, code, MailConstants.MAIL_CODE_VALID_TIME);
     }
 }

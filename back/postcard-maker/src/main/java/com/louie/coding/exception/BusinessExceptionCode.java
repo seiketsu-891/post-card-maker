@@ -7,7 +7,8 @@ public enum BusinessExceptionCode {
     TOKEN_EXPIRED("token已过期"),
     TOKEN_ILLEGAL("非法token"),
     ERROR_PASSWORD_DECRYPTION("密码解密失败"),
-    ERROR_SENDING_MAIL("邮件发送失败");
+    ERROR_SENDING_MAIL("邮件发送失败"),
+    MAIL_SEND_TOO_OFTEN("邮件发送过于频繁");
 
     private String desc;
 
