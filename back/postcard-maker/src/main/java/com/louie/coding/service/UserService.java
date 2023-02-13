@@ -43,6 +43,7 @@ public class UserService {
            由于数据库中的时间数据精度和这里的时间精度不同，会造成结果不一样。
          */
         user.setSalt(salt);
+        user.setPremium(false);
         userDao.addUser(user);
         return TokenUtil.generateToken(user);
     }

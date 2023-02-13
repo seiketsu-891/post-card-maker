@@ -10,6 +10,15 @@ public class User {
     private String salt;
     private Date createTime;
     private Date updateTime;
+    private Boolean isPremium;
+
+    public Boolean getPremium() {
+        return isPremium;
+    }
+
+    public void setPremium(Boolean premium) {
+        isPremium = premium;
+    }
 
     public Date getCreateTime() {
         return createTime;

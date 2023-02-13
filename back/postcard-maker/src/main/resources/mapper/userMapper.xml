@@ -5,12 +5,19 @@
 <mapper namespace="com.louie.coding.dao.UserDao">
     <insert id="addUser" parameterType="com.louie.coding.entity.User" useGeneratedKeys="true" keyProperty="id">
         insert into t_user
-            (username, `password`, email, salt, createTime)
+            (username, `password`, email, salt, createTime, ispPremium)
         values (#{username}, #{password}, #{email}, #{salt}, #{createTime})
     </insert>
 
     <select id="getUserByEmail" parameterType="java.lang.String" resultType="com.louie.coding.entity.User">
-        select id, username, `password`, email, createTime, updateTime, salt
+        select id,
+               username,
+               `password`,
+               email,
+               createTime,
+               updateTime,
+               salt,
+               ispPremium
         from t_user
         where email = #{email}
     </select>

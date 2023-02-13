@@ -1,6 +1,5 @@
 package com.louie.coding.util;
 
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -19,6 +18,7 @@ public class TokenUtil {
     public static String generateToken(User user) {
         String email = user.getEmail();
         String username = user.getUsername();
+        Boolean isPremium = user.getPremium();
         Long id = user.getId();
 
         Algorithm algorithm;
@@ -37,6 +37,7 @@ public class TokenUtil {
                 .withKeyId(String.valueOf(id))
                 .withClaim("username", username)
                 .withClaim("email", email)
+                .withClaim("isPremium", isPremium)
                 .withIssuer(ISSUER)
                 .withExpiresAt(calendar.getTime())
                 .sign(algorithm);
