@@ -67,6 +67,27 @@ export default {
     initCanvas() {
       this.canvas = new this.fabric.Canvas(this.$refs.canvas);
       this.setCanvasSize(this.currDimension.width, this.currDimension.height);
+      // 画布必须设置初始颜色，不然下载下来的图片背景会是灰色;
+      this.canvas.setBackgroundColor("#fff");
+    },
+    /**
+     * 将画布转化为图片并下载
+     */
+    convertCanvasToImage() {
+      const dataURL = this.canvas.toDataURL({
+        width: this.canvas.width,
+        height: this.canvas.height,
+        left: 0,
+        top: 0,
+        format: "image/jpeg",
+        quality: 1,
+      });
+      const link = document.createElement("a");
+      link.download = "image.jpeg";
+      link.href = dataURL;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
   },
   mounted() {
@@ -83,6 +104,10 @@ export default {
         width: this.currDimension.width * zoomFactor,
         height: this.currDimension.height * zoomFactor,
       });
+    });
+    // 监听画布转图片事件
+    this.emitter.on("convertCanvasToImage", () => {
+      this.convertCanvasToImage();
     });
   },
   created() {

@@ -19,7 +19,10 @@
             <template #icon> <CrownFilled class="icon--crown" /> </template>
             成为会员</a-button
           >
-          <a-button class="header__btn--download header__btn">
+          <a-button
+            @click="handleDownloadClicked()"
+            class="header__btn--download header__btn"
+          >
             <template #icon>
               <CloudDownloadOutlined class="icon--downloand" />
             </template>
@@ -210,6 +213,13 @@ export default {
       // 如果先toFixed(2)，然后乘以100的话，有时会出现末尾还是有0.00000000000001的情况，所以这里用Math.round
       zoom = Math.round(zoom * 100);
       this.emitter.emit("zoomValueChange", { zoom });
+    },
+    /**
+     * 点击下载按钮后的处理
+     */
+    handleDownloadClicked() {
+      // todo 发送请求判定是否是vip
+      this.emitter.emit("convertCanvasToImage", {});
     },
   },
 };

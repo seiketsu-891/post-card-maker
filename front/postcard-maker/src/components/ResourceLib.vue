@@ -39,8 +39,7 @@ export default {
      */
     addStock() {
       const _this = this;
-      const imgSource =
-        "https://cdn4.buysellads.net/uu/1/23814/1542656925-explore-themes-1.jpg";
+      const imgSource = require("../assets/logo.png");
       // 这个函数是静态函数
       // 第二个参数是callback
       // 第三个函数是图片设置信息
@@ -50,8 +49,6 @@ export default {
           _this.emitter.emit("addImg", { img });
         },
         {
-          width: 100,
-          height: 300,
           left: 0,
           top: 10,
         }
