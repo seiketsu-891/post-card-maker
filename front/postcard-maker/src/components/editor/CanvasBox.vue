@@ -19,19 +19,55 @@
 export default {
   data() {
     return {
+      constants: {
+        CANVAS_DEFAULT_WIDHT: 600,
+        CANVAS_DEFAULT_HEIGHT: 400,
+      },
       elementContextMenuVisibility: false,
-      backgroundColor: "#fff",
       // 画布当前被设置的宽高（每次zoom时以此为基准）
       currDimension: {
-        width: 600,
-        height: 400,
+        width: this.CANVAS_DEFAULT_WIDHT,
+        height: this.CANVAS_DEFAULT_HEIGHT,
       },
+      currBackgroundColor: "#fff",
       contextMemuOptions: { zIndex: 3, minWidth: 230, x: 500, y: 200 },
       selectedEle: null, // 当前被选中的画布元素
-      objects: [], // todo 存储画布元素，目前还没开始用
+      elements: {
+        shapes: [],
+        texts: [],
+        illustrations: [],
+      }, // todo 存储画布元素，目前还没开始用
     };
   },
   methods: {
+    addElements() {
+      // 加入形状
+      const shapes = this.elements.shapes;
+      if (shapes != null && shapes.length > 0) {
+        shapes.forEach((s) => {
+          let shape;
+          switch (s.type) {
+            case "0":
+              shape = new this.fabric.Rect();
+              break;
+            case "1":
+              shape = new this.fabric.Circle();
+              break;
+            case "2":
+              shape = new this.fabric.Triangle();
+              break;
+            default:
+              shape = new this.fabric.Rect();
+          }
+          shape.width = s.width;
+          shape.height = s.height;
+          shape.fill = s.fill;
+          shape.left = s.left;
+          shape.top = s.top;
+          this.canvas.add(shape);
+        });
+      }
+    },
     /**
      * 右键点击后的处理
      */
@@ -66,9 +102,12 @@ export default {
      */
     initCanvas() {
       this.canvas = new this.fabric.Canvas(this.$refs.canvas);
-      this.setCanvasSize(this.currDimension.width, this.currDimension.height);
+      this.setCanvasSize(
+        this.constants.CANVAS_DEFAULT_WIDHT,
+        this.constants.CANVAS_DEFAULT_HEIGHT
+      );
       // 画布必须设置初始颜色，不然下载下来的图片背景会是灰色;
-      this.canvas.setBackgroundColor("#fff");
+      this.canvas.setBackgroundColor(this.currBackgroundColor);
     },
     /**
      * 将画布转化为图片并下载
@@ -88,6 +127,40 @@ export default {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    },
+    /**
+     * 获取上一次编辑中的明信片相关信息
+     */
+    getCanvasElements() {
+      const recentPostcardProject = {
+        canvas: {
+          width: 500,
+          height: 300,
+          backgroundColor: "#3af4f2",
+        },
+        texts: [],
+        shapes: [
+          {
+            type: "0",
+            fill: "#4f6g3f",
+            width: 100,
+            height: 22,
+            left: 10,
+            top: 50,
+          },
+        ],
+        illustrations: [],
+      };
+      if (recentPostcardProject) {
+        // 设置画布信息
+        const canvasDb = recentPostcardProject.canvas;
+        this.currDimension.width = canvasDb.width;
+        this.currDimension.height = canvasDb.height;
+        this.currBackgroundColor = canvasDb.backgroundColor;
+        this.elements.shapes = recentPostcardProject.shapes;
+        this.elements.texts = recentPostcardProject.texts;
+        this.elements.illustrations = recentPostcardProject.illustrations;
+      }
     },
   },
   mounted() {
@@ -109,6 +182,8 @@ export default {
     this.emitter.on("convertCanvasToImage", () => {
       this.convertCanvasToImage();
     });
+    // 加入上次编辑中的画布元素
+    this.addElements();
   },
   created() {
     // 监听画布信息改变事件，改变画布设置
@@ -117,13 +192,14 @@ export default {
       const data = arg.canvasInfo;
       this.currDimension.width = data.width;
       this.currDimension.height = data.height;
+      this.currBackgroundColor = data.currColor;
       this.setCanvasSize(data.width, data.height);
       this.canvas.setBackgroundColor(data.currColor);
     });
     // 监听插入图形事件，插入图形
     this.emitter.on("addShape", (args) => {
       const shape = args.shape;
-      this.objects.push(shape);
+      // this.elements.push(shape);
       this.canvas.add(shape);
     });
     // 监听文本框插入事件
@@ -137,6 +213,7 @@ export default {
       const img = args.img;
       this.canvas.add(img);
     });
+    this.getCanvasElements();
   },
 };
 </script>

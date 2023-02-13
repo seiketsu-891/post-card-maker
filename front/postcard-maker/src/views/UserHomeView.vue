@@ -17,7 +17,8 @@
           >
           <a-button class="header__btn--get-premium header__btn">
             <template #icon> <CrownFilled class="icon--crown" /> </template>
-            成为会员</a-button
+            <span v-if="isPremium">您是会员</span
+            ><span v-else>成为会员</span></a-button
           >
           <a-button
             @click="handleDownloadClicked()"
@@ -177,9 +178,12 @@ export default {
       ], // 菜单名，主要用于切换菜单右侧展开部分
       activeMenu: "canvasSetting", // 当前点击的菜单
       resourceAreaVisible: true, // 侧边可折叠资源菜单区是否可见
+      isPremium: true,
     };
   },
-
+  created() {
+    // todo check ifVIP and set the value of isPremium;
+  },
   methods: {
     /**
      * 隐藏侧边可折叠菜单区
