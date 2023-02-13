@@ -41,6 +41,7 @@ export default {
   },
   methods: {
     addElements() {
+      const _this = this;
       // 加入形状
       const shapes = this.elements.shapes;
       if (shapes != null && shapes.length > 0) {
@@ -65,6 +66,36 @@ export default {
           shape.left = s.left;
           shape.top = s.top;
           this.canvas.add(shape);
+        });
+      } // end shapes
+      // 加入插图
+      const images = this.elements.illustrations;
+      if (images != null && images.length > 0) {
+        images.forEach((i) => {
+          this.fabric.Image.fromURL(
+            i.url,
+            function (img) {
+              _this.emitter.emit("addImg", { img });
+            },
+            {
+              left: 0,
+              top: 10,
+            }
+          );
+        });
+      }
+      // 加入文字
+      const texts = this.elements.texts;
+      let text;
+      if (texts != null && texts.length > 0) {
+        texts.forEach((t) => {
+          text = new this.fabric.IText(t.content, {
+            left: t.left,
+            top: t.top,
+            fontFamily: t.fontFamily,
+            fill: t.fill,
+          });
+          this.canvas.add(text);
         });
       }
     },
@@ -138,7 +169,15 @@ export default {
           height: 300,
           backgroundColor: "#3af4f2",
         },
-        texts: [],
+        texts: [
+          {
+            content: "Alex",
+            left: 20,
+            top: 20,
+            fontFamily: "Arial",
+            fill: "pink",
+          },
+        ],
         shapes: [
           {
             type: "0",
@@ -149,7 +188,15 @@ export default {
             top: 50,
           },
         ],
-        illustrations: [],
+        illustrations: [
+          {
+            width: 100,
+            height: 100,
+            url: "https://tpc.googlesyndication.com/simgad/10235212382014818733",
+            left: 30,
+            top: 30,
+          },
+        ],
       };
       if (recentPostcardProject) {
         // 设置画布信息
