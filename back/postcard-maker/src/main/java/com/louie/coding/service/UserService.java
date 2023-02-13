@@ -8,6 +8,8 @@ import com.louie.coding.exception.BusinessExceptionCode;
 import com.louie.coding.util.MD5Util;
 import com.louie.coding.util.RSAUtil;
 import com.louie.coding.util.TokenUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,6 +17,7 @@ import java.util.Date;
 
 @Service
 public class UserService {
+    private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     @Resource
     private UserDao userDao;
     @Resource
@@ -75,6 +78,8 @@ public class UserService {
         String redisKey = MailConstants.REDIS_KEY_MAIL_CODE_PREFIX + email;
         // 检查用户1分钟之内是否已经发送了邮件
         Long leftValidTimeInSeconds = redisService.getLeftValidTimeInSeconds(redisKey);
+        LOGGER.info("验证码剩余有效期是:{}分", leftValidTimeInSeconds / 60);
+        // 判断剩余有效期是否大于： 总有效期-限定的发送频率
         if (leftValidTimeInSeconds > MailConstants.MAIL_CODE_VALID_TIME - MailConstants.MAIL_CODE_RESEND_MIN_INTERVAL) {
             throw new BusinessException(BusinessExceptionCode.MAIL_SEND_TOO_OFTEN);
         }

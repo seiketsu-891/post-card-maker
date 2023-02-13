@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 @Service
 public class MailService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-    @Value("${spring.mail.username}")
+    @Value("${MAIL_USERNAME}")
     String MAIL_FROM_ADDRESS;
     @Resource
     private SpringTemplateEngine templateEngine;
