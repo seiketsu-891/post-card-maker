@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louie.coding.dao.CanvasDao">
+    <select id="getRecentProjectByUserId" parameterType="java.lang.Long" resultType="com.louie.coding.entity.Project">
+        select *
+        from t_project p
+                 join t_canvas c
+                      on c.projectId = p.id
+        order by p.updateTime desc
+        limit 1
+    </select>
+</mapper>
