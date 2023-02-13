@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louie.coding.dao.AlbumDao">
+    <!--List<Album> getAlbumsWithPagination(Map<String, Object> params);-->
+    <select id="getAlbumsWithPagination" parameterType="java.util.Map" resultType="com.louie.coding.entity.Album">
+        select a.id, a.name, a.description, i.url
+        from t_album a
+                 left join t_illustration i
+                           on a.coverId = i.id
+        order by a.createTime
+        limit #{start} , #{size};
+    </select>
+</mapper>
