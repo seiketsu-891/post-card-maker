@@ -8,4 +8,6 @@ public interface UserDao {
     User getUserByEmail(String email);
 
     void addUser(User user);
+
+    Boolean getIsPremiumByUserId(Long id);
 }

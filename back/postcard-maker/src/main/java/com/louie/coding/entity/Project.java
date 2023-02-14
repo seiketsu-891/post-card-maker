@@ -6,10 +6,16 @@ public class Project {
     private Long id;
     private Long userId;
     private String name;
-    private Date dateTime;
+    private Date createTime;
     private Date updateTime;
 
-    private Canvas canvas;
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
     public Long getId() {
         return id;
@@ -35,13 +41,6 @@ public class Project {
         this.name = name;
     }
 
-    public Date getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(Date dateTime) {
-        this.dateTime = dateTime;
-    }
 
     public Date getUpdateTime() {
         return updateTime;

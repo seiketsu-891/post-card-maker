@@ -1,12 +1,10 @@
 package com.louie.coding.controller;
 
+import com.louie.coding.controller.support.UserSupport;
 import com.louie.coding.entity.JsonResponse;
 import com.louie.coding.entity.User;
 import com.louie.coding.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -14,6 +12,8 @@ import javax.annotation.Resource;
 public class UserController {
     @Resource
     private UserService userService;
+    @Resource
+    private UserSupport userSupport;
 
     /**
      * 新增用户,新增后用户自动处于登录状态
@@ -47,5 +47,13 @@ public class UserController {
     public JsonResponse<String> getToken(@RequestBody User user) {
         String token = userService.login(user);
         return JsonResponse.success(token);
+    }
+
+
+    @GetMapping("/premiums")
+    public JsonResponse<Boolean> checkIfPremium() {
+        Long userId = userSupport.getCurrentUserId();
+        Boolean isPremium = userService.checkIfPremium(userId);
+        return JsonResponse.success(isPremium);
     }
 }

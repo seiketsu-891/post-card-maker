@@ -89,4 +89,8 @@ public class UserService {
         // 将验证码存入redis
         redisService.setValue(redisKey, code, MailConstants.MAIL_CODE_VALID_TIME);
     }
+
+    public Boolean checkIfPremium(Long userId) {
+        return userDao.getIsPremiumByUserId(userId);
+    }
 }

@@ -21,4 +21,10 @@
         from t_user
         where email = #{email}
     </select>
+
+    <select id="getIsPremiumByUserId" parameterType="java.lang.Long" resultType="java.lang.Boolean">
+        select ispPremium
+        from t_user
+        where id = #{id}
+    </select>
 </mapper>

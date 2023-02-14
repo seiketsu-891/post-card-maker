@@ -164,6 +164,7 @@ export default {
      */
     getCanvasElements() {
       const recentPostcardProject = {
+        projectId: 1,
         canvas: {
           width: 500,
           height: 300,
