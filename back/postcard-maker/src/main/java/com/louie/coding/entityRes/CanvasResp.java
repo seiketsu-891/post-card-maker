@@ -1,6 +1,5 @@
 package com.louie.coding.entityRes;
 
-
 public class CanvasResp {
     private Long id;
     private int width;

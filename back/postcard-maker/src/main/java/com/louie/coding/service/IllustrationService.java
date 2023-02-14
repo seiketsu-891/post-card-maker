@@ -3,6 +3,7 @@ package com.louie.coding.service;
 import com.louie.coding.dao.IllustrationDao;
 import com.louie.coding.entity.Illustration;
 import com.louie.coding.entity.PageResult;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class IllustrationService {
     @Resource
     private IllustrationDao illustrationDao;

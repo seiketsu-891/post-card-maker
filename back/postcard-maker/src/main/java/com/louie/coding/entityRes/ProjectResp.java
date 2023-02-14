@@ -6,7 +6,6 @@ public class ProjectResp {
     private Long id;
     private String name;
     private CanvasResp canvas;
-
     private List<EleShapeResp> shapes;
     private List<EleIllustrationResp> illustrations;
     private List<EleTextResp> texts;
