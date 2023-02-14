@@ -4,11 +4,14 @@ import com.louie.coding.controller.support.UserSupport;
 import com.louie.coding.entity.JsonResponse;
 import com.louie.coding.entity.User;
 import com.louie.coding.service.UserService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @RestController
+@Validated
 public class UserController {
     @Resource
     private UserService userService;
@@ -19,11 +22,10 @@ public class UserController {
      * 新增用户,新增后用户自动处于登录状态
      */
     @PostMapping("/users")
-    public JsonResponse<String> addUser(@RequestBody User user) {
+    public JsonResponse<String> addUser(@Valid @RequestBody User user) {
         String token = userService.addUser(user);
         return JsonResponse.success(token);
     }
-
 
     /**
      * 发送邮箱验证码
