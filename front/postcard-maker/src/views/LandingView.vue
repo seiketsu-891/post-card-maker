@@ -40,7 +40,12 @@
               ></a-input>
             </a-form-item>
             <a-form-item>
-              <a-button class="form-card__btn" type="primary">登录</a-button>
+              <a-button
+                class="form-card__btn"
+                type="primary"
+                @click="handleLoginButtonClicked"
+                >登录</a-button
+              >
             </a-form-item>
           </a-form>
           <!-- 登录表单结束 -->
@@ -50,6 +55,7 @@
   </div>
 </template>
 <script>
+import { login } from "@/service/user";
 import { MailOutlined, LockOutlined } from "@ant-design/icons-vue";
 export default {
   components: {
@@ -63,6 +69,12 @@ export default {
         password: "",
       },
     };
+  },
+  methods: {
+    async handleLoginButtonClicked() {
+      const res = await login(this.loginForm);
+      console.log(res);
+    },
   },
 };
 </script>

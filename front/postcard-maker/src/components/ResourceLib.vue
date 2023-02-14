@@ -25,14 +25,24 @@
   </div>
 </template>
 <script>
+import { getAlbums } from "@/service/album";
 export default {
   data() {
     return {
       searchKeyword: "",
       activeTabKey: 1,
+      albums: [],
     };
   },
+
+  created() {
+    getAlbums();
+  },
   methods: {
+    async getAlbums() {
+      const result = await getAlbums(1, 5);
+      this.albums = result;
+    },
     onSearch() {},
     /**
      * 在画布上插入所点击的图片素材
