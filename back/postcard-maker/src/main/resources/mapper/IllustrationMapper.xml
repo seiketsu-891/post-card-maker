@@ -3,10 +3,27 @@
         PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.louie.coding.dao.IllustrationDao">
+
+    <select id="getCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(1) from t_illustration
+        where 1 = 1
+        <if test="albumId != null and albumId !=''">
+            and albumId = #{albumId}
+        </if>
+        <if test="keyword !=null and keyword !=''">
+            and (description like concat('%', #{keyword}, '%') or title like concat('%', #{keyword}, '%'))
+        </if>
+    </select>
     <select id="getIllusWithPagination" parameterType="java.util.Map" resultType="com.louie.coding.entity.Illustration">
         select id, title, url
         from t_illustration
-        where albumId = #{albumId}
+        where 1 = 1
+        <if test="albumId != null and albumId !=''">
+            and albumId = #{albumId}
+        </if>
+        <if test="keyword !=null and keyword !=''">
+            and (description like concat('%', #{keyword}, '%') or title like concat('%', #{keyword}, '%'))
+        </if>
         limit #{start}, #{size}
     </select>
 </mapper>

@@ -7,4 +7,6 @@ import java.util.Map;
 
 public interface IllustrationDao {
     List<Illustration> getIllusWithPagination(Map<String, Object> params);
+
+    Integer getCount(Map<String, Object> params);
 }
