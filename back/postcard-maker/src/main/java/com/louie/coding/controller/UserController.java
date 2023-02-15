@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.util.Map;
 
 @RestController
@@ -43,7 +44,7 @@ public class UserController {
      * 发送邮箱验证码
      */
     @PostMapping("/verification-codes")
-    public JsonResponse<String> sendVerificationCode(@RequestParam String email) {
+    public JsonResponse<String> sendVerificationCode(@Email(message = "邮箱不合法") @RequestParam String email) {
         userService.sendVerificationCodeByMail(email);
         return JsonResponse.success();
     }
@@ -54,7 +55,7 @@ public class UserController {
      * @return token 已登录用户的信息从token中获取
      */
     @PostMapping("/double-tokens")
-    public JsonResponse<Map<String, Object>> getToken(@RequestBody UserLogin user) {
+    public JsonResponse<Map<String, Object>> getToken(@Valid @RequestBody UserLogin user) {
         Map<String, Object> tokens = userService.login(user);
         return JsonResponse.success(tokens);
     }

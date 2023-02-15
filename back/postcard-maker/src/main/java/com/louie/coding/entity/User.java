@@ -1,11 +1,9 @@
 package com.louie.coding.entity;
 
-import javax.validation.constraints.Size;
 import java.util.Date;
 
 public class User {
     private Long id;
-    @Size(min = 3, max = 16, message = "用户名应在3到16位之间")
     private String username;
     private String password;
     private String email;
