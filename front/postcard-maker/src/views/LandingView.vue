@@ -16,14 +16,13 @@
       <a-col class="form-container__col" :xs="20" :sm="16" :md="12" :lg="8">
         <a-card class="form-card">
           <div class="form-card__msg">
-            <div class="form-card__title">USER LOGIN</div>
-            <!-- <div class="form-card__message">
-              <p>Hey,来体验一下网站功能吧，你可以在本网站通过素材拼接生成</p>
-            </div> -->
+            <div v-if="view == 0" class="form-card__title">USER LOGIN</div>
+            <div v-if="view == 1" class="form-card__title">USER REGISTER</div>
           </div>
           <!-- 登录表单 -->
           <a-form
             class="form-card__form"
+            v-if="view == 0"
             :model="loginForm"
             @finish="onLoginFormFinished"
           >
@@ -73,6 +72,90 @@
             </a-form-item>
           </a-form>
           <!-- 登录表单结束 -->
+          <!-- 注册表单 -->
+          <a-form
+            v-if="view == 1"
+            class="form-card__form"
+            :model="registerForm"
+            @finish="onRegiFormFinished"
+          >
+            <a-form-item
+              name="username"
+              validateTrigger="change"
+              htm
+              :rules="[
+                {
+                  required: true,
+                  pattern: new RegExp(/^[a-zA-Z]\w{3,10}$/),
+                  message: '3-10位，字母开头，仅包含字母数字',
+                },
+              ]"
+            >
+              <a-input
+                class="form-card__input"
+                v-model:value="registerForm.username"
+                placeholder="用户名"
+              />
+            </a-form-item>
+            <a-form-item
+              name="email"
+              validateTrigger="change"
+              htm
+              :rules="[
+                {
+                  required: true,
+                  type: 'email',
+                  message: '请输入合法邮箱',
+                },
+              ]"
+            >
+              <a-input
+                class="form-card__input"
+                v-model:value="registerForm.email"
+                placeholder="电子邮箱"
+              />
+            </a-form-item>
+            <a-form-item
+              name="password"
+              :rules="[
+                {
+                  required: true,
+                  max: 16,
+                  min: 6,
+                  message: '密码应为6到16位',
+                },
+              ]"
+            >
+              <a-input-password
+                class="form-card__input"
+                v-model:value="registerForm.password"
+                placeholder="密码"
+              />
+            </a-form-item>
+            <a-form-item
+              name="password2"
+              :rules="[
+                {
+                  required: true,
+                  max: 16,
+                  min: 6,
+                  message: '确认密码应为6到16位',
+                },
+              ]"
+            >
+              <a-input-password
+                class="form-card__input"
+                v-model:value="registerForm.password2"
+                placeholder="确认密码"
+              />
+            </a-form-item>
+            <a-form-item>
+              <a-button class="form-card__btn" type="primary" html-type="submit"
+                >注册</a-button
+              >
+            </a-form-item>
+          </a-form>
+          <!-- 注册表单结束 -->
         </a-card>
       </a-col>
     </a-row>
@@ -80,7 +163,7 @@
 </template>
 <script>
 import { encrypt } from "../utils/jsencrypt";
-
+import { register } from "@/service/user";
 import { login } from "@/service/user";
 import { MailOutlined, LockOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
@@ -89,12 +172,33 @@ export default {
     MailOutlined,
     LockOutlined,
   },
+  watch: {
+    // 切换登录注册界面时，清空输入框里的数据
+    view(value) {
+      if (value == 1) {
+        this.registerForm.email = "";
+        this.registerForm.password = "";
+        this.registerForm.password2 = "";
+        this.registerForm.username = "";
+      } else {
+        this.loginForm.email = "";
+        this.loginForm.password = "";
+      }
+    },
+  },
   data() {
     return {
       loginForm: {
         email: "",
         password: "",
       },
+      registerForm: {
+        email: "",
+        username: "",
+        password: "",
+        password2: "",
+      },
+      view: 0, // 0: login , 1:register
     };
   },
   methods: {
@@ -104,13 +208,36 @@ export default {
         password: encrypt(this.loginForm.password),
       });
       if (res.code == 200) {
-        // const token = res.data;
+        // todo 解密token提取数据
+        const token = res.data;
+        const loginUser = {
+          username: "",
+          email: "",
+        };
+        this.$store.dispatcher("login", { loginUser, token });
+        this.router.push("/home");
       } else {
         message.warn(res.message);
       }
     },
+    async handleRegisterButtonClicked() {
+      const user = {
+        username: this.registerForm.username,
+        password: this.registerForm.password,
+        email: this.registerForm.email,
+      };
+      const res = await register(user);
+      if (res.code == 200) {
+        message.success("注册成功，请登录");
+        // 转到登录试图
+        this.view = 0;
+      }
+    },
     onLoginFormFinished() {
       this.handleLoginButtonClicked();
+    },
+    onRegiFormFinished() {
+      this.handleRegisterButtonClicked();
     },
   },
 };

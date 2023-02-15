@@ -12,9 +12,9 @@
         </h1>
         <!-- 按钮 -->
         <div class="header__btns">
-          <a-avatar class="header__avatar" style="background-color: #82c646"
-            >K</a-avatar
-          >
+          <a-avatar class="header__avatar" style="background-color: #82c646">{{
+            user.username.substring(0, 1)
+          }}</a-avatar>
           <a-button class="header__btn--get-premium header__btn">
             <template #icon> <CrownFilled class="icon--crown" /> </template>
             <span v-if="isPremium">您是会员</span
@@ -180,6 +180,11 @@ export default {
       resourceAreaVisible: true, // 侧边可折叠资源菜单区是否可见
       isPremium: true,
     };
+  },
+  computed: {
+    user() {
+      return this.$store.getters.user;
+    },
   },
   created() {
     // todo check ifVIP and set the value of isPremium;
