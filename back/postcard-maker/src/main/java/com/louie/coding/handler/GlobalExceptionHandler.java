@@ -1,8 +1,8 @@
 package com.louie.coding.handler;
 
 import com.louie.coding.entity.JsonResponse;
+import com.louie.coding.exception.AuthException;
 import com.louie.coding.exception.BusinessException;
-import com.louie.coding.exception.BusinessExceptionCode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.validation.ObjectError;
@@ -20,9 +20,11 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public JsonResponse<String> globalExceptionHandler(Exception e) {
         String message = e.getMessage();
-        if (e instanceof BusinessException) {
-            BusinessExceptionCode code = ((BusinessException) e).getCode();
-            message = code.getDesc();
+        if (e instanceof AuthException) {
+            message = ((AuthException) e).getCode().getDesc();
+            return JsonResponse.error(401, message);
+        } else if (e instanceof BusinessException) {
+            message = ((BusinessException) e).getCode().getDesc();
             return JsonResponse.error(0, message);
         } else if (e instanceof MethodArgumentNotValidException) {
             MethodArgumentNotValidException ex = (MethodArgumentNotValidException) e;

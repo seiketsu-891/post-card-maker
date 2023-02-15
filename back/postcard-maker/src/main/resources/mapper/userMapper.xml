@@ -27,4 +27,22 @@
         from t_user
         where id = #{id}
     </select>
+
+    <delete id="deleteRefreshToken">
+        delete
+        from t_refresh_token
+        where token = #{token}
+    </delete>
+
+    <insert id="addRefreshToken" parameterType="com.louie.coding.entity.RefreshTokenDetail">
+        insert into t_refresh_token
+            (token, userId, createTime)
+        values (#{token}, #{userId}, #{createTime})
+    </insert>
+
+    <select id="getRefreshTokenDetail" parameterType="java.lang.String">
+        select id, token, userId, createTime
+        from t_refresh_token
+        where token = #{token}
+    </select>
 </mapper>

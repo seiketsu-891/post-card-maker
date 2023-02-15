@@ -24,6 +24,16 @@ public class RedisService {
         }
     }
 
+    public String getValue(String key) {
+        ValueOperations<String, String> vo = stringRedisTemplate.opsForValue();
+        return vo.get(key);
+    }
+
+    public void deleteKey(String key) {
+        ValueOperations<String, String> vo = stringRedisTemplate.opsForValue();
+        vo.getAndDelete(key);
+    }
+
     /**
      * 获取key剩余有效期（秒数）
      */
