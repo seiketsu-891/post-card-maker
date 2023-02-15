@@ -1,6 +1,4 @@
-import axios from "axios";
-const baseURL = "http://localhost:8081/";
-axios.defaults.baseURL = baseURL;
+import axios from "@/main.js";
 
 export function get(url, params) {
   return axios

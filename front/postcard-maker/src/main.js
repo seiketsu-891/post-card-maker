@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import axios from "axios";
 // mitt
 import mitt from "mitt";
 const emitter = mitt();
@@ -51,6 +52,47 @@ import "ant-design-vue/lib/divider/style";
 import "ant-design-vue/lib/slider/style";
 import "ant-design-vue/lib/select/style";
 import "ant-design-vue/lib/message/style";
+
+axios.defaults.baseURL = "http://127.0.0.1:8081/";
+
+// http request拦截器
+axios.interceptors.request.use((config) => {
+  // 发送请求前做的事情
+  if (store.getters.token) {
+    config.headers.token = store.getters.token;
+  }
+  return config;
+});
+
+// http response拦截器
+axios.interceptors.response.use(
+  (res) => {
+    return res;
+  },
+  async (err) => {
+    const originalRequest = err.config;
+    // 处理token过期情况
+    if (err.response.status === 401 && !originalRequest._retry) {
+      originalRequest.retry = true;
+      const res = await axios.post("/tokens", {});
+      const resp = res.data;
+      // 获得新的token
+      if (res.code === "200") {
+        const token = resp.data;
+        store.dispatch("updateToken", { token });
+        originalRequest.headers.token = token;
+        // 如果重新获得token成功，则重新发送请求
+        return axios(originalRequest);
+      } else {
+        // 获取新token失败，登录状态失效
+        store.dispatch("logout", {});
+        router.push("/login");
+      }
+    }
+    return Promise.reject(err.response.data);
+  }
+);
+export default axios;
 
 const app = createApp(App);
 app.config.globalProperties.emitter = emitter;

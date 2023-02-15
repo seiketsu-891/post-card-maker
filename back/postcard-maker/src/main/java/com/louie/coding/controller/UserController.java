@@ -67,7 +67,7 @@ public class UserController {
         return JsonResponse.success(isPremium);
     }
 
-    @GetMapping("/tokens")
+    @PostMapping("/tokens")
     public JsonResponse<String> getNewToken(HttpServletRequest request) {
         String refreshToken = request.getHeader("refreshToken");
         String token = userService.refreshToken(refreshToken);
