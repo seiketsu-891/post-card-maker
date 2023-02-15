@@ -22,8 +22,23 @@
             </div> -->
           </div>
           <!-- 登录表单 -->
-          <a-form class="form-card__form">
-            <a-form-item>
+          <a-form
+            class="form-card__form"
+            :model="loginForm"
+            @finish="onLoginFormFinished"
+          >
+            <a-form-item
+              name="email"
+              validateTrigger="change"
+              htm
+              :rules="[
+                {
+                  required: true,
+                  type: 'email',
+                  message: '请输入合法邮箱',
+                },
+              ]"
+            >
               <a-input
                 class="form-card__input"
                 v-model:value="loginForm.email"
@@ -31,19 +46,28 @@
               >
                 <template #prefix> <mail-outlined type="user" /> </template
               ></a-input>
-              <a-input
+            </a-form-item>
+            <a-form-item
+              name="password"
+              :rules="[
+                {
+                  required: true,
+                  max: 16,
+                  min: 6,
+                  message: '密码应为6到16位',
+                },
+              ]"
+            >
+              <a-input-password
                 class="form-card__input"
                 v-model:value="loginForm.password"
                 placeholder="密码"
               >
                 <template #prefix> <lock-outlined type="user" /> </template
-              ></a-input>
+              ></a-input-password>
             </a-form-item>
             <a-form-item>
-              <a-button
-                class="form-card__btn"
-                type="primary"
-                @click="handleLoginButtonClicked"
+              <a-button class="form-card__btn" type="primary" html-type="submit"
                 >登录</a-button
               >
             </a-form-item>
@@ -55,8 +79,11 @@
   </div>
 </template>
 <script>
+import { encrypt } from "../utils/jsencrypt";
+
 import { login } from "@/service/user";
 import { MailOutlined, LockOutlined } from "@ant-design/icons-vue";
+import { message } from "ant-design-vue";
 export default {
   components: {
     MailOutlined,
@@ -72,8 +99,18 @@ export default {
   },
   methods: {
     async handleLoginButtonClicked() {
-      const res = await login(this.loginForm);
-      console.log(res);
+      const res = await login({
+        email: this.loginForm.email,
+        password: encrypt(this.loginForm.password),
+      });
+      if (res.code == 200) {
+        // const token = res.data;
+      } else {
+        message.warn(res.message);
+      }
+    },
+    onLoginFormFinished() {
+      this.handleLoginButtonClicked();
     },
   },
 };
@@ -121,9 +158,11 @@ export default {
     padding: 15px
     text-align: center
   &__input
-    margin-bottom: 19px
     height: 50px
+    &:not(first-of-type)
+      margin-top: 10px
   &__btn
+    margin-top: 20px
     border-radius: 10px
     width: 100px
 </style>

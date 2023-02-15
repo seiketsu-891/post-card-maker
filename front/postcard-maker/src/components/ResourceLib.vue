@@ -26,6 +26,7 @@
 </template>
 <script>
 import { getAlbums } from "@/service/album";
+import { message } from "ant-design-vue";
 export default {
   data() {
     return {
@@ -40,8 +41,12 @@ export default {
   },
   methods: {
     async getAlbums() {
-      const result = await getAlbums(1, 5);
-      this.albums = result;
+      const res = await getAlbums(1, 5);
+      if (res.code == 200) {
+        this.albums = res.data;
+      } else {
+        message.warn(res.message);
+      }
     },
     onSearch() {},
     /**

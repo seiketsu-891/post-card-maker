@@ -7,23 +7,9 @@ export function get(url, params) {
     .get(url, {
       params,
     })
-    .then((res) => {
-      const resp = res.data;
-      if (resp.code == 200) {
-        return resp.data;
-      } else {
-        // error handle
-      }
-    });
+    .then((res) => res.data);
 }
 
 export function post(url, body) {
-  return axios.post(url, body).then((res) => {
-    const resp = res.data;
-    if (resp.code == 200) {
-      return resp.data;
-    } else {
-      // error handle
-    }
-  });
+  return axios.post(url, body).then((res) => res.data);
 }
