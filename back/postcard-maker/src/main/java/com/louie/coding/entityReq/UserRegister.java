@@ -1,16 +1,22 @@
 package com.louie.coding.entityReq;
 
+import com.louie.coding.entity.annotation.ValidPassword;
+
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 public class UserRegister {
     @Email(message = "邮箱非法")
+    @NotNull(message = "邮箱不能为空")
     private String email;
-    @Pattern(regexp = "/^[a-zA-z]\\w{3,10}$/", message = "用户名需要3-10位，字母开头，只含字母数字")
+    @NotNull(message = "用户名不能为空")
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9]{2,9}$", message = "用户名需要3-10位，字母开头，只含字母数字")
     private String username;
+    @NotNull(message = "验证码不能为空")
     private String code;
-    @Size(min = 6, max = 16, message = "密码需要6-16位")
+
+    @ValidPassword
     private String password;
 
     public String getEmail() {
