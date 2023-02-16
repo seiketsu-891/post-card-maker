@@ -124,6 +124,7 @@
   </div>
 </template>
 <script>
+import { ifPremium } from "@/service/user";
 import CanvasSetting from "@/components/CanvasSetting";
 import ResourceLib from "@/components/ResourceLib";
 import ShapeLib from "@/components/ShapeLib";
@@ -145,6 +146,7 @@ import {
   LeftOutlined,
   FileImageOutlined,
 } from "@ant-design/icons-vue";
+import { message } from "ant-design-vue";
 export default {
   components: {
     FontSizeOutlined,
@@ -187,9 +189,20 @@ export default {
     },
   },
   created() {
-    // todo check ifVIP and set the value of isPremium;
+    this.checkIfPremium();
   },
   methods: {
+    /**
+     * 检查用户是否是会员
+     */
+    async checkIfPremium() {
+      const res = await ifPremium();
+      if (res.code == 200) {
+        this.isPremium = res.data;
+      } else {
+        message.error("获取数据失败！");
+      }
+    },
     /**
      * 隐藏侧边可折叠菜单区
      */

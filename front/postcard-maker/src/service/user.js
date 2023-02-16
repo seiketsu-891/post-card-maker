@@ -1,3 +1,4 @@
+import { get } from "./axiosBase";
 import { post } from "./axiosBase";
 
 export function login(user) {
@@ -6,4 +7,8 @@ export function login(user) {
 
 export function register(user) {
   return post("/users", user);
+}
+
+export function ifPremium() {
+  return get("/premiums");
 }
