@@ -4,6 +4,7 @@ import com.louie.coding.controller.support.UserSupport;
 import com.louie.coding.entity.JsonResponse;
 import com.louie.coding.entityReq.UserLogin;
 import com.louie.coding.entityReq.UserRegister;
+import com.louie.coding.entityReq.UserRestPassword;
 import com.louie.coding.service.UserService;
 import com.louie.coding.util.RSAUtil;
 import org.springframework.validation.annotation.Validated;
@@ -62,6 +63,9 @@ public class UserController {
     }
 
 
+    /**
+     * 检查用户是否为会员
+     */
     @GetMapping("/premiums")
     public JsonResponse<Boolean> checkIfPremium() {
         Long userId = userSupport.getCurrentUserId();
@@ -69,10 +73,22 @@ public class UserController {
         return JsonResponse.success(isPremium);
     }
 
+    /**
+     * 获取新token
+     */
     @PostMapping("/tokens")
     public JsonResponse<String> getNewToken(HttpServletRequest request) {
         String refreshToken = request.getHeader("refreshToken");
         String token = userService.refreshToken(refreshToken);
         return JsonResponse.success(token);
+    }
+
+    /**
+     * 重置密码
+     */
+    @PostMapping("/passwords")
+    public JsonResponse<String> resetPassword(@Valid UserRestPassword userRestPassword) {
+        userService.resetPassword(userRestPassword);
+        return JsonResponse.success();
     }
 }

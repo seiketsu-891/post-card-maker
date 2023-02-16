@@ -17,4 +17,6 @@ public interface UserDao {
     void addRefreshToken(RefreshTokenDetail refreshTokenDetail);
 
     RefreshTokenDetail getRefreshTokenDetail(String token);
+
+    void updatePassword(User user);
 }

@@ -7,7 +7,8 @@ public enum BusinessExceptionCode {
     ERROR_PASSWORD_DECRYPTION("密码解密失败"),
     ERROR_SENDING_MAIL("邮件发送失败"),
     MAIL_SEND_TOO_OFTEN("邮件发送过于频繁"),
-    WRONG_VERIFICATION_CODE("验证码错误");
+    WRONG_VERIFICATION_CODE("验证码错误"),
+    USER_EMAIL_NOT_EXISTS("该邮箱未注册");
 
     private String desc;
 

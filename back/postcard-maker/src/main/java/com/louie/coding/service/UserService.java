@@ -7,6 +7,7 @@ import com.louie.coding.entity.RefreshTokenDetail;
 import com.louie.coding.entity.User;
 import com.louie.coding.entityReq.UserLogin;
 import com.louie.coding.entityReq.UserRegister;
+import com.louie.coding.entityReq.UserRestPassword;
 import com.louie.coding.exception.AuthException;
 import com.louie.coding.exception.AuthExceptionCode;
 import com.louie.coding.exception.BusinessException;
@@ -153,5 +154,30 @@ public class UserService {
         }
 
         return TokenUtil.refreshToken(refreshTokenDetail.getUserId());
+    }
+
+    public void resetPassword(UserRestPassword userRestPassword) {
+        String email = userRestPassword.getEmail();
+        User userDb = userDao.getUserByEmail(email);
+        if (userDb == null) {
+            throw new BusinessException(BusinessExceptionCode.USER_EMAIL_NOT_EXISTS);
+        }
+
+        //校验验证码
+        String code = userRestPassword.getCode();
+        String redisKey = MailConstants.REDIS_KEY_MAIL_CODE_PREFIX + userRestPassword.getEmail();
+        String codeDb = redisService.getValue(redisKey);
+        if (codeDb == null || !codeDb.equals(code)) {
+            throw new BusinessException(BusinessExceptionCode.WRONG_VERIFICATION_CODE);
+        }
+        redisService.deleteKey(redisKey);
+
+        String salt = userDb.getSalt();
+        String MD5Password = getMD5Password(userDb.getPassword(), salt);
+        User user = new User();
+        user.setId(userDb.getId());
+        user.setPassword(MD5Password);
+        user.setUpdateTime(new Date());
+        userDao.updatePassword(user);
     }
 }
