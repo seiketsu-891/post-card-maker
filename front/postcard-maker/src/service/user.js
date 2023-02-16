@@ -12,3 +12,11 @@ export function register(user) {
 export function ifPremium() {
   return get("/premiums");
 }
+
+export function sendCode(email) {
+  return post("/verification-codes?email=" + email);
+}
+
+export function resetPassword(user) {
+  return post("/passwords", user);
+}
