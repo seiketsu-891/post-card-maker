@@ -36,8 +36,9 @@ public class UserController {
      * 新增用户,新增后用户自动处于登录状态
      */
     @PostMapping("/users")
-    public void addUser(@Valid @RequestBody UserRegister userRegister) {
+    public JsonResponse<String> addUser(@Valid @RequestBody UserRegister userRegister) {
         userService.addUser(userRegister);
+        return JsonResponse.success();
     }
 
     /**

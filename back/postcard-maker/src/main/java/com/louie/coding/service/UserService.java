@@ -65,7 +65,7 @@ public class UserService {
            由于数据库中的时间数据精度和这里的时间精度不同，会造成结果不一样。
          */
         user.setSalt(salt);
-        user.setPremium(false);
+        user.setIsPremium(false);
         userDao.addUser(user);
     }
 
@@ -92,7 +92,7 @@ public class UserService {
         // 将refreshToken存入数据库
         Long userId = userDb.getId();
         RefreshTokenDetail refreshTokenDetail = new RefreshTokenDetail();
-        refreshTokenDetail.setId(userId);
+        refreshTokenDetail.setUserId(userId);
         refreshTokenDetail.setToken(refreshToken);
         refreshTokenDetail.setCreateTime(new Date());
         userDao.deleteRefreshToken(refreshToken);

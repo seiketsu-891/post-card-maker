@@ -20,7 +20,7 @@ public class TokenUtil {
     public static String generateToken(User user, String type) {
         String email = user.getEmail();
         String username = user.getUsername();
-        Boolean isPremium = user.getPremium();
+        Boolean isPremium = user.getIsPremium();
         Long id = user.getId();
 
         Algorithm algorithm;
