@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Validated
@@ -19,7 +20,8 @@ public class AlbumController {
     private AlbumService albumService;
 
     @GetMapping("/albums")
-    public JsonResponse<List<Album>> getAlbums(@RequestParam @NotNull(message = "参数异常") Integer pageNum, @RequestParam @NotNull(message = "参数异常") Integer pageSize) {
+    // 当controller上用@Valid的时候， @Positive 不起作用
+    public JsonResponse<List<Album>> getAlbums(@RequestParam @Positive(message = "页码参数异常") @NotNull Integer pageNum, @RequestParam @Positive(message = "页码参数异常") @NotNull Integer pageSize) {
         List<Album> albums = albumService.getAlbums(pageNum, pageSize);
         return JsonResponse.success(albums);
     }

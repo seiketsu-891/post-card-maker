@@ -20,6 +20,20 @@ public class User {
         isPremium = premium;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", salt='" + salt + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", isPremium=" + isPremium +
+                '}';
+    }
+
     public Date getCreateTime() {
         return createTime;
     }

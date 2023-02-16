@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Map;
 
 @RestController
@@ -46,8 +47,8 @@ public class UserController {
      * 发送邮箱验证码
      */
     @PostMapping("/verification-codes")
-    public JsonResponse<String> sendVerificationCode(@Email(message = "邮箱不合法") @RequestParam String email) {
-        userService.sendVerificationCodeByMail(email);
+    public JsonResponse<String> sendVerificationCode(@Email(message = "邮箱非法") @RequestParam @NotBlank(message = "邮箱不能为空") String email, @RequestParam Integer purpose) {
+        userService.sendVerificationCodeByMail(email, purpose);
         return JsonResponse.success();
     }
 
@@ -87,7 +88,7 @@ public class UserController {
      * 重置密码
      */
     @PostMapping("/passwords")
-    public JsonResponse<String> resetPassword(@Valid UserRestPassword userRestPassword) {
+    public JsonResponse<String> resetPassword(@Valid @RequestBody UserRestPassword userRestPassword) {
         userService.resetPassword(userRestPassword);
         return JsonResponse.success();
     }

@@ -9,4 +9,7 @@ public interface MailConstants {
     Long MAIL_CODE_VALID_TIME = (long) (5 * 60);
     // 验证码最少发送频率间隔
     Long MAIL_CODE_RESEND_MIN_INTERVAL = (long) (60);
+    int CODE_PURPOSE_REGISTER = 0;
+    int CODE_PURPOSE_RESET_PASSWORD = 1;
+
 }

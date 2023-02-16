@@ -115,11 +115,18 @@ public class UserService {
         return MD5Util.sign(passwordRaw, String.valueOf(salt), "UTF-8");
     }
 
-    public void sendVerificationCodeByMail(String email) {
-        // 验证邮箱是否存在
+    public void sendVerificationCodeByMail(String email, int purpose) {
         User userDb = userDao.getUserByEmail(email);
-        if (userDb != null) {
-            throw new BusinessException(BusinessExceptionCode.USER_EMAIL_EXISTS);
+
+        // 注册用 - 需要判定邮箱是否已存在
+        if (MailConstants.CODE_PURPOSE_REGISTER == purpose) {
+            if (userDb != null) {
+                throw new BusinessException(BusinessExceptionCode.USER_EMAIL_EXISTS);
+            }
+        } else { // 非注册用需要邮箱已注册
+            if (userDb == null) {
+                throw new BusinessException(BusinessExceptionCode.USER_EMAIL_NOT_EXISTS);
+            }
         }
 
         String redisKey = MailConstants.REDIS_KEY_MAIL_CODE_PREFIX + email;
@@ -173,11 +180,12 @@ public class UserService {
         redisService.deleteKey(redisKey);
 
         String salt = userDb.getSalt();
-        String MD5Password = getMD5Password(userDb.getPassword(), salt);
+        String MD5Password = getMD5Password(userRestPassword.getPassword(), salt);
         User user = new User();
         user.setId(userDb.getId());
         user.setPassword(MD5Password);
         user.setUpdateTime(new Date());
+        System.out.println(user);
         userDao.updatePassword(user);
     }
 }

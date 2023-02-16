@@ -21,6 +21,7 @@ public class RedisService {
             vo.set(key, value, timeSeconds, TimeUnit.SECONDS);
         } catch (Exception e) {
             LOGGER.info("redis存入失败, e={}", e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -30,8 +31,12 @@ public class RedisService {
     }
 
     public void deleteKey(String key) {
-        ValueOperations<String, String> vo = stringRedisTemplate.opsForValue();
-        vo.getAndDelete(key);
+        try {
+            stringRedisTemplate.delete(key);
+        } catch (Exception e) {
+            LOGGER.info("redis删除key失败, e={}", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**

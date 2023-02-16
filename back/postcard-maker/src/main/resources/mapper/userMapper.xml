@@ -45,11 +45,11 @@
         from t_refresh_token
         where token = #{token}
     </select>
-    
+
     <update id="updatePassword" parameterType="com.louie.coding.entity.User">
         update t_user
         set `password` = #{password}
-            and updateTime = #{updateTime}
+          , updateTime = #{updateTime}
         where id = #{id}
     </update>
 </mapper>
