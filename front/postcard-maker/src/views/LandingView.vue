@@ -69,6 +69,12 @@
               <a-button class="form-card__btn" type="primary" html-type="submit"
                 >登录</a-button
               >
+              <a-button
+                class="form-card__btn--nonprimary"
+                type="dashed"
+                @click="view = 1"
+                >去注册</a-button
+              >
             </a-form-item>
           </a-form>
           <!-- 登录表单结束 -->
@@ -86,13 +92,12 @@
               :rules="[
                 {
                   required: true,
-                  pattern: new RegExp(/^[a-zA-Z]\w{3,10}$/),
+                  pattern: new RegExp(/^[a-zA-Z][a-zA-Z0-9]{2,9}$/),
                   message: '3-10位，字母开头，仅包含字母数字',
                 },
               ]"
             >
               <a-input
-                class="form-card__input"
                 v-model:value="registerForm.username"
                 placeholder="用户名"
               />
@@ -110,7 +115,6 @@
               ]"
             >
               <a-input
-                class="form-card__input"
                 v-model:value="registerForm.email"
                 placeholder="电子邮箱"
               />
@@ -127,7 +131,6 @@
               ]"
             >
               <a-input-password
-                class="form-card__input"
                 v-model:value="registerForm.password"
                 placeholder="密码"
               />
@@ -144,7 +147,6 @@
               ]"
             >
               <a-input-password
-                class="form-card__input"
                 v-model:value="registerForm.password2"
                 placeholder="确认密码"
               />
@@ -152,6 +154,12 @@
             <a-form-item>
               <a-button class="form-card__btn" type="primary" html-type="submit"
                 >注册</a-button
+              >
+              <a-button
+                class="form-card__btn--nonprimary"
+                type="dashed"
+                @click="view = 0"
+                >返回登录</a-button
               >
             </a-form-item>
           </a-form>
@@ -209,13 +217,14 @@ export default {
       });
       if (res.code == 200) {
         // todo 解密token提取数据
-        const token = res.data;
         const loginUser = {
-          username: "",
+          username: "patty",
           email: "",
         };
-        this.$store.dispatcher("login", { loginUser, token });
-        this.router.push("/home");
+        const token = res.data.token;
+        const refreshToken = res.data.refreshToken;
+        this.$store.dispatch("login", { loginUser, token, refreshToken });
+        this.$router.push("/home");
       } else {
         message.warn(res.message);
       }
@@ -267,7 +276,7 @@ export default {
   &__col
     max-width: 400px
 .form-card
-  padding: 30px 0
+  padding: 10px 0
   background: #fff
   border: none
   border-radius: 20px
@@ -279,7 +288,7 @@ export default {
     color: #4E5255
     font-size: 30px
   &__message
-    margin-top: 10px
+    margin-top: 5px
     color: #7D8186
   &__form
     padding: 15px
@@ -292,4 +301,7 @@ export default {
     margin-top: 20px
     border-radius: 10px
     width: 100px
+    &--nonprimary
+      margin-left: 30px
+      border-radius: 10px
 </style>

@@ -13,7 +13,7 @@
         <!-- 按钮 -->
         <div class="header__btns">
           <a-avatar class="header__avatar" style="background-color: #82c646">{{
-            user.username.substring(0, 1)
+            user.username.substring(0, 1).toUpperCase()
           }}</a-avatar>
           <a-button class="header__btn--get-premium header__btn">
             <template #icon> <CrownFilled class="icon--crown" /> </template>
