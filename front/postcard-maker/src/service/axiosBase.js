@@ -11,3 +11,8 @@ export function get(url, params) {
 export function post(url, body) {
   return axios.post(url, body).then((res) => res.data);
 }
+
+// 以delete为名会提示是关键字
+export function del(url, body) {
+  return axios.delete(url, body).then((res) => res.data);
+}

@@ -29,6 +29,7 @@
             </template>
             下载文件</a-button
           >
+          <a-button class="header__btn" @click="userLogout">登出</a-button>
         </div>
         <!-- 头部菜单 -->
       </a-layout-header>
@@ -125,6 +126,7 @@
 </template>
 <script>
 import { ifPremium } from "@/service/user";
+import { logout } from "@/service/user";
 import CanvasSetting from "@/components/CanvasSetting";
 import ResourceLib from "@/components/ResourceLib";
 import ShapeLib from "@/components/ShapeLib";
@@ -192,6 +194,18 @@ export default {
     this.checkIfPremium();
   },
   methods: {
+    /**
+     * 退出登录
+     */
+    async userLogout() {
+      const res = await logout();
+      if (res.code == 200) {
+        this.$store.dispatch("logout");
+        this.$router.push("/");
+      } else {
+        message.error("操作失败");
+      }
+    },
     /**
      * 检查用户是否是会员
      */
@@ -278,8 +292,9 @@ export default {
       outline: none
       border: none
       height: 40px
-      margin-right: 40px
+      margin-left: 20px
       padding: 0 20px
+      color: #4A4A4A
       &--get-premium
          color: #fff
          background-color: rgba(255,255,255,.2)
@@ -292,9 +307,6 @@ export default {
          &:focus
             background-color: rgba(255,255,255,.2)
             color: #fff
-      &--download
-         color: #4A4A4A
-         margin-right: 0
 .main
     margin-top: 60px
     margin-left: 120px

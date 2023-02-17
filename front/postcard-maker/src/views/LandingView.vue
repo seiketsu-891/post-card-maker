@@ -25,7 +25,7 @@
             class="form-card__form"
             v-if="view == 0"
             :model="loginForm"
-            @finish="onLoginFormFinished"
+            @finish="userLogin"
           >
             <a-form-item
               name="email"
@@ -87,7 +87,7 @@
             v-if="view == 1"
             class="form-card__form"
             :model="registerForm"
-            @finish="onRegiFormFinished"
+            @finish="register"
           >
             <a-form-item
               name="username"
@@ -181,11 +181,7 @@
               />
             </a-form-item>
             <a-form-item>
-              <a-button
-                class="form-card__btn"
-                type="primary"
-                html-type="submit"
-                @click="register"
+              <a-button class="form-card__btn" type="primary" html-type="submit"
                 >注册</a-button
               >
               <a-button
@@ -196,11 +192,11 @@
               >
             </a-form-item>
           </a-form>
-
           <!-- 注册表单结束 -->
           <!-- 找回密码表单 -->
           <a-form
             class="form-card__form"
+            @finish="resetPwd"
             v-if="view == 2"
             :model="resetPwdForm"
           >
@@ -280,11 +276,7 @@
             </a-form-item>
 
             <a-form-item>
-              <a-button
-                class="form-card__btn"
-                type="primary"
-                html-type="submit"
-                @click="resetPwd"
+              <a-button class="form-card__btn" type="primary" html-type="submit"
                 >重置密码</a-button
               >
               <a-button
@@ -367,6 +359,11 @@ export default {
   },
   methods: {
     async register() {
+      // 如果用户还未发送验证码，则提示
+      if (!this.codeBtn.visibility) {
+        message.warn("您还未验证邮箱");
+        return;
+      }
       const res = await register({
         username: this.registerForm.username,
         email: this.registerForm.email,
@@ -377,7 +374,9 @@ export default {
       // 练习重点内容期间这里先不做了
       if (res.code == 200) {
         message.success("注册成功,即将转入登录页面");
-        this.$router.push({ path: "/login" }, 3000);
+        setTimeout(() => {
+          this.view = 0;
+        }, 2000);
       } else {
         message.warn(res.message);
       }
@@ -393,7 +392,9 @@ export default {
       });
       if (res.code == 200) {
         message.success("重置成功,即将转入登录页面");
-        this.$router.push({ path: "/login" }, 3000);
+        setTimeout(() => {
+          this.view = 0;
+        }, 2000);
       } else {
         message.warn(res.message);
       }
@@ -402,6 +403,12 @@ export default {
      * 发送邮箱验证码
      */
     async sendCode(type) {
+      const email =
+        type == 1 ? this.registerForm.email : this.resetPwdForm.email;
+      if (email.trim() == "") {
+        message.warn("您还未输入邮箱");
+        return;
+      }
       if (this.codeBtn.disabled || this.codeBtn.timer) {
         return;
       }
@@ -409,9 +416,8 @@ export default {
       this.codeBtn.disabled = true;
       this.codeBtn.type = type;
 
-      const email =
-        type == 1 ? this.registerForm.email : this.resetPwdForm.email;
-      const res = await sendCode(email);
+      const purpose = type == 1 ? 0 : 1;
+      const res = await sendCode(email, purpose);
       if (res.code != 200) {
         if (res.code == 0) {
           message.warn(res.message);
@@ -465,7 +471,7 @@ export default {
     /**
      * 处理登录
      */
-    async handleLoginButtonClicked() {
+    async userLogin() {
       const res = await login({
         email: this.loginForm.email,
         password: encrypt(this.loginForm.password),
@@ -483,25 +489,6 @@ export default {
       } else {
         message.warn(res.message);
       }
-    },
-    async handleRegisterButtonClicked() {
-      const user = {
-        username: this.registerForm.username,
-        password: this.registerForm.password,
-        email: this.registerForm.email,
-      };
-      const res = await register(user);
-      if (res.code == 200) {
-        message.success("注册成功，请登录");
-        // 转到登录试图
-        this.view = 0;
-      }
-    },
-    onLoginFormFinished() {
-      this.handleLoginButtonClicked();
-    },
-    onRegiFormFinished() {
-      this.handleRegisterButtonClicked();
     },
   },
 };

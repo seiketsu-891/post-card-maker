@@ -4,9 +4,9 @@ import VuexPersistence from "vuex-persist";
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
 });
-[vuexLocal.plugin];
 
 export default createStore({
+  plugins: [vuexLocal.plugin],
   state() {
     return {
       loginUser: null,
@@ -15,6 +15,14 @@ export default createStore({
     };
   },
   getters: {
+    // 这个是用于路由判定,用于获取登录状态
+    logined(state) {
+      return (
+        state.loginUser !== null &&
+        state.token !== null &&
+        state.refreshToken != null
+      );
+    },
     user(state) {
       return state.loginUser;
     },
