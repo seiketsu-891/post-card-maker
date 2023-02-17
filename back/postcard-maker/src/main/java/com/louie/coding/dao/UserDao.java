@@ -3,6 +3,7 @@ package com.louie.coding.dao;
 import com.louie.coding.entity.RefreshTokenDetail;
 import com.louie.coding.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserDao {
@@ -12,11 +13,11 @@ public interface UserDao {
 
     Boolean getIsPremiumByUserId(Long id);
 
-    void deleteRefreshToken(String token);
-
     void addRefreshToken(RefreshTokenDetail refreshTokenDetail);
 
     RefreshTokenDetail getRefreshTokenDetail(String token);
 
     void updatePassword(User user);
+
+    void deleteRefreshTokenByUserIdAndToken(@Param("userId") Long userId, @Param("token") String refreshToken);
 }

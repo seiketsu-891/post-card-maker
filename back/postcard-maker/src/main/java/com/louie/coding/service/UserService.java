@@ -96,7 +96,7 @@ public class UserService {
         refreshTokenDetail.setUserId(userId);
         refreshTokenDetail.setToken(refreshToken);
         refreshTokenDetail.setCreateTime(new Date());
-        userDao.deleteRefreshToken(refreshToken);
+        userDao.deleteRefreshTokenByUserIdAndToken(userId, refreshToken);
         userDao.addRefreshToken(refreshTokenDetail);
 
         return tokens;
@@ -147,11 +147,11 @@ public class UserService {
         return userDao.getIsPremiumByUserId(userId);
     }
 
-    public String refreshToken(String refreshToken) {
+    public String refreshToken(String refreshToken, Long userId) {
         try {
             TokenUtil.verifyToken(refreshToken);
         } catch (TokenExpiredException e) {
-            userDao.deleteRefreshToken(refreshToken);
+            userDao.deleteRefreshTokenByUserIdAndToken(userId, refreshToken);
             throw new AuthException(AuthExceptionCode.TOKEN_EXPIRED);
         }
 
@@ -187,5 +187,9 @@ public class UserService {
         user.setUpdateTime(new Date());
         System.out.println(user);
         userDao.updatePassword(user);
+    }
+
+    public void logout(Long userId, String refreshToken) {
+        userDao.deleteRefreshTokenByUserIdAndToken(userId, refreshToken);
     }
 }

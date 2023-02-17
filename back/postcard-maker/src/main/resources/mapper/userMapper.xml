@@ -28,12 +28,6 @@
         where id = #{id}
     </select>
 
-    <delete id="deleteRefreshToken">
-        delete
-        from t_refresh_token
-        where token = #{token}
-    </delete>
-
     <insert id="addRefreshToken" parameterType="com.louie.coding.entity.RefreshTokenDetail">
         insert into t_refresh_token
             (token, userId, createTime)
@@ -45,6 +39,13 @@
         from t_refresh_token
         where token = #{token}
     </select>
+
+    <delete id="deleteRefreshTokenByUserIdAndToken">
+        delete
+        from t_refresh_token
+        where token = #{token}
+          and userId = #{userId}
+    </delete>
 
     <update id="updatePassword" parameterType="com.louie.coding.entity.User">
         update t_user
