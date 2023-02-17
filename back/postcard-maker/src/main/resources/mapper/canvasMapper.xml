@@ -81,4 +81,10 @@
             <result property="url" column="i_url"/>
         </collection>
     </resultMap>
+
+    <insert id="addProjectFolder">
+        insert into t_project_folder
+            (userId, `name`, createTime)
+        values (#{userId}, #{name}, #{createTime})
+    </insert>
 </mapper>
