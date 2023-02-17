@@ -254,7 +254,6 @@ export default {
      * 点击下载按钮后的处理
      */
     handleDownloadClicked() {
-      // todo 发送请求判定是否是vip
       this.emitter.emit("convertCanvasToImage", {});
     },
   },

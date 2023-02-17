@@ -8,9 +8,9 @@
       >
         <context-menu-item label="删除元素" @click="delObj()" />
         <context-menu-sperator />
-        <context-menu-item label="调整元素为最上层" />
+        <context-menu-item label="上移一层" @click="sendObjForward()" />
         <context-menu-sperator />
-        <context-menu-item label="调整元素为最下层" />
+        <context-menu-item label="下移一层" @click="sendObjBackward()" />
       </context-menu>
     </div>
   </div>
@@ -41,10 +41,22 @@ export default {
         shapes: [],
         texts: [],
         illustrations: [],
-      }, // todo 存储画布元素，目前还没开始用
+      },
     };
   },
   methods: {
+    sendObjBackward() {
+      const activeObj = this.canvas.getActiveObject();
+      if (activeObj) {
+        this.canvas.sendBackwards(activeObj);
+      }
+    },
+    sendObjForward() {
+      const activeObj = this.canvas.getActiveObject();
+      if (activeObj) {
+        this.canvas.bringForward(activeObj);
+      }
+    },
     addElements() {
       const _this = this;
       // 加入形状
@@ -70,6 +82,12 @@ export default {
           shape.fill = s.fill;
           shape.left = s.left;
           shape.top = s.top;
+          shape.angle = s.angle;
+          shape.scaleX = s.scaleX;
+          shape.scaleY = s.scaleY;
+          shape.zoomX = s.zoomX;
+          shape.zoomY = s.zoomY;
+
           this.canvas.add(shape);
         });
       } // end shapes
@@ -116,6 +134,16 @@ export default {
         this.contextMemuOptions.y = e.y;
       }
     },
+    sendObjToBack() {
+      const activObj = this.canvas.getActiveObject();
+      if (activObj) {
+        console.log(this.canvas.getObjects());
+        this.canvas.sendToBack(activObj);
+        console.log(this.canvas.getObjects());
+        // todo 从elemetns中移除
+      }
+    },
+
     /**
      * 删除画布元素
      */
@@ -123,6 +151,7 @@ export default {
       const activObj = this.canvas.getActiveObject();
       if (activObj) {
         this.canvas.remove(activObj);
+        // todo 从elemetns中移除
       }
     },
     /**
@@ -183,11 +212,54 @@ export default {
             fontFamily: "Arial",
             fill: "pink",
           },
+          {
+            content: "Louie",
+            left: 20,
+            top: 20,
+            fontFamily: "Arial",
+            fill: "pink",
+          },
+          {
+            content: "Alex",
+            left: 20,
+            top: 20,
+            fontFamily: "Arial",
+            fill: "pink",
+          },
         ],
         shapes: [
           {
             type: "0",
-            fill: "#4f6g3f",
+            fill: "orange",
+            width: 150,
+            height: 100,
+            left: 250.8708407237088,
+            top: -68.57772591354359,
+            angle: 81.01263599260606,
+            scaleX: 2.6869004311767037,
+            scaleY: 2.6869004311767037,
+            zoomX: 5.3738008623534075,
+            zoomY: 5.3738008623534075,
+          },
+          {
+            type: "0",
+            fill: "black",
+            width: 100,
+            height: 22,
+            left: 10,
+            top: 50,
+          },
+          {
+            type: "0",
+            fill: "red",
+            width: 100,
+            height: 22,
+            left: 10,
+            top: 50,
+          },
+          {
+            type: "0",
+            fill: "yellow",
             width: 100,
             height: 22,
             left: 10,
@@ -263,12 +335,21 @@ export default {
     // 监听文本框插入事件
     this.emitter.on("addTextBox", (args) => {
       const textBox = args.textBox;
-      console.log(this.canvas);
+      this.pageElements.shapes.push(textBox);
+      textBox.on("modified", () => {
+        console.log("文本框发生改变");
+        console.log(textBox);
+      });
       this.canvas.add(textBox);
     });
     // 监听图片素材插入事件
     this.emitter.on("addImg", (args) => {
       const img = args.img;
+      this.pageElements.shapes.push(img);
+      img.on("modified", () => {
+        console.log("图片发生改变");
+        console.log(img);
+      });
       this.canvas.add(img);
     });
     this.getCanvasElements();
