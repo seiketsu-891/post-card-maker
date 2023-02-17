@@ -1,15 +1,14 @@
 package com.louie.coding.controller;
 
 import com.louie.coding.controller.support.UserSupport;
-import com.louie.coding.entity.JsonResponse;
-import com.louie.coding.entity.Project;
-import com.louie.coding.entity.ProjectFolder;
+import com.louie.coding.entity.*;
 import com.louie.coding.service.CanvasService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 @RestController
 public class CanvasController {
@@ -36,4 +35,35 @@ public class CanvasController {
         canvasService.addProjectFolder(projectFolder, userId);
         return JsonResponse.success();
     }
+
+    /**
+     * 新建一个明信片项目
+     *
+     * @return 画布或元素id/项目id
+     */
+    @PostMapping("/projects")
+    public JsonResponse<Map<String, Object>> addProject(Project project) {
+        Long userId = userSupport.getCurrentUserId();
+        Map<String, Object> ids = canvasService.addProject(project, userId);
+        return JsonResponse.success(ids);
+    }
+
+    /**
+     * 项目已新建好的情况下，更新或新增明信片项目元素
+     */
+    public JsonResponse<Long> addOrUpdateElements(Element element) {
+        Long userId = userSupport.getCurrentUserId();
+        Long elementId =  canvasService.addOrUpdateElements(element, userId);
+        return JsonResponse.success(elementId);
+    }
+
+
+    public JsonResponse<String> updateCanvas(Canvas canvas) {
+
+    }
+//    public JsonResponse<String> updateProjectInfo(Project project){
+//
+//    }
+
+
 }
