@@ -60,6 +60,7 @@ axios.interceptors.request.use((config) => {
   // 发送请求前做的事情
   if (store.getters.token) {
     config.headers.token = store.getters.token;
+    config.headers.refreshToken = store.getters.refreshToken;
   }
   return config;
 });
@@ -86,7 +87,7 @@ axios.interceptors.response.use(
       } else {
         // 获取新token失败，登录状态失效
         store.dispatch("logout", {});
-        router.push("/login");
+        router.push("/");
       }
     }
     return Promise.reject(err.response.data);

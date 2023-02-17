@@ -19,6 +19,10 @@
 export default {
   data() {
     return {
+      // 当前页面的elements信息
+      pageElements: {
+        shapes: [],
+      },
       constants: {
         CANVAS_DEFAULT_WIDHT: 600,
         CANVAS_DEFAULT_HEIGHT: 400,
@@ -32,6 +36,7 @@ export default {
       currBackgroundColor: "#fff",
       contextMemuOptions: { zIndex: 3, minWidth: 230, x: 500, y: 200 },
       selectedEle: null, // 当前被选中的画布元素
+      // 数据中的elements
       elements: {
         shapes: [],
         texts: [],
@@ -247,6 +252,11 @@ export default {
     // 监听插入图形事件，插入图形
     this.emitter.on("addShape", (args) => {
       const shape = args.shape;
+      this.pageElements.shapes.push(shape);
+      shape.on("modified", () => {
+        console.log("形状发生改变");
+        console.log(shape);
+      });
       // this.elements.push(shape);
       this.canvas.add(shape);
     });
