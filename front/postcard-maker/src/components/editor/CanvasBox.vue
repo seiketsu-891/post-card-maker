@@ -35,13 +35,14 @@ export default {
       },
       currBackgroundColor: "#fff",
       contextMemuOptions: { zIndex: 3, minWidth: 230, x: 500, y: 200 },
-      selectedEle: null, // 当前被选中的画布元素
+      activeEle: null, // 当前被选中的画布元素
       // 数据中的elements
       elements: {
         shapes: [],
         texts: [],
         illustrations: [],
       },
+      eles: [],
     };
   },
   methods: {
@@ -66,28 +67,26 @@ export default {
           let shape;
           switch (s.type) {
             case "0":
-              shape = new this.fabric.Rect();
+              shape = new this.fabric.Rect({
+                width: s.width,
+                height: s.height,
+              });
               break;
             case "1":
-              shape = new this.fabric.Circle();
-              break;
-            case "2":
-              shape = new this.fabric.Triangle();
+              shape = new this.fabric.Circle({
+                radius: s.width / 2,
+              });
               break;
             default:
-              shape = new this.fabric.Rect();
+              shape = new this.fabric.Rect({
+                width: s.width,
+                height: s.height,
+                fill: s.fill,
+                left: s.left,
+                top: s.top,
+              });
           }
-          shape.width = s.width;
-          shape.height = s.height;
           shape.fill = s.fill;
-          shape.left = s.left;
-          shape.top = s.top;
-          shape.angle = s.angle;
-          shape.scaleX = s.scaleX;
-          shape.scaleY = s.scaleY;
-          shape.zoomX = s.zoomX;
-          shape.zoomY = s.zoomY;
-
           this.canvas.add(shape);
         });
       } // end shapes
@@ -109,14 +108,19 @@ export default {
       }
       // 加入文字
       const texts = this.elements.texts;
-      let text;
       if (texts != null && texts.length > 0) {
+        // 这里我一开始在if外面放了一个text变量，
+        // 结果出现的问题是所有textBox的text属性都是一样的
+
         texts.forEach((t) => {
-          text = new this.fabric.IText(t.content, {
+          let text = new this.fabric.IText(t.content, {
             left: t.left,
             top: t.top,
+            // fontSize: t.fontSize,
             fontFamily: t.fontFamily,
             fill: t.fill,
+            // fontSize: t.fontSize,
+            selectable: true,
           });
           this.canvas.add(text);
         });
@@ -206,24 +210,25 @@ export default {
         },
         texts: [
           {
-            content: "Alex",
+            content: "测试",
             left: 20,
             top: 20,
-            fontFamily: "Arial",
+            fill: "red",
+            // fontSize: 20,
+            fontFamily: "Helvetica",
+          },
+          {
+            content: "测试",
+            left: 0,
+            top: 0,
+            fontFamily: "Verdana",
             fill: "pink",
           },
           {
-            content: "Louie",
+            content: "测试",
             left: 20,
             top: 20,
-            fontFamily: "Arial",
-            fill: "pink",
-          },
-          {
-            content: "Alex",
-            left: 20,
-            top: 20,
-            fontFamily: "Arial",
+            fontFamily: "Times New Roman",
             fill: "pink",
           },
         ],
@@ -242,7 +247,7 @@ export default {
             zoomY: 5.3738008623534075,
           },
           {
-            type: "0",
+            type: "1",
             fill: "black",
             width: 100,
             height: 22,
@@ -309,11 +314,60 @@ export default {
     });
     // 加入上次编辑中的画布元素
     this.addElements();
+    // 给画布元素绑定点击事件
+    this.canvas.on("mouse:down", (e) => {
+      const activeEle = e.target;
+      if (!activeEle || activeEle.type === "image") {
+        //  令元素编辑组件消失
+        this.emitter.emit("hideEleEditor", {});
+        return;
+      }
+      // 判断元素类型
+      const type = activeEle.type;
+      console.log(type);
+      if (type === "i-text") {
+        console.log("show");
+        this.emitter.emit("showEleEditor", {
+          type: "i-text",
+          properties: {
+            color: activeEle.fill,
+            fontFamily: activeEle.fontFamily,
+          },
+        });
+        // todo 显示文字编辑框
+      } else {
+        //  显示形状颜色修改提示
+        this.emitter.emit("showEleEditor", {
+          type: "shape",
+          properties: {
+            color: activeEle.fill,
+          },
+        });
+      }
+    });
+    // 监听元素颜色改变事件
+    this.emitter.on("changeActiveEleColor", (args) => {
+      const newColor = args.color;
+      // 获取当前活跃元素
+      const ele = this.canvas.getActiveObject();
+      console.log(ele);
+      if (ele && ele.fill) {
+        console.log("color" + ele.fill);
+        // 这里直接用xx.fill = xx的话，虽然会改变属性值，但不起作用
+        ele.set("fill", newColor);
+        this.canvas.renderAll();
+      }
+    });
+    this.emitter.on("changeFont", (args) => {
+      const ele = this.canvas.getActiveObject();
+      ele.set("fontFamily", args.fontFamily);
+      ele.fontId = args.fontId;
+      this.canvas.renderAll();
+    });
   },
   created() {
     // 监听画布信息改变事件，改变画布设置
     this.emitter.on("canvasChange", (arg) => {
-      console.log(this.canvas);
       const data = arg.canvasInfo;
       this.currDimension.width = data.width;
       this.currDimension.height = data.height;

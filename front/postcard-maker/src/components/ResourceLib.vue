@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="outer">
     <div class="search-bar">
       <a-input-search
         v-model:value="searchKeyword"
@@ -8,24 +8,18 @@
         @search="onSearch"
       />
     </div>
-    <!-- 搜索框 -->
-
-    <!-- 选项卡 -->
-    <a-tabs v-model:activeKey="activeTabKey">
-      <!-- 素材集 -->
-      <a-tab-pane key="1">
-        <template #tab> <span> 风格分类</span></template>
-        <div><a href="#" @click="addStock()">点击插入图片</a></div></a-tab-pane
-      >
-      <!-- 主题分类 -->
-      <a-tab-pane key="2">
-        <template #tab> <span> 主题分类</span> </template>tab2</a-tab-pane
-      >
-    </a-tabs>
+    <!-- 插图集 -->
+    <div class="scrollable">
+      <a class="album__wrapper" v-for="a in albums" :key="a.id"
+        ><span class="album__name">{{ a.name }}</span>
+        <img class="album__cover" :src="a.url" />
+        <p class="album__desc">{{ a.description }}</p>
+      </a>
+    </div>
   </div>
 </template>
 <script>
-import { getAlbums } from "@/service/album";
+import { getAlbums } from "@/service/resources";
 import { message } from "ant-design-vue";
 export default {
   data() {
@@ -37,7 +31,7 @@ export default {
   },
 
   created() {
-    getAlbums();
+    this.getAlbums();
   },
   methods: {
     async getAlbums() {
@@ -73,6 +67,30 @@ export default {
 };
 </script>
 <style lang="sass" scoped>
+.outer
+   height: 100%
+.scrollable
+   height: 100%
+   overflow: auto
 .search-bar
     margin-bottom: 20px
+.album
+   &__wrapper
+    color: #4a4a4a
+    display: inline-block
+    border-radius: 10px
+    padding: 20px 10px
+    background: #EDF3F2
+    margin-bottom: 30px
+    display: flex
+    flex-direction: column
+    align-items: center
+    &:hover
+      box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px
+   &__cover
+      display: block
+      width: 200px
+   &__name
+      align-self: center
+      font-size: 23px
 </style>

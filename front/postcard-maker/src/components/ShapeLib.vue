@@ -1,11 +1,17 @@
 <template>
-  <div>
-    <a href="#" @click="addShape('rect')">插入长方形</a>
+  <div class="shape">
+    <div v-for="s in shapes" :key="s.id">
+      <a class="shape__wrapper" @click="addShape(s.shapeName)">
+        <img class="shape__img" :src="s.imgUrl"
+      /></a>
+    </div>
+    <!-- <a href="#" @click="addShape('rect')"></a>
     <a href="#" @click="addShape('circle')">插入圆形</a>
-    <a href="#" @click="addShape('triangle')">插入三角形</a>
+    <a href="#" @click="addShape('triangle')">插入三角形</a> -->
   </div>
 </template>
 <script>
+import { getShapes } from "@/service/resources";
 export default {
   data() {
     return {
@@ -24,7 +30,21 @@ export default {
     };
   },
   mounted() {},
+  created() {
+    this.getShapeList();
+  },
   methods: {
+    /**
+     * 从后台获取形状
+     */
+    async getShapeList() {
+      const res = await getShapes();
+      console.log(res);
+      if (res.code == "200") {
+        console.log(res);
+        this.shapes = res.data;
+      }
+    },
     /**
      * 在画布中插入图形
      */
@@ -83,4 +103,18 @@ export default {
   },
 };
 </script>
-<style></style>
+<style lang="sass" scoped>
+.shape
+  text-align: center
+  &__wrapper
+   width: fit-content
+   display: inline-block
+   border-radius: 10px
+   padding: 30px
+   background: #cbe2f3
+   margin-bottom: 30px
+   &:hover
+    box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px
+  &__img
+   width: 90px
+</style>

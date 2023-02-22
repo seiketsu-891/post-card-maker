@@ -112,7 +112,7 @@
         </div>
         <!-- 明信片编辑区 -->
         <div class="editor" @wheel.prevent="onWheelScrolledInEditor($event)">
-          <TextEditorBar class="text-editor-bar" />
+          <EleEditorBar class="ele-editor-bar" />
           <div class="canvas-container">
             <div class="canvas"><CanvasBox /></div>
           </div>
@@ -135,7 +135,7 @@ import CustomResourceLib from "@/components/CustomResourceLib";
 import MyPostcards from "@/components/MyPostcards";
 import CanvasBox from "@/components/editor/CanvasBox";
 import ZoomBar from "@/components/editor/ZoomBar";
-import TextEditorBar from "@/components/editor/TextEditorBar";
+import EleEditorBar from "@/components/editor/EleEditorBar";
 // 图标
 import {
   FontSizeOutlined,
@@ -168,7 +168,7 @@ export default {
     CanvasBox,
     ShapeLib,
     ZoomBar,
-    TextEditorBar,
+    EleEditorBar,
   },
   data() {
     return {
@@ -321,6 +321,9 @@ export default {
       position: relative
       padding: 40px 25px
       box-shadow: 25px 0 20px -20px rgba(101, 138, 216, 0.2)
+      &__container
+        width: 100%
+        height: 100%
       &__collapsebtn
         background-color: rgba(101, 138, 216, 1)
         position: absolute
@@ -359,7 +362,7 @@ export default {
          display: flex
          bottom: 30px
          right: 30px
-      .text-editor-bar
+      .ele-editor-bar
          position: absolute
          top: 30px
 .side
