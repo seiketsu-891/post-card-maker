@@ -2,6 +2,9 @@ package com.louie.coding.entity;
 
 import java.util.Date;
 
+/**
+ * 包含了元素所有属性的一个大类
+ */
 public class Element {
     private Long id;
     private Double width;
@@ -17,11 +20,29 @@ public class Element {
     private String url;
     private String fill;
     private String fontFamily;
+    private String shapeCode;
+    private String fontId;
     private Long order;
     private Long projectId;
     private String content;
     private Date updateTime;
     private Date createTime;
+
+    public String getShapeCode() {
+        return shapeCode;
+    }
+
+    public void setShapeCode(String shapeCode) {
+        this.shapeCode = shapeCode;
+    }
+
+    public String getFontId() {
+        return fontId;
+    }
+
+    public void setFontId(String fontId) {
+        this.fontId = fontId;
+    }
 
     public Long getProjectId() {
         return projectId;

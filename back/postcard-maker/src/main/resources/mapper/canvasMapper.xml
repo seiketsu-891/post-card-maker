@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.louie.coding.dao.CanvasDao">
-    <resultMap id="projectWithCanvasElementsInfoResultMap" type="com.louie.coding.entityRes.Project">
+    <resultMap id="projectWithCanvasElementsInfoResultMap" type="com.louie.coding.entity.Project">
         <!--Project类本身-->
         <constructor>
             <idArg column="p_id" javaType="java.lang.Long"/>
@@ -18,7 +18,7 @@
         </association>
         <!--elements-->
         <collection property="elements" ofType="com.louie.coding.entity.Element">
-            <id property="id" column="i_id"/>
+            <id property="id" column="id"/>
             <result property="width" column="width"/>
             <result property="height" column="height"/>
             <result property="left" column="left"/>
@@ -28,16 +28,17 @@
             <result property="scaleX" column="scaleX"/>
             <result property="scaleY" column="scaleY"/>
             <result property="angle" column="angle"/>
+            <result property="order" column="order"/>
             <result property="type" column="type"/>
             <result property="content" column="content"/>
-            <result property="url" column="url"/>
+            <result property="fontId" column="fontId"/>
             <result property="fill" column="fill"/>
-            <result property="fontFamily" column="fontFamily"/>
-            <result property="order" column="order"/>
+            <result property="url" column="url"/>
+            <result property="shapeCode" column="shapeCode"/>
+            <result property="fontFamily" column="font"/>
             <result property="projectId" column="projectId"/>
         </collection>
     </resultMap>
-
     <select id="getRecentProjectByUserId" parameterType="java.lang.Long"
             resultMap="projectWithCanvasElementsInfoResultMap">
         select p.id      as p_id,
@@ -46,7 +47,8 @@
                c.width   as c_width,
                c.height  as c_height,
                c.bgColor as c_bgColor,
-               e.id      as e_id,
+               e.projectId,
+               e.id,
                e.width,
                e.height,
                e.`left`,
@@ -56,56 +58,22 @@
                e.scaleX,
                e.scaleY,
                e.angle,
+               e.`order`,
                e.type,
                e.content,
-               e.url,
+               e.fontId,
                e.fill,
-               e.fontFamily,
-               e.`order`,
-               e.projectId
+               e.shapeCode,
+               e.url,
+               f.name    as font
         from t_project p
-                 left join t_canvas c on c.projectId = p.id
-                 left join t_element e on e.projectId = p.id
+                 left join t_element e on p.id = e.projectId
+                 left join t_canvas c on p.id = c.projectId
+                 left join t_font f on f.id = e.fontId
         where p.userId = #{userId}
-        order by p.updateTime desc, e.`order`
+        order by p.updateTime desc
         limit 1
     </select>
-    <!--    <select id="getRecentProjectByUserId" parameterType="java.lang.Long"-->
-    <!--            resultMap="projectWithCanvasElementsInfoResultMap">-->
-    <!--        select p.id      as p_id,-->
-    <!--               p.name    as p_name,-->
-    <!--               c.id      as c_name,-->
-    <!--               c.width   as c_width,-->
-    <!--               c.height  as c_height,-->
-    <!--               c.bgColor as c_bgColor,-->
-    <!--               s.id      as s_id,-->
-    <!--               s.width   as s_width,-->
-    <!--               s.height  as s_height,-->
-    <!--               s.left    as s_left,-->
-    <!--               s.top     as s_top,-->
-    <!--               s.fill    as s_fill,-->
-    <!--               t.id      as t_id,-->
-    <!--               t.content as t_content,-->
-    <!--               t.font    as t_font,-->
-    <!--               t.color   as t_color,-->
-    <!--               t.size    as t_size,-->
-    <!--               t.left    as t_left,-->
-    <!--               t.top     as t_top,-->
-    <!--               i.id      as i_id,-->
-    <!--               i.width   as i_width,-->
-    <!--               i.height  as i_height,-->
-    <!--               i.left    as i_left,-->
-    <!--               i.top     as i_top,-->
-    <!--               i.url     as i_url-->
-    <!--        from t_project p-->
-    <!--                 left join t_canvas c on c.projectId = p.id-->
-    <!--                 left join t_ele_shape s on s.projectId = p.id-->
-    <!--                 left join t_ele_illustration i on i.projectId = p.id-->
-    <!--                 left join t_ele_text t on t.projectId = p.id-->
-    <!--        where p.userId = #{userId}-->
-    <!--        order by p.updateTime desc-->
-    <!--        limit 1-->
-    <!--    </select>-->
     <!--    <resultMap id="projectWithCanvasElementsInfoResultMap" type="com.louie.coding.entity.Project">-->
     <!--        &lt;!&ndash;Project类本身&ndash;&gt;-->
     <!--        <constructor>-->
