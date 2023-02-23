@@ -11,19 +11,25 @@
             and albumId = #{albumId}
         </if>
         <if test="keyword !=null and keyword !=''">
-            and (description like concat('%', #{keyword}, '%') or title like concat('%', #{keyword}, '%'))
+            and description like concat('%', #{keyword}, '%')
         </if>
     </select>
-    <select id="getIllusWithPagination" parameterType="java.util.Map" resultType="com.louie.coding.entity.Illustration">
-        select id, title, url
+    <select id="getIllusWithPagination" parameterType="java.util.Map"
+            resultType="com.louie.coding.entity.Illustration">
+        select id, url
         from t_illustration
         where 1 = 1
         <if test="albumId != null and albumId !=''">
             and albumId = #{albumId}
         </if>
         <if test="keyword !=null and keyword !=''">
-            and (description like concat('%', #{keyword}, '%') or title like concat('%', #{keyword}, '%'))
+            and `description` like concat('%', #{keyword}, '%')
         </if>
         limit #{start}, #{size}
     </select>
+
+    <insert id="addUserIllustration" parameterType="com.louie.coding.entity.UserIllustration">
+        insert into t_user_illustration (url, userId, createTime)
+        values (#{url}, #{userId}, #{createTime})
+    </insert>
 </mapper>
