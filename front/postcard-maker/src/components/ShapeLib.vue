@@ -1,7 +1,7 @@
 <template>
   <div class="shape">
     <div v-for="s in shapes" :key="s.id">
-      <a class="shape__wrapper" @click="addShape(s.shapeName)">
+      <a class="shape__wrapper" @click="addShape(s.name)">
         <img class="shape__img" :src="s.imgUrl"
       /></a>
     </div>
@@ -49,6 +49,7 @@ export default {
      * 在画布中插入图形
      */
     addShape(shapeName) {
+      console.log(shapeName);
       let shape;
       switch (shapeName) {
         case "rect":
