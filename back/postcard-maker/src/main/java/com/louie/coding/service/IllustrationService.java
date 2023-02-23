@@ -3,6 +3,8 @@ package com.louie.coding.service;
 import com.louie.coding.dao.IllustrationDao;
 import com.louie.coding.entity.Illustration;
 import com.louie.coding.entity.PageResult;
+import com.louie.coding.entityResp.IllustrationResp;
+import com.louie.coding.util.CopyUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,7 +18,7 @@ public class IllustrationService {
     @Resource
     private IllustrationDao illustrationDao;
 
-    public PageResult<Illustration> getIllustrations(Integer pageNum, Integer pageSize, Long albumId, String keyword) {
+    public PageResult<IllustrationResp> getIllustrations(Integer pageNum, Integer pageSize, Long albumId, String keyword) {
         Integer start = (pageNum - 1) * pageSize;
         Map<String, Object> params = new HashMap<>();
         params.put("start", start);
@@ -30,8 +32,9 @@ public class IllustrationService {
             list = illustrationDao.getIllusWithPagination(params);
         }
 
-        PageResult<Illustration> res = new PageResult<>();
-        res.setList(list);
+        List<IllustrationResp> listResp = CopyUtil.copyList(list, IllustrationResp.class);
+        PageResult<IllustrationResp> res = new PageResult<>();
+        res.setList(listResp);
         res.setTotal(count);
 
         return res;
