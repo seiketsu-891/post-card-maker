@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import axios from "axios";
+
 // mitt
 import mitt from "mitt";
 const emitter = mitt();
@@ -15,8 +16,12 @@ import { fabric } from "fabric";
 import Vue3ColorPicker from "vue3-colorpicker";
 import "vue3-colorpicker/style.css";
 import "@/assets/style/colorPickerOverride.sass";
+// infinite loading
+import InfiniteLoading from "v3-infinite-loading";
+import "v3-infinite-loading/lib/style.css";
 // ant-degign-vue components
 import {
+  ConfigProvider,
   Button,
   Card,
   Grid,
@@ -35,6 +40,9 @@ import {
   Slider,
   Select,
   Message,
+  Empty,
+  Upload,
+  Alert,
 } from "ant-design-vue";
 import "ant-design-vue/lib/card/style";
 import "ant-design-vue/lib/button/style";
@@ -52,6 +60,8 @@ import "ant-design-vue/lib/divider/style";
 import "ant-design-vue/lib/slider/style";
 import "ant-design-vue/lib/select/style";
 import "ant-design-vue/lib/message/style";
+import "ant-design-vue/lib/upload/style";
+import "ant-design-vue/lib/alert/style";
 
 axios.defaults.baseURL = "http://127.0.0.1:8081/";
 
@@ -99,6 +109,7 @@ const app = createApp(App);
 app.config.globalProperties.emitter = emitter;
 app.config.globalProperties.fabric = fabric;
 app
+  .use(Alert)
   .use(Grid)
   .use(Button)
   .use(Card)
@@ -116,7 +127,11 @@ app
   .use(Divider)
   .use(Slider)
   .use(Select)
-  .use(Message);
+  .use(Message)
+  .use(Empty)
+  .use(Upload)
+  .use(ConfigProvider);
 app.use(Vue3ColorPicker);
 app.use(ContextMenu);
+app.component("InfiniteLoading", InfiniteLoading);
 app.use(store).use(router).mount("#app");
