@@ -12,9 +12,14 @@
         </h1>
         <!-- 按钮 -->
         <div class="header__btns">
-          <a-avatar class="header__avatar" style="background-color: #82c646">{{
-            user.username.substring(0, 1).toUpperCase()
-          }}</a-avatar>
+          <!--下面加入判断是避免退出登录时控制台报错  -->
+          <a-avatar class="header__avatar" style="background-color: #82c646">
+            {{
+              user && user.username
+                ? user.username.substring(0, 1).toUpperCase()
+                : "A"
+            }}</a-avatar
+          >
           <a-button class="header__btn--get-premium header__btn">
             <template #icon> <CrownFilled class="icon--crown" /> </template>
             <span v-if="isPremium">您是会员</span
@@ -214,7 +219,7 @@ export default {
       if (res.code == 200) {
         this.isPremium = res.data;
       } else {
-        message.error("获取数据失败！");
+        message.error(res.message);
       }
     },
     /**

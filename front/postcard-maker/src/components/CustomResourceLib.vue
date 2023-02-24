@@ -9,8 +9,7 @@
       :customRequest="customUpload"
       :before-upload="beforeUpload"
     >
-      <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-      <div v-else>
+      <div>
         <loading-outlined v-if="isUploading"></loading-outlined>
         <plus-outlined v-else></plus-outlined>
         <div class="ant-upload-text">上传</div>
