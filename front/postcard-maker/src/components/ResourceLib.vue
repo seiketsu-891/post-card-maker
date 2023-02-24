@@ -24,12 +24,14 @@
       </div>
       <!-- 单张图显示区 -->
       <div class="pics__container" v-if="!showAlbums">
-        <a-button
-          type="dashed"
-          @click="showAlbums = true"
-          class="pics__btn--return"
-          >返回插图集</a-button
-        >
+        <div class="pics__btn-wrapper">
+          <a-button
+            type="dashed"
+            @click="showAlbums = true"
+            class="pics__btn--return"
+            >返回插图集</a-button
+          >
+        </div>
         <div class="pics__empty" v-show="emptyState"><a-empty></a-empty></div>
         <a class="pics__wrapper" v-for="pic in pictures" :key="pic.id">
           <img :src="pic.url" class="pics__img" @click="addStock(pic.url)"
@@ -180,14 +182,17 @@ export default {
      margin-top: 50px
   &__container
       width: 100%
+      text-align: center
   &__wrapper
       text-align: center
       width: 100%
       display: block
+  &__btn-wrapper
+      width: 100%
+      text-align: left
   &__btn
     &--return
       margin-bottom: 10px
-      margin-left: 10px
   &__img
       width: 90%
       &:hover
