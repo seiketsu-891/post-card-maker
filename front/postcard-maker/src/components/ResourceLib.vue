@@ -94,7 +94,7 @@ export default {
      * 获取图片集数据
      */
     async getAlbums() {
-      const res = await getAlbums(1, 6);
+      const res = await getAlbums(1, 5);
       if (res.code == 200) {
         this.albums = res.data;
       } else {

@@ -40,3 +40,8 @@ export function getIllustrations(
 export function uploadFile(file) {
   return post("/files", file);
 }
+
+// 获取用户上传的图片素材
+export function getUserPics(pageNum, pageSize) {
+  return get("/user-pics?pageNum=" + pageNum + "&pageSize=" + pageSize);
+}
