@@ -32,4 +32,19 @@
         insert into t_user_illustration (url, userId, createTime)
         values (#{url}, #{userId}, #{createTime})
     </insert>
+
+    <select id="getUserPicsWithPagination" parameterType="java.util.Map"
+            resultType="com.louie.coding.entity.UserIllustration">
+        select id, url, userId, createTime
+        from t_user_illustration
+        where userId = #{userId}
+        order by createTime desc
+        limit #{start}, #{size}
+    </select>
+
+    <select id="getUserPicCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(1)
+        from t_user_illustration
+        where userId = #{userId}
+    </select>
 </mapper>

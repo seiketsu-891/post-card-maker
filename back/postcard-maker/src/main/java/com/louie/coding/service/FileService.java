@@ -1,8 +1,6 @@
 package com.louie.coding.service;
 
 
-import com.louie.coding.dao.IllustrationDao;
-import com.louie.coding.entity.UserIllustration;
 import com.louie.coding.exception.BusinessException;
 import com.louie.coding.exception.BusinessExceptionCode;
 import com.qcloud.cos.COSClient;
@@ -15,10 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -35,11 +31,8 @@ public class FileService {
     private String BUCKET_NAME;
     @Value("${spring.qcloud.url}")
     private String URL;
-
-    @Resource
-    private IllustrationDao illustrationDao;
-
-    public void uploadFile(MultipartFile file, Long userId) {
+    
+    public String uploadFile(MultipartFile file, String directory) {
         COSCredentials cred = new BasicCOSCredentials(SECRET_ID, SECRET_KEY);
         ClientConfig clientConfig = new ClientConfig(new Region(REGION));
         System.out.println("xxxxxx");
@@ -60,20 +53,14 @@ public class FileService {
         String extension = oldFileName.substring(oldFileName.lastIndexOf("."));
         String fileName = UUID.randomUUID() + extension;
 
-
-        UserIllustration ui = new UserIllustration();
         try {
             File localFile = File.createTempFile("temp", null);
             file.transferTo(localFile);
             // 指定路径
-            String path = PATH_PREFIX + userId + "/" + fileName;
+            String path = PATH_PREFIX + directory + fileName;
             PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET_NAME, path, localFile);
             cosclient.putObject(putObjectRequest);
-
-            ui.setUrl(URL + putObjectRequest.getKey());
-            ui.setUserId(userId);
-            ui.setCreateTime(new Date());
-            illustrationDao.addUserIllustration(ui);
+            return URL + putObjectRequest.getKey();
         } catch (IOException e) {
             e.printStackTrace();
             throw new BusinessException(BusinessExceptionCode.FILE_UPLOAD_ERROR);

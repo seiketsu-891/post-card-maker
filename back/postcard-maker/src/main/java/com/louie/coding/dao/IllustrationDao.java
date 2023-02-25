@@ -14,4 +14,8 @@ public interface IllustrationDao {
     Integer getCount(Map<String, Object> params);
 
     void addUserIllustration(UserIllustration userIllustration);
+
+    Integer getUserPicCount(Long userId);
+
+    List<UserIllustration> getUserPicsWithPagination(Map<String, Object> params);
 }
