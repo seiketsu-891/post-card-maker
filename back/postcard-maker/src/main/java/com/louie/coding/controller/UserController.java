@@ -79,9 +79,9 @@ public class UserController {
      */
     @PostMapping("/tokens")
     public JsonResponse<String> getNewToken(HttpServletRequest request) {
-        Long userId = userSupport.getCurrentUserId();
         String refreshToken = request.getHeader("refreshToken");
-        String token = userService.refreshToken(refreshToken,userId);
+        Long userId = userSupport.getUserIdByRefreshToken(refreshToken);
+        String token = userService.refreshToken(refreshToken, userId);
         return JsonResponse.success(token);
     }
 
@@ -97,8 +97,7 @@ public class UserController {
     @DeleteMapping("/refresh-tokens")
     public JsonResponse<String> logout(HttpServletRequest request) {
         String refreshToken = request.getHeader("refreshToken");
-        Long userId = userSupport.getCurrentUserId();
-        userService.logout(userId, refreshToken);
+        userService.logout(refreshToken);
         return JsonResponse.success();
     }
 }

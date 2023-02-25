@@ -19,5 +19,9 @@ public interface UserDao {
 
     void updatePassword(User user);
 
+    void deleteRefreshTokenByToken(String refreshToken);
+
+    void deleteRefreshTokenByUserId(Long userId);
+
     void deleteRefreshTokenByUserIdAndToken(@Param("userId") Long userId, @Param("token") String refreshToken);
 }

@@ -16,4 +16,9 @@ public class UserSupport {
         // 因为用户用不存在的用户id理论上也无法获取任何数据
         return userId;
     }
+
+    // 刷新token时用
+    public Long getUserIdByRefreshToken(String token) {
+        return TokenUtil.verifyToken(token);
+    }
 }
