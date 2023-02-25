@@ -11,6 +11,7 @@ public class Canvas {
     private Date createTime;
     private Date updateTime;
 
+
     public Long getId() {
         return id;
     }

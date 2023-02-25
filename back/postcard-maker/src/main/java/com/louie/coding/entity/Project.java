@@ -12,9 +12,9 @@ public class Project {
     private Canvas canvas;
     private List<Element> elements;
 
-    //    private List<EleShape> shapes;
-//    private List<EleIllustration> illustrations;
-//    private List<EleText> texts;
+    public Project() {
+    }
+
     public Project(Long id) {
         this.id = id;
     }
@@ -34,30 +34,6 @@ public class Project {
     public void setCanvas(Canvas canvas) {
         this.canvas = canvas;
     }
-
-//    public List<EleShape> getShapes() {
-//        return shapes;
-//    }
-//
-//    public void setShapes(List<EleShape> shapes) {
-//        this.shapes = shapes;
-//    }
-//
-//    public List<EleIllustration> getIllustrations() {
-//        return illustrations;
-//    }
-//
-//    public void setIllustrations(List<EleIllustration> illustrations) {
-//        this.illustrations = illustrations;
-//    }
-//
-//    public List<EleText> getTexts() {
-//        return texts;
-//    }
-//
-//    public void setTexts(List<EleText> texts) {
-//        this.texts = texts;
-//    }
 
     public Date getCreateTime() {
         return createTime;

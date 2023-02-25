@@ -117,9 +117,65 @@
     <!--        </collection>-->
     <!--    </resultMap>-->
 
-    <insert id="addProjectFolder">
+    <insert id="addProjectFolder" parameterType="com.louie.coding.entity.ProjectFolder">
         insert into t_project_folder
             (userId, `name`, createTime)
         values (#{userId}, #{name}, #{createTime})
     </insert>
+
+    <insert id="addProject" parameterType="com.louie.coding.entity.Project" useGeneratedKeys="true" keyProperty="id">
+        insert into t_project(userId, `name`, createTime, updateTime)
+        values (#{userId}, #{name}, #{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="addCanvas" parameterType="com.louie.coding.entity.Canvas" useGeneratedKeys="true" keyProperty="id">
+        insert into t_canvas(projectId, width, height, bgColor, createTime)
+        values (#{projectId}, #{width}, #{height}, #{bgColor}, #{createTime})
+    </insert>
+
+    <insert id="addElements" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into t_element(
+        width, height, `left`, top, zoomX, zoomY, scaleX, scaleY, angle, type, createTime,
+        `order`, projectId, content, fontId, fill, shapeCode, url)
+        values
+        <foreach collection="elements" item="ele" separator=",">
+            (
+            #{ele.width},
+            #{ele.height},
+            #{ele.left},
+            #{ele.top},
+            #{ele.zoomX},
+            #{ele.zoomY},
+            #{ele.scaleX},
+            #{ele.scaleY},
+            #{ele.angle},
+            #{ele.type},
+            #{ele.createTime},
+            #{ele.order},
+            #{ele.projectId},
+            <if test="ele.type == 0">
+                null,
+                null,
+                #{ele.fill},
+                #{ele.shapeCode},
+                null
+            </if>
+            <if test="ele.type == 1">
+                #{ele.content},
+                #{ele.fontId},
+                #{ele.fill},
+                null,
+                null
+            </if>
+            <if test="ele.type == 2">
+                null,
+                null,
+                null,
+                null,
+                #{ele.url}
+            </if>
+            )
+        </foreach>
+    </insert>
+
 </mapper>
