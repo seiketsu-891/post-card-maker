@@ -77,7 +77,7 @@ export default {
       if (!sizeInLimit) {
         message.error("文件不能大于1MB");
       }
-      return isPNG || sizeInLimit || Upload.LIST_IGNORE;
+      return (isPNG && sizeInLimit) || Upload.LIST_IGNORE;
     },
 
     /**
@@ -89,15 +89,16 @@ export default {
       form.append("file", file.file);
       const res = await uploadFile(form);
       if (res.code == "200") {
+        this.isUploading = false;
         message.success("上传成功");
         this.loadingKey++;
         this.pageNum = 1;
         this.pictures = [];
-        this.getPics();
+        // this.getPics();
       } else {
         message.error("上传失败");
+        this.isUploading = false;
       }
-      this.isUploading = false;
     },
     /**
      *

@@ -38,7 +38,7 @@ export function getIllustrations(
 
 // 上传文件
 export function uploadFile(file) {
-  return post("/files", file);
+  return post("/user-pics", file);
 }
 
 // 获取用户上传的图片素材
