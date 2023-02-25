@@ -96,7 +96,7 @@ public class UserService {
         refreshTokenDetail.setUserId(userId);
         refreshTokenDetail.setToken(refreshToken);
         refreshTokenDetail.setCreateTime(new Date());
-        userDao.deleteRefreshTokenByUserIdAndToken(userId, refreshToken);
+        userDao.deleteRefreshTokenByUserId(userId);
         userDao.addRefreshToken(refreshTokenDetail);
 
         return tokens;
@@ -189,7 +189,7 @@ public class UserService {
         userDao.updatePassword(user);
     }
 
-    public void logout(Long userId, String refreshToken) {
-        userDao.deleteRefreshTokenByUserIdAndToken(userId, refreshToken);
+    public void logout(String refreshToken) {
+        userDao.deleteRefreshTokenByToken(refreshToken);
     }
 }
