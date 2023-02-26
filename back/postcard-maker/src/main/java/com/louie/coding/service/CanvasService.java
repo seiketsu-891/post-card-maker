@@ -67,19 +67,37 @@ public class CanvasService {
         }
         return project;
     }
-//
-//    public Long  addOrUpdateElements(Element element, Long userId) {
-//        Long projectId = element.getProjectId();
-//        Project project = canvasDao.getProjectByIdAndUsername(projectId, userId);
-//        if(project == null){
-//            throw new BusinessException(BusinessExceptionCode.PROJECT_NOT_EXISTS);
-//        }
-//
-//        if(element.getId() == null ){
-//            elementDao.addElement(element);
-//        }else{
-//            elementDao.updateElement(element);
-//        }
-//        return element.getId();
-//    }
+
+    //todo 是否返回project待前端测试后再决定
+    public void addOrUpdateElements(Element element, Long userId) {
+        // todo 验证（特别是projectid需要存在）
+        Date now = new Date();
+        if (element.getId() == null) {
+            // 新建element
+            element.setCreateTime(now);
+            canvasDao.addElement(element);
+        } else {
+            element.setUpdateTime(now);
+            System.out.println("update");
+            canvasDao.updateElement(element);
+        }
+        Long projectId = element.getProjectId();
+        canvasDao.updateProjectTimeByProjectIdAndUserId(now, projectId, userId);
+    }
+
+    public void updateCanvas(Canvas canvas, Long userId) {
+        Date now = new Date();
+        canvas.setUpdateTime(now);
+        Long projectId = canvas.getProjectId();
+        canvasDao.updateCanvas(canvas);
+        canvasDao.updateProjectTimeByProjectIdAndUserId(now, projectId, userId);
+    }
+
+    public void updateProjectInfo(Project project, Long userId) {
+        // todo 除了校验外，需要验证project id是否存在
+        Date now = new Date();
+        project.setUserId(userId);
+        project.setUpdateTime(now);
+        canvasDao.updateProjectInfoByProjectIdAndUserId(project);
+    }
 }

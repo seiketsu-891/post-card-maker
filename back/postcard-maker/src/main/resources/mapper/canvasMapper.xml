@@ -178,4 +178,96 @@
         </foreach>
     </insert>
 
+    <insert id="addElement" parameterType="com.louie.coding.entity.Element">
+        insert into t_element(
+        width, height, `left`, top, zoomX, zoomY, scaleX, scaleY, angle, type, createTime,
+        `order`, projectId, content, fontId, fill, shapeCode, url)
+        values
+        (
+        #{width},
+        #{height},
+        #{left},
+        #{top},
+        #{zoomX},
+        #{zoomY},
+        #{scaleX},
+        #{scaleY},
+        #{angle},
+        #{type},
+        #{createTime},
+        #{order},
+        #{projectId},
+        <if test="type == 0">
+            null,
+            null,
+            #{fill},
+            #{shapeCode},
+            null
+        </if>
+        <if test="type == 1">
+            #{content},
+            #{fontId},
+            #{fill},
+            null,
+            null
+        </if>
+        <if test="type == 2">
+            null,
+            null,
+            null,
+            null,
+            #{url}
+        </if>
+        )
+    </insert>
+
+    <update id="updateElement" parameterType="com.louie.coding.entity.Element">
+        update t_element
+        set width = #{width},
+        height = #{height},
+        `left` = #{left},
+        top = #{top},
+        zoomX = #{zoomX},
+        zoomY = #{zoomY},
+        scaleX = #{scaleX},
+        scaleY = #{scaleY},
+        angle = #{angle},
+        type = #{type},
+        updateTime = #{updateTime},
+        `order` = #{order}
+        <if test="type == 0">
+            ,fill = #{fill},
+            shapeCode = #{shapeCode}
+        </if>
+        <if test="type == 1">
+            ,content= #{content},
+            fontId= #{fontId},
+            fill= #{fill}
+        </if>
+        where id = #{id}
+    </update>
+
+    <update id="updateProjectTimeByProjectIdAndUserId">
+        update t_project
+        set updateTime = #{updateTime}
+        where id = #{projectId}
+          and userId = #{userId}
+    </update>
+
+    <update id="updateCanvas" parameterType="com.louie.coding.entity.Canvas">
+        update t_canvas
+        set width      = #{width},
+            height     = #{height},
+            bgColor    = #{bgColor},
+            updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateProjectInfoByProjectIdAndUserId" parameterType="com.louie.coding.entity.Project">
+        update t_project
+        set `name`     = #{name},
+            updateTime = #{updateTime}
+        where id = #{id}
+          and userId = #{userId}
+    </update>
 </mapper>

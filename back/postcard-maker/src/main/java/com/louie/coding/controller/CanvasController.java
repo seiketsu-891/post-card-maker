@@ -1,9 +1,7 @@
 package com.louie.coding.controller;
 
 import com.louie.coding.controller.support.UserSupport;
-import com.louie.coding.entity.JsonResponse;
-import com.louie.coding.entity.Project;
-import com.louie.coding.entity.ProjectFolder;
+import com.louie.coding.entity.*;
 import com.louie.coding.service.CanvasService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,20 +45,35 @@ public class CanvasController {
         Project projectWithCanvasAndElements = canvasService.addProject(project, userId);
         return JsonResponse.success(projectWithCanvasAndElements);
     }
-//
-//    /**
-//     * 项目已新建好的情况下，更新或新增明信片项目元素
-//     */
-//    public JsonResponse<Long> addOrUpdateElements(Element element) {
-//        Long userId = userSupport.getCurrentUserId();
-//        Long elementId =  canvasService.addOrUpdateElements(element, userId);
-//        return JsonResponse.success(elementId);
-//    }
-//    public JsonResponse<String> updateCanvas(Canvas canvas) {
-//
-//    }
-//    public JsonResponse<String> updateProjectInfo(Project project){
-//
-//    }
 
+    /**
+     * 项目已新建好的情况下，更新明信片项目元素
+     */
+    @PostMapping("/elements")
+    public JsonResponse<String> addOrUpdateElements(@RequestBody Element element) {
+        Long userId = userSupport.getCurrentUserId();
+        canvasService.addOrUpdateElements(element, userId);
+        return JsonResponse.success();
+    }
+
+    /**
+     * 更新画布
+     */
+    @PostMapping("/canvases")
+    // todo 传递全部还是部分属性到时候看前端测试决定
+    public JsonResponse<String> updateCanvas(@RequestBody Canvas canvas) {
+        Long userId = userSupport.getCurrentUserId();
+        canvasService.updateCanvas(canvas, userId);
+        return JsonResponse.success();
+    }
+
+    /**
+     * 更新明信片信息（目前就是明信片名字）
+     */
+    @PostMapping("/project-info")
+    public JsonResponse<String> updateProjectInfo(@RequestBody Project project) {
+        Long userId = userSupport.getCurrentUserId();
+        canvasService.updateProjectInfo(project, userId);
+        return JsonResponse.success();
+    }
 }
