@@ -94,10 +94,23 @@ public class UserController {
         return JsonResponse.success();
     }
 
+    /**
+     * 登出
+     */
     @DeleteMapping("/refresh-tokens")
     public JsonResponse<String> logout(HttpServletRequest request) {
         String refreshToken = request.getHeader("refreshToken");
         userService.logout(refreshToken);
+        return JsonResponse.success();
+    }
+
+    /**
+     * 将用户设定为会员
+     */
+    @PostMapping("/premiums")
+    public JsonResponse<String> becomePremium() {
+        Long userId = userSupport.getCurrentUserId();
+        userService.becomePremium(userId);
         return JsonResponse.success();
     }
 }

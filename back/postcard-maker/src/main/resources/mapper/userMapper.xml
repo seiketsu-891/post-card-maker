@@ -66,4 +66,10 @@
         where userId = #{userId}
           and token = #{token}
     </delete>
+
+    <update id="updatePremiumStatus">
+        update t_user
+        set isPremium = #{isPremium}
+        where id = #{userId}
+    </update>
 </mapper>

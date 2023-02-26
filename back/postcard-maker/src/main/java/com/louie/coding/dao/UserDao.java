@@ -24,4 +24,6 @@ public interface UserDao {
     void deleteRefreshTokenByUserId(Long userId);
 
     void deleteRefreshTokenByUserIdAndToken(@Param("userId") Long userId, @Param("token") String refreshToken);
+
+    void updatePremiumStatus(@Param("userId") Long userId, @Param("isPremium") boolean isPremium);
 }

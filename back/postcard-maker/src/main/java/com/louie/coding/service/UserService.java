@@ -192,4 +192,8 @@ public class UserService {
     public void logout(String refreshToken) {
         userDao.deleteRefreshTokenByToken(refreshToken);
     }
+
+    public void becomePremium(Long userId) {
+        userDao.updatePremiumStatus(userId, true);
+    }
 }
