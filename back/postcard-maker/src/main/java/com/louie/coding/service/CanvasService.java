@@ -2,18 +2,14 @@ package com.louie.coding.service;
 
 import com.louie.coding.constants.CanvasConstants;
 import com.louie.coding.dao.CanvasDao;
-import com.louie.coding.entity.Canvas;
-import com.louie.coding.entity.Element;
-import com.louie.coding.entity.Project;
-import com.louie.coding.entity.ProjectFolder;
+import com.louie.coding.entity.*;
 import io.netty.util.internal.StringUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -99,5 +95,31 @@ public class CanvasService {
         project.setUserId(userId);
         project.setUpdateTime(now);
         canvasDao.updateProjectInfoByProjectIdAndUserId(project);
+    }
+
+    public PageResult<Project> getProjectList(Integer pageNum, Integer pageSize, Long userId) {
+        Integer start = (pageNum - 1) * pageSize;
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", start);
+        params.put("size", pageSize);
+        params.put("userId", userId);
+
+        List<Project> list = new ArrayList<>();
+        Integer count = canvasDao.getProjectCount(userId);
+        if (count > 0) {
+            list = canvasDao.getProjectsWithPagination(params);
+        }
+
+        PageResult<Project> res = new PageResult<>();
+        res.setList(list);
+        res.setTotal(count);
+        return res;
+    }
+
+    public List<ProjectFolder> getProjectFolderList(Long userId) {
+        // todo 新增用户时创立一个默认文件夹，新建project时将project设定为默认文件夹（或为空即为默认文件夹）
+        List<ProjectFolder> list = new ArrayList<>();
+        list = canvasDao.getProjectFolders(userId);
+        return list;
     }
 }

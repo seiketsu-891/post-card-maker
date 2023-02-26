@@ -3,12 +3,10 @@ package com.louie.coding.controller;
 import com.louie.coding.controller.support.UserSupport;
 import com.louie.coding.entity.*;
 import com.louie.coding.service.CanvasService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 public class CanvasController {
@@ -75,5 +73,25 @@ public class CanvasController {
         Long userId = userSupport.getCurrentUserId();
         canvasService.updateProjectInfo(project, userId);
         return JsonResponse.success();
+    }
+
+    /**
+     * 获取当前用户的所有明信片项目信息（分页获取）
+     */
+    @GetMapping("/projects")
+    public JsonResponse<PageResult<Project>> projectList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        Long userId = userSupport.getCurrentUserId();
+        PageResult<Project> res = canvasService.getProjectList(pageNum, pageSize, userId);
+        return JsonResponse.success(res);
+    }
+
+    /**
+     * 获取当前用户的所有明信片项目文件夹
+     */
+    @GetMapping("/project-folders")
+    public JsonResponse<List<ProjectFolder>> projectFolderList() {
+        Long userId = userSupport.getCurrentUserId();
+        List<ProjectFolder> res = canvasService.getProjectFolderList(userId);
+        return JsonResponse.success(res);
     }
 }

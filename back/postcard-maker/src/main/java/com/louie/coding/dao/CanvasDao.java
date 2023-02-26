@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface CanvasDao {
@@ -31,4 +32,10 @@ public interface CanvasDao {
     void updateCanvas(Canvas canvas);
 
     void updateProjectInfoByProjectIdAndUserId(Project project);
+
+    Integer getProjectCount(Long userId);
+
+    List<Project> getProjectsWithPagination(Map<String, Object> params);
+
+    List<ProjectFolder> getProjectFolders(Long userId);
 }
