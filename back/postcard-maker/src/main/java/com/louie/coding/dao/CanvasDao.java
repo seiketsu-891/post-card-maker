@@ -3,7 +3,6 @@ package com.louie.coding.dao;
 import com.louie.coding.entity.Canvas;
 import com.louie.coding.entity.Element;
 import com.louie.coding.entity.Project;
-import com.louie.coding.entity.ProjectFolder;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,8 +13,6 @@ import java.util.Map;
 @Mapper
 public interface CanvasDao {
     Project getRecentProjectByUserId(Long userId);
-
-    void addProjectFolder(ProjectFolder projectFolder);
 
     void addProject(Project project);
 
@@ -37,5 +34,4 @@ public interface CanvasDao {
 
     List<Project> getProjectsWithPagination(Map<String, Object> params);
 
-    List<ProjectFolder> getProjectFolders(Long userId);
 }

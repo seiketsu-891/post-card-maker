@@ -6,7 +6,6 @@ import com.louie.coding.service.CanvasService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @RestController
 public class CanvasController {
@@ -24,14 +23,6 @@ public class CanvasController {
         Project p = canvasService.getRecentProject(userId);
         // Project p = canvasService.getRecentProject(1L); 快速测试用
         return JsonResponse.success(p);
-    }
-
-    //
-    @PostMapping("/project-folders")
-    public JsonResponse<String> addProjectFolder(@RequestBody ProjectFolder projectFolder) {
-        Long userId = userSupport.getCurrentUserId();
-        canvasService.addProjectFolder(projectFolder, userId);
-        return JsonResponse.success();
     }
 
     /**
@@ -82,16 +73,6 @@ public class CanvasController {
     public JsonResponse<PageResult<Project>> projectList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
         Long userId = userSupport.getCurrentUserId();
         PageResult<Project> res = canvasService.getProjectList(pageNum, pageSize, userId);
-        return JsonResponse.success(res);
-    }
-
-    /**
-     * 获取当前用户的所有明信片项目文件夹
-     */
-    @GetMapping("/project-folders")
-    public JsonResponse<List<ProjectFolder>> projectFolderList() {
-        Long userId = userSupport.getCurrentUserId();
-        List<ProjectFolder> res = canvasService.getProjectFolderList(userId);
         return JsonResponse.success(res);
     }
 }

@@ -2,7 +2,10 @@ package com.louie.coding.service;
 
 import com.louie.coding.constants.CanvasConstants;
 import com.louie.coding.dao.CanvasDao;
-import com.louie.coding.entity.*;
+import com.louie.coding.entity.Canvas;
+import com.louie.coding.entity.Element;
+import com.louie.coding.entity.PageResult;
+import com.louie.coding.entity.Project;
 import io.netty.util.internal.StringUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +22,6 @@ public class CanvasService {
 
     public Project getRecentProject(Long userId) {
         return canvasDao.getRecentProjectByUserId(userId);
-    }
-
-    public void addProjectFolder(ProjectFolder projectFolder, Long userId) {
-        projectFolder.setUserId(userId);
-        projectFolder.setCreateTime(new Date());
-        canvasDao.addProjectFolder(projectFolder);
     }
 
     public Project addProject(Project project, Long userId) {
@@ -116,10 +113,4 @@ public class CanvasService {
         return res;
     }
 
-    public List<ProjectFolder> getProjectFolderList(Long userId) {
-        // todo 新增用户时创立一个默认文件夹，新建project时将project设定为默认文件夹（或为空即为默认文件夹）
-        List<ProjectFolder> list = new ArrayList<>();
-        list = canvasDao.getProjectFolders(userId);
-        return list;
-    }
 }

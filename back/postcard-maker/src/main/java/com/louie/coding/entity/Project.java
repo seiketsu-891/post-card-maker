@@ -7,16 +7,23 @@ public class Project {
     private Long id;
     private Long userId;
     private String name;
+    private String snapshot;
     private Date createTime;
     private Date updateTime;
     private Canvas canvas;
     private List<Element> elements;
-
     public Project() {
     }
-
     public Project(Long id) {
         this.id = id;
+    }
+
+    public String getSnapshot() {
+        return snapshot;
+    }
+
+    public void setSnapshot(String snapshot) {
+        this.snapshot = snapshot;
     }
 
     public List<Element> getElements() {

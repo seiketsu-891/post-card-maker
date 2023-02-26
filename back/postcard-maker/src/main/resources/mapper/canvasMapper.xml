@@ -116,13 +116,6 @@
     <!--            <result property="url" column="i_url"/>-->
     <!--        </collection>-->
     <!--    </resultMap>-->
-
-    <insert id="addProjectFolder" parameterType="com.louie.coding.entity.ProjectFolder">
-        insert into t_project_folder
-            (userId, `name`, createTime)
-        values (#{userId}, #{name}, #{createTime})
-    </insert>
-
     <insert id="addProject" parameterType="com.louie.coding.entity.Project" useGeneratedKeys="true" keyProperty="id">
         insert into t_project(userId, `name`, createTime, updateTime)
         values (#{userId}, #{name}, #{createTime}, #{updateTime})
@@ -283,13 +276,5 @@
         where userId = #{userId}
         order by updateTime desc
         limit #{start}, #{size}
-    </select>
-
-    <select id="getProjectFolders" parameterType="java.lang.Long"
-            resultType="com.louie.coding.entity.ProjectFolder">
-        select id, userId, name, coverProjectId, createTime, updateTime
-        from t_project_folder
-        where userId = #{userId}
-        order by createTime desc
     </select>
 </mapper>
