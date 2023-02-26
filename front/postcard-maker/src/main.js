@@ -43,6 +43,7 @@ import {
   Empty,
   Upload,
   Alert,
+  Modal,
 } from "ant-design-vue";
 import "ant-design-vue/lib/card/style";
 import "ant-design-vue/lib/button/style";
@@ -62,6 +63,7 @@ import "ant-design-vue/lib/select/style";
 import "ant-design-vue/lib/message/style";
 import "ant-design-vue/lib/upload/style";
 import "ant-design-vue/lib/alert/style";
+import "ant-design-vue/lib/modal/style";
 
 axios.defaults.baseURL = "http://127.0.0.1:8081/";
 
@@ -129,7 +131,8 @@ app
   .use(Message)
   .use(Empty)
   .use(Upload)
-  .use(ConfigProvider);
+  .use(ConfigProvider)
+  .use(Modal);
 app.use(Vue3ColorPicker);
 app.use(ContextMenu);
 app.component("InfiniteLoading", InfiniteLoading);

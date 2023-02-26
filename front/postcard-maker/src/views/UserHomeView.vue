@@ -20,11 +20,33 @@
                 : "A"
             }}</a-avatar
           >
-          <a-button class="header__btn--get-premium header__btn">
+          <a-button
+            @click="openTaskModal"
+            class="header__btn--get-premium header__btn"
+          >
             <template #icon> <CrownFilled class="icon--crown" /> </template>
             <span v-if="isPremium">您是会员</span
             ><span v-else>成为会员</span></a-button
           >
+          <a-modal
+            v-model:visible="taskModalVisible"
+            title="完成任务即可成为会员"
+            @ok="handleOk"
+          >
+            <template #footer>
+              <a-button key="back" @click="handleCancel">返回</a-button>
+              <a-button
+                key="submit"
+                type="primary"
+                :loading="loading"
+                @click="handleOk"
+                >Submit</a-button
+              >
+            </template>
+            <div v-for="t in tasks" :key="t.id">
+              {{ t.description }} {{ t.completed }}
+            </div>
+          </a-modal>
           <a-button
             @click="handleDownloadClicked()"
             class="header__btn--download header__btn"
@@ -130,8 +152,8 @@
   </div>
 </template>
 <script>
-import { ifPremium } from "@/service/user";
-import { logout } from "@/service/user";
+import { ifPremium, logout } from "@/service/user";
+import { getTasks } from "@/service/tasks";
 import CanvasSetting from "@/components/CanvasSetting";
 import ResourceLib from "@/components/ResourceLib";
 import ShapeLib from "@/components/ShapeLib";
@@ -177,6 +199,7 @@ export default {
   },
   data() {
     return {
+      taskModalVisible: false,
       selectedMenuItemKey: ["0"], // 用于设置默认选中项
       menus: [
         "canvasSetting",
@@ -188,6 +211,7 @@ export default {
       activeMenu: "canvasSetting", // 当前点击的菜单
       resourceAreaVisible: true, // 侧边可折叠资源菜单区是否可见
       isPremium: true,
+      tasks: [],
     };
   },
   computed: {
@@ -199,6 +223,21 @@ export default {
     this.checkIfPremium();
   },
   methods: {
+    /**
+     * 打开成为会员任务的模态框
+     */
+    openTaskModal() {
+      this.taskModalVisible = true;
+      this.getTaskInfos();
+    },
+    async getTaskInfos() {
+      const res = await getTasks();
+      if (res.code == 200) {
+        this.tasks = res.data;
+      } else {
+        message.error(res.message);
+      }
+    },
     /**
      * 退出登录
      */
