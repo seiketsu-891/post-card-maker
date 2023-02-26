@@ -80,7 +80,7 @@ public class UserController {
     @PostMapping("/tokens")
     public JsonResponse<String> getNewToken(HttpServletRequest request) {
         String refreshToken = request.getHeader("refreshToken");
-        Long userId = userSupport.getUserIdByRefreshToken(refreshToken);
+        Long userId = userSupport.getCurrentUserId();
         String token = userService.refreshToken(refreshToken, userId);
         return JsonResponse.success(token);
     }
