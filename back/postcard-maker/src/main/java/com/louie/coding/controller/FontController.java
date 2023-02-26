@@ -1,7 +1,7 @@
 package com.louie.coding.controller;
 
 import com.louie.coding.entity.JsonResponse;
-import com.louie.coding.entityResp.FontResp;
+import com.louie.coding.entity.entityResp.FontResp;
 import com.louie.coding.service.FontService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

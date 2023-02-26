@@ -4,7 +4,7 @@ import com.louie.coding.dao.IllustrationDao;
 import com.louie.coding.entity.Illustration;
 import com.louie.coding.entity.PageResult;
 import com.louie.coding.entity.UserIllustration;
-import com.louie.coding.entityResp.IllustrationResp;
+import com.louie.coding.entity.entityResp.IllustrationResp;
 import com.louie.coding.util.CopyUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

@@ -4,7 +4,7 @@ import com.louie.coding.controller.support.UserSupport;
 import com.louie.coding.entity.JsonResponse;
 import com.louie.coding.entity.PageResult;
 import com.louie.coding.entity.UserIllustration;
-import com.louie.coding.entityResp.IllustrationResp;
+import com.louie.coding.entity.entityResp.IllustrationResp;
 import com.louie.coding.service.IllustrationService;
 import com.louie.coding.util.Base64Util;
 import org.springframework.web.bind.annotation.GetMapping;

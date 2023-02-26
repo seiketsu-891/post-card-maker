@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.louie.coding.dao.AlbumDao">
     <select id="getAlbumsWithPagination" parameterType="java.util.Map"
-            resultType="com.louie.coding.entityResp.AlbumResp">
+            resultType="com.louie.coding.entity.entityResp.AlbumResp">
         select a.id, a.name, a.description, i.url
         from t_album a
                  left join t_illustration i

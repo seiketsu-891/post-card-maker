@@ -2,9 +2,9 @@ package com.louie.coding.controller;
 
 import com.louie.coding.controller.support.UserSupport;
 import com.louie.coding.entity.JsonResponse;
-import com.louie.coding.entityReq.UserLogin;
-import com.louie.coding.entityReq.UserRegister;
-import com.louie.coding.entityReq.UserRestPassword;
+import com.louie.coding.entity.entityReq.UserLogin;
+import com.louie.coding.entity.entityReq.UserRegister;
+import com.louie.coding.entity.entityReq.UserRestPassword;
 import com.louie.coding.service.UserService;
 import com.louie.coding.util.RSAUtil;
 import org.springframework.validation.annotation.Validated;

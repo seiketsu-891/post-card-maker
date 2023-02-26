@@ -1,4 +1,4 @@
-package com.louie.coding.entityReq;
+package com.louie.coding.entity.entityReq;
 
 import com.louie.coding.entity.annotation.ValidPassword;
 

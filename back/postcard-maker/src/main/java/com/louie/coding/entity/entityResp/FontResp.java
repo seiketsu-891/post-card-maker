@@ -1,4 +1,4 @@
-package com.louie.coding.entityResp;
+package com.louie.coding.entity.entityResp;
 
 public class FontResp {
     private String label;

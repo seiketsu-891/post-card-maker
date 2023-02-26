@@ -1,4 +1,4 @@
-package com.louie.coding.entityResp;
+package com.louie.coding.entity.entityResp;
 
 public class IllustrationResp {
     private Long id;

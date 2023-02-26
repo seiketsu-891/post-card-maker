@@ -2,7 +2,7 @@ package com.louie.coding.service;
 
 import com.louie.coding.dao.FontDao;
 import com.louie.coding.entity.Font;
-import com.louie.coding.entityResp.FontResp;
+import com.louie.coding.entity.entityResp.FontResp;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
