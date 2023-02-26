@@ -76,27 +76,32 @@ axios.interceptors.request.use((config) => {
 });
 
 // http response拦截器
-axios.interceptors.response.use(async (res) => {
-  const originalRequest = res.config;
-  if (res.data.code == 401 && !originalRequest._retry) {
-    originalRequest._retry = true;
-    const res = await axios.post("/tokens", {});
-    const resp = res.data;
-    // 获得新的token
-    if (resp.code == 200) {
-      const token = resp.data;
-      store.dispatch("updateToken", token);
-      originalRequest.headers.token = store.getters.token;
-      // 如果重新获得token成功，则重新发送请求
-      return axios(originalRequest);
-    } else {
-      // 获取新token失败，登录状态失效
-      store.dispatch("logout", {});
-      router.push("/");
+axios.interceptors.response.use(
+  async (res) => {
+    return res;
+  },
+  async (err) => {
+    const originalRequest = err.config;
+    if (err.response.status == 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const res = await axios.post("/tokens", {});
+      const resp = res.data;
+      // 获得新的token
+      if (resp.code == 200) {
+        const token = resp.data;
+        store.dispatch("updateToken", token);
+        originalRequest.headers.token = store.getters.token;
+        // 如果重新获得token成功，则重新发送请求
+        return axios(originalRequest);
+      } else {
+        // 获取新token失败，登录状态失效
+        store.dispatch("logout", {});
+        router.push("/");
+      }
     }
+    return Promise.reject(err.response.data);
   }
-  return res;
-});
+);
 export default axios;
 
 const app = createApp(App);
