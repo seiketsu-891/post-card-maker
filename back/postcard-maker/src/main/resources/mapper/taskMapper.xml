@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louie.coding.dao.TaskDao">
+    <select id="getTasks" parameterType="java.lang.Long" resultType="com.louie.coding.entity.entityResp.TaskResp">
+        select t.id,
+               `description`,
+               if(isnull(ut.completeTime) or isnull(ut.userId), 0, 1) as completed
+        from t_task t
+                 left join t_user_task ut
+                           on t.id = ut.taskId
+        where ut.userId = #{userId}
+           or ut.userId is null;
+    </select>
+</mapper>
