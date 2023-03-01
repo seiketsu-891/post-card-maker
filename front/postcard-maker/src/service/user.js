@@ -24,3 +24,7 @@ export function resetPassword(user) {
 export function logout() {
   return del("/refresh-tokens");
 }
+
+export function becomePremium() {
+  return post("/premiums");
+}

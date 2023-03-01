@@ -28,34 +28,67 @@
             <span v-if="isPremium">您是会员</span
             ><span v-else>成为会员</span></a-button
           >
-          <a-modal
-            v-model:visible="taskModalVisible"
-            title="完成任务即可成为会员"
-            @ok="handleOk"
-          >
+          <a-modal v-model:visible="taskModalVisible" :title="taskModalTitle">
             <template #footer>
-              <a-button key="back" @click="handleCancel">返回</a-button>
+              <a-button key="back" @click="taskModalVisible = false"
+                >返回</a-button
+              >
               <a-button
+                v-if="tasks.allCompleted && !isPremium"
                 key="submit"
                 type="primary"
                 :loading="loading"
-                @click="handleOk"
-                >Submit</a-button
+                @click="becomePremium"
+                >点击成为会员</a-button
               >
             </template>
-            <div v-for="t in tasks" :key="t.id">
-              {{ t.description }} {{ t.completed }}
+            <a-alert
+              v-if="tasks.allCompleted && !isPremium"
+              style="margin-bottom: 30px"
+              message="您已完成所有任务，点击下方按钮即可成为会员"
+              type="info"
+            />
+            <div
+              class="taskmodal__container"
+              v-for="(t, index) in tasks.list"
+              :key="t.id"
+            >
+              <div class="taskmodal__wrapper">
+                <p class="taskmodal__desc">{{ t.description }}</p>
+                <span>
+                  <!-- 任务没完成的显示  -->
+                  <a-button v-if="!t.completed" @click="goToTask(t.code)">{{
+                    "去完成"
+                  }}</a-button>
+                  <!-- 任务已完成的显示 -->
+                  <span v-else>
+                    <a-progress type="circle" :percent="100" :width="30"
+                  /></span>
+                </span>
+              </div>
+              <a-divider v-if="index != tasks.list.length - 1" a-divider />
             </div>
           </a-modal>
-          <a-button
-            @click="handleDownloadClicked()"
-            class="header__btn--download header__btn"
+          <a-popconfirm
+            placement="bottom"
+            ok-text="我知道了"
+            @confirm="downloadPopNoticeVisible = false"
+            :showCancel="false"
+            :visible="downloadPopNoticeVisible"
           >
-            <template #icon>
-              <CloudDownloadOutlined class="icon--downloand" />
+            <template #title>
+              <p>点击这里即可下载明信片</p>
             </template>
-            下载文件</a-button
-          >
+            <a-button
+              @click="handleDownloadClicked()"
+              class="header__btn--download header__btn"
+            >
+              <template #icon>
+                <CloudDownloadOutlined class="icon--downloand" />
+              </template>
+              下载文件</a-button
+            >
+          </a-popconfirm>
           <a-button class="header__btn" @click="userLogout">登出</a-button>
         </div>
         <!-- 头部菜单 -->
@@ -128,9 +161,9 @@
             <!-- 文字框选择 -->
             <TextInsertion v-show="activeMenu == menus[3]" />
             <!-- 自定义上传素材 -->
-            <CustomResourceLib v-show="activeMenu == menus[4]" />
+            <CustomResourceLib v-if="activeMenu == menus[4]" />
             <!-- 已保存的文件 -->
-            <MyPostcards v-show="activeMenu == menus[5]" />
+            <MyPostcards v-if="activeMenu == menus[5]" />
           </div>
           <!-- 折叠按钮 -->
           <button class="resource__collapsebtn" @click="collapeResourceArea">
@@ -152,8 +185,8 @@
   </div>
 </template>
 <script>
-import { ifPremium, logout } from "@/service/user";
-import { getTasks } from "@/service/tasks";
+import { ifPremium, logout, becomePremium } from "@/service/user";
+import { getTasks, completeTask } from "@/service/tasks";
 import CanvasSetting from "@/components/CanvasSetting";
 import ResourceLib from "@/components/ResourceLib";
 import ShapeLib from "@/components/ShapeLib";
@@ -199,6 +232,8 @@ export default {
   },
   data() {
     return {
+      TASK_ID_DOWNLOAD_POSTCARD: 2,
+      downloadPopNoticeVisible: false,
       taskModalVisible: false,
       selectedMenuItemKey: ["0"], // 用于设置默认选中项
       menus: [
@@ -210,7 +245,7 @@ export default {
       ], // 菜单名，主要用于切换菜单右侧展开部分
       activeMenu: "canvasSetting", // 当前点击的菜单
       resourceAreaVisible: true, // 侧边可折叠资源菜单区是否可见
-      isPremium: true,
+      isPremium: false,
       tasks: [],
     };
   },
@@ -218,15 +253,61 @@ export default {
     user() {
       return this.$store.getters.user;
     },
+    taskModalTitle() {
+      return this.isPremium ? "您已完成任务并获得会员" : "完成任务即可获取会员";
+    },
   },
   created() {
     this.checkIfPremium();
   },
   methods: {
+    async becomePremium() {
+      const res = await becomePremium();
+      if (res.code == 200) {
+        message.success({
+          content: "您已成为会员",
+          duration: 2,
+        });
+        this.taskModalVisible = false;
+        this.checkIfPremium();
+      } else {
+        message.error(res.message);
+      }
+    },
+    /**
+     * 今日任务提示界面
+     */
+    goToTask(code) {
+      if ("T_UPLOAD_IMAGE" == code) {
+        // 提示上传图片
+        this.taskModalVisible = false;
+        this.activeMenu = this.menus[4];
+        this.resourceAreaVisible = true;
+        this.selectedMenuItemKey = ["4"];
+        // 如果一开始就处在自定义图片界面，emit过后会立即起效果
+        // 否则需要用$nextTick
+        this.$nextTick(() => {
+          this.emitter.emit("customImgshowPop");
+        });
+        this.emitter.emit("customImgshowPop");
+      } else if ("T_DOWNLOAD_POSTCARD" == code) {
+        // 提示下载按钮
+        this.taskModalVisible = false;
+        this.downloadPopNoticeVisible = true;
+      } else {
+        return;
+      }
+    },
+    hideAllPosNotice() {
+      this.downloadPopNoticeVisible = false;
+      this.emitter.emit("HidePopNotice");
+    },
     /**
      * 打开成为会员任务的模态框
      */
     openTaskModal() {
+      // 打开modal
+      this.hideAllPosNotice();
       this.taskModalVisible = true;
       this.getTaskInfos();
     },
@@ -297,8 +378,15 @@ export default {
     /**
      * 点击下载按钮后的处理
      */
-    handleDownloadClicked() {
+    async handleDownloadClicked() {
       this.emitter.emit("convertCanvasToImage", {});
+      // 下载任务的处理
+      if (!this.isPremium) {
+        const res = await completeTask(this.TASK_ID_DOWNLOAD_POSTCARD);
+        if (res.code != 200) {
+          message.error(res.message);
+        }
+      }
     },
   },
 };
@@ -420,4 +508,11 @@ export default {
 .icon
   &--crown
     color: #FFD039
+.taskmodal
+  &__wrapper
+    display: flex
+    justify-content: space-between
+    align-items: center
+  &__disc
+    margin: 0
 </style>

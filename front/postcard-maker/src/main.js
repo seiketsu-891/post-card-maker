@@ -44,6 +44,8 @@ import {
   Upload,
   Alert,
   Modal,
+  Progress,
+  Popconfirm,
 } from "ant-design-vue";
 import "ant-design-vue/lib/card/style";
 import "ant-design-vue/lib/button/style";
@@ -64,6 +66,8 @@ import "ant-design-vue/lib/message/style";
 import "ant-design-vue/lib/upload/style";
 import "ant-design-vue/lib/alert/style";
 import "ant-design-vue/lib/modal/style";
+import "ant-design-vue/lib/progress/style";
+import "ant-design-vue/lib/popconfirm/style";
 
 axios.defaults.baseURL = "http://127.0.0.1:8081/";
 
@@ -132,7 +136,9 @@ app
   .use(Empty)
   .use(Upload)
   .use(ConfigProvider)
-  .use(Modal);
+  .use(Modal)
+  .use(Progress)
+  .use(Popconfirm);
 app.use(Vue3ColorPicker);
 app.use(ContextMenu);
 app.component("InfiniteLoading", InfiniteLoading);

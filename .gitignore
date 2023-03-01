@@ -1,0 +1,5 @@
+back/postcard-maker/src/main/resources/application-personal.properties
+-F
+-m
+dump.rdb
+dump.rdb

@@ -1,20 +1,31 @@
 <template>
   <div class="outer">
-    <a-upload
-      v-model:file-list="fileList"
-      name="avatar"
-      list-type="picture-card"
-      class="avatar-uploader"
-      :show-upload-list="false"
-      :customRequest="customUpload"
-      :before-upload="beforeUpload"
+    <a-popconfirm
+      placement="bottom"
+      ok-text="我知道了"
+      @confirm="popNoticeVisible = false"
+      :showCancel="false"
+      :visible="popNoticeVisible"
     >
-      <div>
-        <loading-outlined v-if="isUploading"></loading-outlined>
-        <plus-outlined v-else></plus-outlined>
-        <div class="ant-upload-text">上传</div>
-      </div>
-    </a-upload>
+      <template #title>
+        <p>可以在这里进行图片资源的上传</p>
+      </template>
+      <a-upload
+        v-model:file-list="fileList"
+        name="avatar"
+        list-type="picture-card"
+        class="avatar-uploader"
+        :show-upload-list="false"
+        :customRequest="customUpload"
+        :before-upload="beforeUpload"
+      >
+        <div>
+          <loading-outlined v-if="isUploading"></loading-outlined>
+          <plus-outlined v-else></plus-outlined>
+          <div class="ant-upload-text">上传</div>
+        </div>
+      </a-upload>
+    </a-popconfirm>
 
     <div class="scrollable">
       <div class="pics__container">
@@ -39,6 +50,7 @@ export default {
   },
   data() {
     return {
+      popNoticeVisible: false,
       loadingKey: 0,
       fileList: [],
       pictures: [], // 当前用户所上传的所有图片
@@ -46,7 +58,17 @@ export default {
       pageNum: 1,
     };
   },
-  mounted() {},
+  created() {
+    this.emitter.on("customImgshowPop", () => {
+      this.popNoticeVisible = true;
+    });
+    this.emitter.on("HidePopNotice", () => {
+      this.popNoticeVisible = false;
+    });
+  },
+  unmounted() {
+    this.popNoticeVisible = false;
+  },
   methods: {
     /**
      * 获取用户上传的图片
