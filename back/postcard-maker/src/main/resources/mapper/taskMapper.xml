@@ -6,11 +6,27 @@
     <select id="getTasks" parameterType="java.lang.Long" resultType="com.louie.coding.entity.entityResp.TaskResp">
         select t.id,
                `description`,
+               t.code,
                if(isnull(ut.completeTime) or isnull(ut.userId), 0, 1) as completed
         from t_task t
                  left join t_user_task ut
-                           on t.id = ut.taskId
-        where ut.userId = #{userId}
-           or ut.userId is null;
+                           on t.id = ut.taskId and ut.userId = #{userId}
+        # 注意：这里on的第二个条件，写在where中会产生问题。
+    </select>
+    <select id="getTaskById" parameterType="java.lang.Long" resultType="com.louie.coding.entity.Task">
+        select id, description, createTime, valid, code
+        from t_task
+        where id = #{id}
+    </select>
+    <insert id="addUserTask" parameterType="com.louie.coding.entity.UserTask">
+        insert into t_user_task
+            (taskId, userId, completeTime)
+        values (#{taskId}, #{userId}, #{completeTime})
+    </insert>
+    <select id="getUserTaskByTaskIdAndUserId" resultType="com.louie.coding.entity.UserTask">
+        select id, taskId, userId, completeTime
+        from t_user_task
+        where taskId = #{taskId}
+          and userId = #{userId}
     </select>
 </mapper>

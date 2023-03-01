@@ -1,5 +1,6 @@
 package com.louie.coding.service;
 
+import com.louie.coding.constants.TaskConstants;
 import com.louie.coding.dao.IllustrationDao;
 import com.louie.coding.entity.Illustration;
 import com.louie.coding.entity.PageResult;
@@ -18,6 +19,8 @@ public class IllustrationService {
     private IllustrationDao illustrationDao;
     @Resource
     private FileService fileService;
+    @Resource
+    private TaskService taskService;
 
     public PageResult<IllustrationResp> getIllustrations(Integer pageNum, Integer pageSize, Long albumId, String keyword) {
         Integer start = (pageNum - 1) * pageSize;
@@ -67,5 +70,8 @@ public class IllustrationService {
         ui.setUserId(userId);
         ui.setCreateTime(new Date());
         illustrationDao.addUserIllustration(ui);
+
+        // 添加任务完成情况
+        taskService.completeTask(userId, TaskConstants.TASK_ID_UPLOAD_IMG);
     }
 }
