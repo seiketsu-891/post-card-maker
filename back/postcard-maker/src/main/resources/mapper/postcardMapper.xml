@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louie.coding.dao.PostcardDao">
+    <!--    <resultMap id="projectWithCanvasElementsInfoResultMap" type="com.louie.coding.entity.Postcard">-->
+    <!--        &lt;!&ndash;Project类本身&ndash;&gt;-->
+    <!--        <constructor>-->
+    <!--            <idArg column="p_id" javaType="java.lang.Long"/>-->
+    <!--        </constructor>-->
+    <!--        <result column="p_name" property="name" javaType="java.lang.String"/>-->
+    <!--        &lt;!&ndash;canvas&ndash;&gt;-->
+    <!--        <association property="canvas" javaType="com.louie.coding.entity.Canvas">-->
+    <!--            <id property="id" column="c_id"/>-->
+    <!--            <result property="width" column="c_width"/>-->
+    <!--            <result property="height" column="c_height"/>-->
+    <!--            <result property="bgColor" column="c_bgColor"/>-->
+    <!--        </association>-->
+    <!--        &lt;!&ndash;elements&ndash;&gt;-->
+    <!--        <collection property="elements" ofType="com.louie.coding.entity.Element">-->
+    <!--            <id property="id" column="id"/>-->
+    <!--            <result property="width" column="width"/>-->
+    <!--            <result property="height" column="height"/>-->
+    <!--            <result property="left" column="left"/>-->
+    <!--            <result property="top" column="top"/>-->
+    <!--            <result property="zoomX" column="zoomX"/>-->
+    <!--            <result property="zoomY" column="zoomY"/>-->
+    <!--            <result property="scaleX" column="scaleX"/>-->
+    <!--            <result property="scaleY" column="scaleY"/>-->
+    <!--            <result property="angle" column="angle"/>-->
+    <!--            <result property="order" column="order"/>-->
+    <!--            <result property="type" column="type"/>-->
+    <!--            <result property="content" column="content"/>-->
+    <!--            <result property="fontId" column="fontId"/>-->
+    <!--            <result property="fill" column="fill"/>-->
+    <!--            <result property="url" column="url"/>-->
+    <!--            <result property="shapeCode" column="shapeCode"/>-->
+    <!--            <result property="fontFamily" column="font"/>-->
+    <!--            <result property="projectId" column="projectId"/>-->
+    <!--        </collection>-->
+    <!--    </resultMap>-->
+    <!--    <select id="getRecentProjectByUserId" parameterType="java.lang.Long"-->
+    <!--            resultMap="projectWithCanvasElementsInfoResultMap">-->
+    <!--        select p.id      as p_id,-->
+    <!--               p.name    as p_name,-->
+    <!--               c.id      as c_name,-->
+    <!--               c.width   as c_width,-->
+    <!--               c.height  as c_height,-->
+    <!--               c.bgColor as c_bgColor,-->
+    <!--               e.projectId,-->
+    <!--               e.id,-->
+    <!--               e.width,-->
+    <!--               e.height,-->
+    <!--               e.`left`,-->
+    <!--               e.top,-->
+    <!--               e.zoomX,-->
+    <!--               e.zoomY,-->
+    <!--               e.scaleX,-->
+    <!--               e.scaleY,-->
+    <!--               e.angle,-->
+    <!--               e.`order`,-->
+    <!--               e.type,-->
+    <!--               e.content,-->
+    <!--               e.fontId,-->
+    <!--               e.fill,-->
+    <!--               e.shapeCode,-->
+    <!--               e.url,-->
+    <!--               f.name    as font-->
+    <!--        from t_postcard p-->
+    <!--                 left join t_element e on p.id = e.projectId-->
+    <!--                 left join t_canvas c on p.id = c.projectId-->
+    <!--                 left join t_font f on f.id = e.fontId-->
+    <!--        where p.userId = #{userId}-->
+    <!--        order by p.updateTime desc-->
+    <!--        limit 1-->
+    <!--    </select>-->
+    <!--    <resultMap id="projectWithCanvasElementsInfoResultMap" type="com.louie.coding.entity.Postcard">-->
+    <!--        &lt;!&ndash;Project类本身&ndash;&gt;-->
+    <!--        <constructor>-->
+    <!--            <idArg column="p_id" javaType="java.lang.Long"/>-->
+    <!--        </constructor>-->
+    <!--        <result column="p_name" property="name" javaType="java.lang.String"/>-->
+    <!--        &lt;!&ndash;canvas&ndash;&gt;-->
+    <!--        <association property="canvas" javaType="com.louie.coding.entity.Canvas">-->
+    <!--            <id property="id" column="c_id"/>-->
+    <!--            <result property="width" column="c_width"/>-->
+    <!--            <result property="height" column="c_height"/>-->
+    <!--            <result property="bgColor" column="c_bgColor"/>-->
+    <!--        </association>-->
+    <!--        &lt;!&ndash;shapes&ndash;&gt;-->
+    <!--        <collection property="shapes" ofType="com.louie.coding.entity.EleShape">-->
+    <!--            <id property="id" column="s_id"/>-->
+    <!--            <result property="width" column="s_width"/>-->
+    <!--            <result property="height" column="s_height"/>-->
+    <!--            <result property="left" column="s_left"/>-->
+    <!--            <result property="top" column="s_top"/>-->
+    <!--            <result property="fill" column="s_fill"/>-->
+    <!--        </collection>-->
+    <!--        &lt;!&ndash;texts&ndash;&gt;-->
+    <!--        <collection property="texts" ofType="com.louie.coding.entity.EleText">-->
+    <!--            <id property="id" column="t_id"/>-->
+    <!--            <result property="content" column="t_content"/>-->
+    <!--            <result property="font" column="t_font"/>-->
+    <!--            <result property="color" column="t_color"/>-->
+    <!--            <result property="size" column="t_size"/>-->
+    <!--            <result property="left" column="t_left"/>-->
+    <!--            <result property="top" column="t_top"/>-->
+    <!--        </collection>-->
+    <!--        &lt;!&ndash;illustrations&ndash;&gt;-->
+    <!--        <collection property="illustrations" ofType="com.louie.coding.entity.EleIllustration">-->
+    <!--            <id property="id" column="i_id"/>-->
+    <!--            <result property="width" column="i_width"/>-->
+    <!--            <result property="height" column="i_height"/>-->
+    <!--            <result property="left" column="i_left"/>-->
+    <!--            <result property="top" column="i_top"/>-->
+    <!--            <result property="url" column="i_url"/>-->
+    <!--        </collection>-->
+    <!--    </resultMap>-->
+    <!--    <insert id="addProject" parameterType="com.louie.coding.entity.Postcard" useGeneratedKeys="true" keyProperty="id">-->
+    <!--        insert into t_postcard(userId, `name`, createTime, updateTime)-->
+    <!--        values (#{userId}, #{name}, #{createTime}, #{updateTime})-->
+    <!--    </insert>-->
+
+    <!--    <insert id="addCanvas" parameterType="com.louie.coding.entity.Canvas" useGeneratedKeys="true" keyProperty="id">-->
+    <!--        insert into t_canvas(projectId, width, height, bgColor, createTime)-->
+    <!--        values (#{projectId}, #{width}, #{height}, #{bgColor}, #{createTime})-->
+    <!--    </insert>-->
+
+    <!--    <insert id="addElements" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">-->
+    <!--        insert into t_element(-->
+    <!--        width, height, `left`, top, zoomX, zoomY, scaleX, scaleY, angle, type, createTime,-->
+    <!--        `order`, projectId, content, fontId, fill, shapeCode, url)-->
+    <!--        values-->
+    <!--        <foreach collection="elements" item="ele" separator=",">-->
+    <!--            (-->
+    <!--            #{ele.width},-->
+    <!--            #{ele.height},-->
+    <!--            #{ele.left},-->
+    <!--            #{ele.top},-->
+    <!--            #{ele.zoomX},-->
+    <!--            #{ele.zoomY},-->
+    <!--            #{ele.scaleX},-->
+    <!--            #{ele.scaleY},-->
+    <!--            #{ele.angle},-->
+    <!--            #{ele.type},-->
+    <!--            #{ele.createTime},-->
+    <!--            #{ele.order},-->
+    <!--            #{ele.projectId},-->
+    <!--            <if test="ele.type == 0">-->
+    <!--                null,-->
+    <!--                null,-->
+    <!--                #{ele.fill},-->
+    <!--                #{ele.shapeCode},-->
+    <!--                null-->
+    <!--            </if>-->
+    <!--            <if test="ele.type == 1">-->
+    <!--                #{ele.content},-->
+    <!--                #{ele.fontId},-->
+    <!--                #{ele.fill},-->
+    <!--                null,-->
+    <!--                null-->
+    <!--            </if>-->
+    <!--            <if test="ele.type == 2">-->
+    <!--                null,-->
+    <!--                null,-->
+    <!--                null,-->
+    <!--                null,-->
+    <!--                #{ele.url}-->
+    <!--            </if>-->
+    <!--            )-->
+    <!--        </foreach>-->
+    <!--    </insert>-->
+
+    <!--    <insert id="addElement" parameterType="com.louie.coding.entity.Element">-->
+    <!--        insert into t_element(-->
+    <!--        width, height, `left`, top, zoomX, zoomY, scaleX, scaleY, angle, type, createTime,-->
+    <!--        `order`, projectId, content, fontId, fill, shapeCode, url)-->
+    <!--        values-->
+    <!--        (-->
+    <!--        #{width},-->
+    <!--        #{height},-->
+    <!--        #{left},-->
+    <!--        #{top},-->
+    <!--        #{zoomX},-->
+    <!--        #{zoomY},-->
+    <!--        #{scaleX},-->
+    <!--        #{scaleY},-->
+    <!--        #{angle},-->
+    <!--        #{type},-->
+    <!--        #{createTime},-->
+    <!--        #{order},-->
+    <!--        #{projectId},-->
+    <!--        <if test="type == 0">-->
+    <!--            null,-->
+    <!--            null,-->
+    <!--            #{fill},-->
+    <!--            #{shapeCode},-->
+    <!--            null-->
+    <!--        </if>-->
+    <!--        <if test="type == 1">-->
+    <!--            #{content},-->
+    <!--            #{fontId},-->
+    <!--            #{fill},-->
+    <!--            null,-->
+    <!--            null-->
+    <!--        </if>-->
+    <!--        <if test="type == 2">-->
+    <!--            null,-->
+    <!--            null,-->
+    <!--            null,-->
+    <!--            null,-->
+    <!--            #{url}-->
+    <!--        </if>-->
+    <!--        )-->
+    <!--    </insert>-->
+
+    <!--    <update id="updateElement" parameterType="com.louie.coding.entity.Element">-->
+    <!--        update t_element-->
+    <!--        set width = #{width},-->
+    <!--        height = #{height},-->
+    <!--        `left` = #{left},-->
+    <!--        top = #{top},-->
+    <!--        zoomX = #{zoomX},-->
+    <!--        zoomY = #{zoomY},-->
+    <!--        scaleX = #{scaleX},-->
+    <!--        scaleY = #{scaleY},-->
+    <!--        angle = #{angle},-->
+    <!--        type = #{type},-->
+    <!--        updateTime = #{updateTime},-->
+    <!--        `order` = #{order}-->
+    <!--        <if test="type == 0">-->
+    <!--            ,fill = #{fill},-->
+    <!--            shapeCode = #{shapeCode}-->
+    <!--        </if>-->
+    <!--        <if test="type == 1">-->
+    <!--            ,content= #{content},-->
+    <!--            fontId= #{fontId},-->
+    <!--            fill= #{fill}-->
+    <!--        </if>-->
+    <!--        where id = #{id}-->
+    <!--    </update>-->
+
+    <!--    <update id="updateProjectTimeByProjectIdAndUserId">-->
+    <!--        update t_postcard-->
+    <!--        set updateTime = #{updateTime}-->
+    <!--        where id = #{projectId}-->
+    <!--          and userId = #{userId}-->
+    <!--    </update>-->
+
+    <!--    <update id="updateCanvas" parameterType="com.louie.coding.entity.Canvas">-->
+    <!--        update t_canvas-->
+    <!--        set width      = #{width},-->
+    <!--            height     = #{height},-->
+    <!--            bgColor    = #{bgColor},-->
+    <!--            updateTime = #{updateTime}-->
+    <!--        where id = #{id}-->
+    <!--    </update>-->
+
+    <!--    <update id="updateProjectInfoByProjectIdAndUserId" parameterType="com.louie.coding.entity.Postcard">-->
+    <!--        update t_postcard-->
+    <!--        set `name`     = #{name},-->
+    <!--            updateTime = #{updateTime}-->
+    <!--        where id = #{id}-->
+    <!--          and userId = #{userId}-->
+    <!--    </update>-->
+
+    <select id="getPostcardCountByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select count(1)
+        from t_postcard
+        where userId = #{userId}
+    </select>
+
+    <select id="getPostCardsWithPagination" parameterType="java.util.Map" resultType="com.louie.coding.entity.Postcard">
+        select id, userId, `name`, createTime, updateTime
+        from t_postcard
+        where userId = #{userId}
+        order by updateTime desc
+        limit #{start}, #{size}
+    </select>
+
+    <insert id="addPostcard" parameterType="com.louie.coding.entity.Postcard" useGeneratedKeys="true" keyProperty="id">
+        insert into t_postcard (userId, `name`, createTime, updateTime, currVersion)
+        values (#{userId}, #{name}, #{createTime}, #{updateTime}, #{currVersion})
+    </insert>
+
+    <resultMap id="postcardWithContentResultMap" type="com.louie.coding.entity.Postcard">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="currContent" column="content"/>
+    </resultMap>
+    <select id="getRecentUpdatedPostcardWithContentByUserId" parameterType="java.lang.Long"
+            resultMap="postcardWithContentResultMap">
+        select p.id,
+               p.`name`,
+               pc.content
+        from t_postcard p
+                 join t_postcard_content pc
+                      on p.id = pc.postcardId and p.currVersion = pc.version
+        where p.userId = #{userId}
+        order by p.updateTime
+        limit 1
+    </select>
+
+    <select id="getPostcardWithContentByUserIdAndId" parameterType="java.util.Map"
+            resultMap="postcardWithContentResultMap">
+        select p.id,
+               p.`name`,
+               pc.content
+        from t_postcard p
+                 join t_postcard_content pc
+                      on p.id = pc.postcardId and p.currVersion = pc.version
+        where p.userId = #{userid}
+          and p.id = #{id}
+    </select>
+    <select id="getByIdAndUserId" resultType="com.louie.coding.entity.Postcard">
+        select id, userId, `name`, createTime, updateTime, currVersion
+        from t_postcard
+        where id = #{id}
+          and userId = #{userId}
+    </select>
+
+    <update id="updatePostcard" parameterType="com.louie.coding.entity.Postcard">
+        update t_postcard
+        set `name`      = #{name},
+            updateTime  = #{updateTime},
+            currVersion = #{currVersion}
+        where id = #{id}
+    </update>
+</mapper>

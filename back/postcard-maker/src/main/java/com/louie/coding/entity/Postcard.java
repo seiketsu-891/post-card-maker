@@ -1,45 +1,38 @@
 package com.louie.coding.entity;
 
 import java.util.Date;
-import java.util.List;
 
-public class Project {
+public class Postcard {
     private Long id;
     private Long userId;
     private String name;
-    private String snapshot;
     private Date createTime;
     private Date updateTime;
-    private Canvas canvas;
-    private List<Element> elements;
-    public Project() {
+
+    private Integer currVersion;
+    private String currContent;
+
+    public Postcard() {
     }
-    public Project(Long id) {
+
+    public Postcard(Long id) {
         this.id = id;
     }
 
-    public String getSnapshot() {
-        return snapshot;
+    public String getCurrContent() {
+        return currContent;
     }
 
-    public void setSnapshot(String snapshot) {
-        this.snapshot = snapshot;
+    public void setCurrContent(String currContent) {
+        this.currContent = currContent;
     }
 
-    public List<Element> getElements() {
-        return elements;
+    public Integer getCurrVersion() {
+        return currVersion;
     }
 
-    public void setElements(List<Element> elements) {
-        this.elements = elements;
-    }
-
-    public Canvas getCanvas() {
-        return canvas;
-    }
-
-    public void setCanvas(Canvas canvas) {
-        this.canvas = canvas;
+    public void setCurrVersion(Integer currVersion) {
+        this.currVersion = currVersion;
     }
 
     public Date getCreateTime() {
@@ -74,7 +67,6 @@ public class Project {
         this.name = name;
     }
 
-
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -82,4 +74,5 @@ public class Project {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
 }

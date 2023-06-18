@@ -16,6 +16,8 @@
   </div>
 </template>
 <script>
+import { savePostcard, getPostcard } from "@/service/postcard";
+import { message } from "ant-design-vue";
 export default {
   data() {
     return {
@@ -141,9 +143,7 @@ export default {
     sendObjToBack() {
       const activObj = this.canvas.getActiveObject();
       if (activObj) {
-        console.log(this.canvas.getObjects());
         this.canvas.sendToBack(activObj);
-        console.log(this.canvas.getObjects());
         // todo 从elemetns中移除
       }
     },
@@ -200,103 +200,71 @@ export default {
     /**
      * 获取上一次编辑中的明信片相关信息
      */
-    getCanvasElements() {
-      const recentPostcardProject = {
-        projectId: 1,
-        canvas: {
-          width: 500,
-          height: 300,
-          backgroundColor: "#3af4f2",
-        },
-        texts: [
-          {
-            content: "测试",
-            left: 20,
-            top: 20,
-            fill: "red",
-            // fontSize: 20,
-            fontFamily: "Helvetica",
-          },
-          {
-            content: "测试",
-            left: 0,
-            top: 0,
-            fontFamily: "Verdana",
-            fill: "pink",
-          },
-          {
-            content: "测试",
-            left: 20,
-            top: 20,
-            fontFamily: "Times New Roman",
-            fill: "pink",
-          },
-        ],
-        shapes: [
-          {
-            type: "0",
-            fill: "orange",
-            width: 150,
-            height: 100,
-            left: 250.8708407237088,
-            top: -68.57772591354359,
-            angle: 81.01263599260606,
-            scaleX: 2.6869004311767037,
-            scaleY: 2.6869004311767037,
-            zoomX: 5.3738008623534075,
-            zoomY: 5.3738008623534075,
-          },
-          {
-            type: "1",
-            fill: "black",
-            width: 100,
-            height: 22,
-            left: 10,
-            top: 50,
-          },
-          {
-            type: "0",
-            fill: "red",
-            width: 100,
-            height: 22,
-            left: 10,
-            top: 50,
-          },
-          {
-            type: "0",
-            fill: "yellow",
-            width: 100,
-            height: 22,
-            left: 10,
-            top: 50,
-          },
-        ],
-        illustrations: [
-          {
-            width: 100,
-            height: 100,
-            url: "https://tpc.googlesyndication.com/simgad/10235212382014818733",
-            left: 30,
-            top: 30,
-          },
-        ],
+    async getRecentPostcard() {
+      const res = await getPostcard();
+      if (res.code == "200") {
+        const recentPostcard = res.data;
+        if (!recentPostcard || !recentPostcard.currContent) {
+          return;
+        }
+        const contentObj = JSON.parse(recentPostcard.currContent);
+        const canvasObj = contentObj.canvas;
+        const canvasInfo = {
+          width: contentObj.width,
+          height: contentObj.height,
+          currColor: canvasObj.background,
+        };
+        this.emitter.emit("canvasChange", {
+          canvasInfo,
+          isFirstLoaded: true,
+        });
+
+        this.fabric.util.enlivenObjects(canvasObj.objects, (objects) => {
+          objects.forEach((obj) => this.canvas.add(obj));
+          this.canvas.renderAll();
+        });
+      } else {
+        message.warn(res.message);
+      }
+    },
+
+    /**
+     * 存储当前画布信息
+     */
+    async savePostcardContent() {
+      // 如果仅仅使用this.canvas，则不会存储画布的宽度和高度信息
+      // JSON.stringify方法默认会忽略对象的函数和不可枚举的属性
+      // 但使用下面方法也无法正确序列化出宽度和高度， canvas是特殊obj
+      // Object.defineProperties(currCanvas, {
+      //   height: {
+      //     value: this.currDimension.height,
+      //     enumerable: true,
+      //   },
+      //   width: {
+      //     value: this.currDimension.width,
+      //     enumerable: true,
+      //   },
+      // });
+      const contentObj = {
+        canvas: this.canvas,
+        width: this.currDimension.width,
+        height: this.currDimension.height,
       };
-      if (recentPostcardProject) {
-        // 设置画布信息
-        const canvasDb = recentPostcardProject.canvas;
-        this.currDimension.width = canvasDb.width;
-        this.currDimension.height = canvasDb.height;
-        this.currBackgroundColor = canvasDb.backgroundColor;
-        this.elements.shapes = recentPostcardProject.shapes;
-        this.elements.texts = recentPostcardProject.texts;
-        this.elements.illustrations = recentPostcardProject.illustrations;
+      const postcardContent = {
+        content: JSON.stringify(contentObj),
+      };
+      const res = await savePostcard(postcardContent);
+      if (res.code == "200") {
+        console.log(res);
+      } else {
+        message.warn(res.message);
       }
     },
   },
   mounted() {
+    const _this = this;
     this.initCanvas();
     // let prevZoom = 1.0;
-    const _this = this;
     this.emitter.on("zoomCanvas", (args) => {
       const zoomFactor = args.zoom / 100;
       _this.canvas.setZoom(zoomFactor);
@@ -324,9 +292,7 @@ export default {
       }
       // 判断元素类型
       const type = activeEle.type;
-      console.log(type);
       if (type === "i-text") {
-        console.log("show");
         this.emitter.emit("showEleEditor", {
           type: "i-text",
           properties: {
@@ -350,9 +316,7 @@ export default {
       const newColor = args.color;
       // 获取当前活跃元素
       const ele = this.canvas.getActiveObject();
-      console.log(ele);
       if (ele && ele.fill) {
-        console.log("color" + ele.fill);
         // 这里直接用xx.fill = xx的话，虽然会改变属性值，但不起作用
         ele.set("fill", newColor);
         this.canvas.renderAll();
@@ -368,19 +332,22 @@ export default {
   created() {
     // 监听画布信息改变事件，改变画布设置
     this.emitter.on("canvasChange", (arg) => {
-      const data = arg.canvasInfo;
-      this.currDimension.width = data.width;
-      this.currDimension.height = data.height;
-      this.currBackgroundColor = data.currColor;
-      this.setCanvasSize(data.width, data.height);
-      this.canvas.setBackgroundColor(data.currColor);
+      const canvasInfo = arg.canvasInfo;
+      this.currDimension.width = canvasInfo.width;
+      this.currDimension.height = canvasInfo.height;
+      this.currBackgroundColor = canvasInfo.currColor;
+      this.setCanvasSize(canvasInfo.width, canvasInfo.height);
+      this.canvas.setBackgroundColor(canvasInfo.currColor);
+      // 发送明信片更新请求
+      if (!canvasInfo.isFirstLoaded) {
+        this.savePostcardContent();
+      }
     });
     // 监听插入图形事件，插入图形
     this.emitter.on("addShape", (args) => {
       const shape = args.shape;
       this.pageElements.shapes.push(shape);
       shape.on("modified", () => {
-        console.log("形状发生改变");
         console.log(shape);
       });
       // this.elements.push(shape);
@@ -406,7 +373,7 @@ export default {
       });
       this.canvas.add(img);
     });
-    this.getCanvasElements();
+    this.getRecentPostcard();
   },
 };
 </script>

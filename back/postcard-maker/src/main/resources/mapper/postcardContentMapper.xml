@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD MAPPER 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.louie.coding.dao.PostcardContentDao">
+    <insert id="addPostcardContent" parameterType="com.louie.coding.entity.PostcardContent">
+        insert into t_postcard_content
+            (id, postcardId, content, createTime, version, `snapshot`)
+        values (#{id},
+                #{postcardId},
+                #{content},
+                #{createTime},
+                #{version},
+                #{snapshot})
+    </insert>
+    <select id="getMaxVersionByPostcardId" parameterType="java.lang.Long">
+        select max(version)
+        from t_postcard_content
+        where postcardId = #{postcardId}
+    </select>
+</mapper>
