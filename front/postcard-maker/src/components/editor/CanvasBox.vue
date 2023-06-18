@@ -32,8 +32,8 @@ export default {
       elementContextMenuVisibility: false,
       // 画布当前被设置的宽高（每次zoom时以此为基准）
       currDimension: {
-        width: this.CANVAS_DEFAULT_WIDHT,
-        height: this.CANVAS_DEFAULT_HEIGHT,
+        width: 0,
+        height: 0,
       },
       currBackgroundColor: "#fff",
       contextMemuOptions: { zIndex: 3, minWidth: 230, x: 500, y: 200 },
@@ -48,6 +48,20 @@ export default {
     };
   },
   methods: {
+    /**
+     * 缩放画布
+     */
+    zoomCanvas(zoomFactor) {
+      console.log(zoomFactor);
+      this.canvas.setZoom(zoomFactor);
+      this.canvas.setDimensions({
+        // 我这里之前犯的一个错是：
+        // 以宽度为例， 再计算新宽度时，我是先拿到canvas.width， 然后再乘以factor。
+        // 但实际上应该是用画布的真实宽度乘以factor，而不是用已经zoom过的宽度去乘factor
+        width: this.currDimension.width * zoomFactor,
+        height: this.currDimension.height * zoomFactor,
+      });
+    },
     sendObjBackward() {
       const activeObj = this.canvas.getActiveObject();
       if (activeObj) {
@@ -164,6 +178,8 @@ export default {
      * @param {*} h 高度
      */
     setCanvasSize(w, h) {
+      this.currDimension.width = w;
+      this.currDimension.height = h;
       this.canvas.setDimensions({ width: w, height: h });
     },
     /**
@@ -171,10 +187,12 @@ export default {
      */
     initCanvas() {
       this.canvas = new this.fabric.Canvas(this.$refs.canvas);
+      console.log(100);
       this.setCanvasSize(
         this.constants.CANVAS_DEFAULT_WIDHT,
         this.constants.CANVAS_DEFAULT_HEIGHT
       );
+
       // 画布必须设置初始颜色，不然下载下来的图片背景会是灰色;
       this.canvas.setBackgroundColor(this.currBackgroundColor);
     },
@@ -262,19 +280,11 @@ export default {
     },
   },
   mounted() {
-    const _this = this;
     this.initCanvas();
     // let prevZoom = 1.0;
     this.emitter.on("zoomCanvas", (args) => {
       const zoomFactor = args.zoom / 100;
-      _this.canvas.setZoom(zoomFactor);
-      _this.canvas.setDimensions({
-        // 我这里之前犯的一个错是：
-        // 以宽度为例， 再计算新宽度时，我是先拿到canvas.width， 然后再乘以factor。
-        // 但实际上应该是用画布的真实宽度乘以factor，而不是用已经zoom过的宽度去乘factor
-        width: this.currDimension.width * zoomFactor,
-        height: this.currDimension.height * zoomFactor,
-      });
+      this.zoomCanvas(zoomFactor);
     });
     // 监听画布转图片事件
     this.emitter.on("convertCanvasToImage", () => {
@@ -333,8 +343,8 @@ export default {
     // 监听画布信息改变事件，改变画布设置
     this.emitter.on("canvasChange", (arg) => {
       const canvasInfo = arg.canvasInfo;
-      this.currDimension.width = canvasInfo.width;
-      this.currDimension.height = canvasInfo.height;
+      // this.currDimension.width = canvasInfo.width;
+      // this.currDimension.height = canvasInfo.height;
       this.currBackgroundColor = canvasInfo.currColor;
       this.setCanvasSize(canvasInfo.width, canvasInfo.height);
       this.canvas.setBackgroundColor(canvasInfo.currColor);
