@@ -12,6 +12,9 @@ export default createStore({
       loginUser: null,
       token: null,
       refreshToken: null,
+      canvasZoomValue: null,
+      // 1. 当更换或新建明信片时，不需要保持上次的zoom数据，所以还需要一个clearZoom的方法
+      // todo： 还需要一个新建按钮；
     };
   },
   getters: {
@@ -32,6 +35,9 @@ export default createStore({
     refreshToken(state) {
       return state.refreshToken;
     },
+    canvasZoomValue(state) {
+      return state.canvasZoomValue;
+    },
   },
   mutations: {
     login(state, { loginUser, token, refreshToken }) {
@@ -50,6 +56,13 @@ export default createStore({
     updateToken(state, token) {
       state.token = token;
     },
+    clearZoomValue(state) {
+      state.canvasZoomValue = null;
+    },
+    updateZoomValue(state, zoomFactor) {
+      if (zoomFactor >= 0.25 && zoomFactor <= 2)
+        state.canvasZoomValue = zoomFactor;
+    },
   },
   actions: {
     login(context, { loginUser, token, refreshToken }) {
@@ -63,6 +76,12 @@ export default createStore({
     },
     logout(context) {
       context.commit("clear");
+    },
+    clearZoomValue(context) {
+      context.commit("clearZoomValue");
+    },
+    updateZoomValue(context, value) {
+      context.commit("updateZoomValue", value);
     },
   },
   modules: {},

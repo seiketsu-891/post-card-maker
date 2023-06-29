@@ -49,6 +49,14 @@ export default {
       });
     },
   },
+  mounted() {
+    this.emitter.on("updateInfoValue", (args) => {
+      const info = args.canvasInfo;
+      this.canvasInfo.width = info.width;
+      this.canvasInfo.height = info.height;
+      this.canvasInfo.currColor = info.currColor;
+    });
+  },
 };
 </script>
 <style lang="sass" scoped>
