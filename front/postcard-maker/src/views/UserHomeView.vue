@@ -12,6 +12,11 @@
         </h1>
         <!-- 按钮 -->
         <div class="header__btns">
+          <a-button
+            class="header_btn header_btn--new-postcard"
+            @click="HandleNewPostcardBtnCliked"
+            >新建明信片</a-button
+          >
           <!--下面加入判断是避免退出登录时控制台报错  -->
           <a-avatar class="header__avatar" style="background-color: #82c646">
             {{
@@ -170,8 +175,19 @@
             <LeftOutlined />
           </button>
         </div>
+
         <!-- 明信片编辑区 -->
         <div class="editor" @wheel.prevent="onWheelScrolledInEditor($event)">
+          <!-- 自动存储提示区域 -->
+          <div class="auto-saving-status">
+            <span class="auto-saving-status__msg">{{ autoSavingMsg }}</span>
+            <a-spin class="auto-saving-status__spin" v-if="isSavingCanvas">
+              <LoadingOutlined spin />
+            </a-spin>
+            <span class="auto-saving-status__ok" v-else>
+              <CheckOutlined />
+            </span>
+          </div>
           <EleEditorBar class="ele-editor-bar" />
           <div class="canvas-container">
             <div class="canvas"><CanvasBox /></div>
@@ -198,6 +214,7 @@ import ZoomBar from "@/components/editor/ZoomBar";
 import EleEditorBar from "@/components/editor/EleEditorBar";
 // 图标
 import {
+  CheckOutlined,
   FontSizeOutlined,
   UploadOutlined,
   SolutionOutlined,
@@ -207,10 +224,12 @@ import {
   CloudDownloadOutlined,
   LeftOutlined,
   FileImageOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 export default {
   components: {
+    CheckOutlined,
     FontSizeOutlined,
     UploadOutlined,
     SolutionOutlined,
@@ -229,9 +248,12 @@ export default {
     ShapeLib,
     ZoomBar,
     EleEditorBar,
+    LoadingOutlined,
   },
   data() {
     return {
+      // todo 加上事件
+      isSavingCanvas: false,
       TASK_ID_DOWNLOAD_POSTCARD: 2,
       downloadPopNoticeVisible: false,
       taskModalVisible: false,
@@ -256,9 +278,21 @@ export default {
     taskModalTitle() {
       return this.isPremium ? "您已完成任务并获得会员" : "完成任务即可获取会员";
     },
+    autoSavingMsg() {
+      return this.isSavingCanvas ? "保存中" : "已保存";
+    },
   },
   created() {
     this.checkIfPremium();
+  },
+  mounted() {
+    // 监听画布自动保存状态
+    this.emitter.on("canvas-saving-start", () => {
+      this.isSavingCanvas = true;
+    });
+    this.emitter.on("canvas-saving-ok", () => {
+      this.isSavingCanvas = false;
+    });
   },
   methods: {
     async becomePremium() {
@@ -388,6 +422,12 @@ export default {
         }
       }
     },
+    /**
+     * 处理点击新建按钮后的操作
+     */
+    HandleNewPostcardBtnCliked() {
+      this.emitter.emit("initDefaultCanvas");
+    },
   },
 };
 </script>
@@ -457,6 +497,7 @@ export default {
         width: 100%
         height: 100%
       &__collapsebtn
+        z-index: 999
         background-color: rgba(101, 138, 216, 1)
         position: absolute
         right: -30px
@@ -475,7 +516,7 @@ export default {
       width: 100%
       height: 100%
       overflow: scroll
-      padding: 80px
+      // padding: 80px
       // 这里如果在editor中直接设置flex的话，会导致垂直方向padding无法正常显示，因此需要给canvas再添加一个父容器
       .canvas-container
         min-width: 100%
@@ -515,4 +556,20 @@ export default {
     align-items: center
   &__disc
     margin: 0
+.auto-saving-status
+  color: #4A4A4A
+  padding:5px 20px
+  position: absolute
+  background: rgba(255,255,255,.5)
+  border-radius: 30px
+  right: 10px
+  top: 10px
+  z-index: 999
+  box-shadow: 20px 20px 21px -13px rgba(0,0,0,0.1)
+  &__msg
+    margin-right: 10px
+  &__spin
+    color: #5B8DDC
+  &__ok
+    color: #07B140
 </style>

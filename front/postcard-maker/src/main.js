@@ -28,6 +28,7 @@ import {
   Row,
   Col,
   Input,
+  InputNumber,
   Form,
   FormItem,
   Layout,
@@ -123,6 +124,7 @@ app
   .use(Form)
   .use(FormItem)
   .use(Input)
+  .use(InputNumber)
   .use(Layout)
   .use(Menu)
   .use(Avatar)

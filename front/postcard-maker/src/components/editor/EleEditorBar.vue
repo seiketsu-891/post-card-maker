@@ -12,10 +12,17 @@
     <!-- 改变字号 -->
     <a-input-group compact class="editor__item" v-show="isEditingText">
       <a-button @click="changeFontSize(-1)"> -</a-button>
-      <a-input v-model:value="currSize" style="width: calc(100% - 200px)" />
-      <a-button @click="changeFontSize(+1)"> + </a-button>
+      <a-input-number
+        :controls="false"
+        min="1"
+        max="500"
+        v-model:value="currSize"
+        @pressEnter="onFontSizeInputChanged"
+      />
+      <a-button @click="changeFontSize(1)"> + </a-button>
     </a-input-group>
     <!-- 颜色 -->
+    <!-- todo 手动输入字号按回车后可以改变字号 -->
     <div>
       <color-picker
         v-model:pureColor="currColor"
@@ -30,6 +37,9 @@ import { getFonts } from "@/service/resources";
 export default {
   data() {
     return {
+      // 记录改变字号请求发送后的时间
+      prevFontSizeRequestTime: [],
+      fontSizeTimeoutRequest: [],
       isEditingText: false, // 控制是否显示仅编辑文字时需要的部分
       show: false,
       currFont: "Arial",
@@ -49,10 +59,14 @@ export default {
       }
       this.show = true;
       this.isEditingText = args.type === "i-text";
+      this.currSize = eleProperties.fontSize;
     });
     this.getFontList();
   },
   methods: {
+    onFontSizeInputChanged() {
+      this.emitter.emit("changeFontSize", { size: this.currSize });
+    },
     changeFont(value) {
       let fontFamily;
       this.fonts.forEach((f) => {
@@ -75,6 +89,10 @@ export default {
       this.emitter.emit("changeActiveEleColor", { color: this.currColor });
     },
     changeFontSize(operation) {
+      let isCoolDown = false;
+      if (operation != 1 && operation != -1) {
+        return;
+      }
       switch (operation) {
         case 1:
           this.currSize++;
@@ -82,6 +100,33 @@ export default {
         case -1:
           this.currSize--;
           break;
+      }
+      const currTime = new Date().getTime();
+      const timeDiff = currTime - this.prevFontSizeRequestTime;
+      if (timeDiff < 500) {
+        isCoolDown = true;
+      }
+      if (!isCoolDown) {
+        this.emitter.emit("changeFontSize", { size: this.currSize });
+        this.prevFontSizeRequestTime = new Date().getTime();
+      } else {
+        // 还在冷却期，此时不发送电文，而改为在冷却期后发送电文
+        // compare time
+        const coolDownTimeLeft = 500 - timeDiff;
+        const timeout = setTimeout(() => {
+          if (!isCoolDown) {
+            this.emitter.emit("changeFontSize", { size: this.currSize });
+          }
+        }, coolDownTimeLeft);
+        this.fontSizeTimeoutRequest.push(timeout);
+      }
+      // 每次触发，不管是否有发送电文，都清除前面在等待的
+      // clear all timeouts
+      if (this.fontSizeTimeoutRequest.length > 0) {
+        for (let i = 0; i < this.fontSizeTimeoutRequest.length; i++) {
+          clearTimeout(this.fontSizeTimeoutRequest[i]);
+        }
+        this.fontSizeTimeoutRequest = [];
       }
     },
   },

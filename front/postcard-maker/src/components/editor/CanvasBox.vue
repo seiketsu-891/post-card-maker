@@ -11,6 +11,10 @@
         <context-menu-item label="上移一层" @click="sendObjForward()" />
         <context-menu-sperator />
         <context-menu-item label="下移一层" @click="sendObjBackward()" />
+        <context-menu-sperator />
+        <context-menu-item label="移至最上层" @click="sendObjToTop()" />
+        <context-menu-sperator />
+        <context-menu-item label="移至最下层" @click="sendObjToBottom()" />
       </context-menu>
     </div>
   </div>
@@ -21,13 +25,11 @@ import { message } from "ant-design-vue";
 export default {
   data() {
     return {
-      // 当前页面的elements信息
-      pageElements: {
-        shapes: [],
-      },
+      currPostcardId: 0,
       constants: {
         CANVAS_DEFAULT_WIDHT: 600,
         CANVAS_DEFAULT_HEIGHT: 400,
+        CANVAS_DEFAULT_BACKGROUND_COLOR: "#fff",
       },
       elementContextMenuVisibility: false,
       // 画布当前被设置的宽高（每次zoom时以此为基准）
@@ -45,6 +47,8 @@ export default {
         illustrations: [],
       },
       eles: [],
+      // 保存用户每次缩放后的缩放比例
+      zoomFactor: null,
     };
   },
   methods: {
@@ -52,7 +56,6 @@ export default {
      * 缩放画布
      */
     zoomCanvas(zoomFactor) {
-      console.log(zoomFactor);
       this.canvas.setZoom(zoomFactor);
       this.canvas.setDimensions({
         // 我这里之前犯的一个错是：
@@ -62,16 +65,44 @@ export default {
         height: this.currDimension.height * zoomFactor,
       });
     },
+    /**
+     * 元素下移一层
+     */
     sendObjBackward() {
       const activeObj = this.canvas.getActiveObject();
       if (activeObj) {
         this.canvas.sendBackwards(activeObj);
+        this.canvas.fire("object:modified", { target: activeObj });
       }
     },
+    /**
+     * 元素上移一层
+     */
     sendObjForward() {
       const activeObj = this.canvas.getActiveObject();
       if (activeObj) {
         this.canvas.bringForward(activeObj);
+        this.canvas.fire("object:modified", { target: activeObj });
+      }
+    },
+    /**
+     * 元素移至最上层
+     */
+    sendObjToTop() {
+      const activeObj = this.canvas.getActiveObject();
+      if (activeObj) {
+        this.canvas.bringToFront(activeObj);
+        this.canvas.fire("object:modified", { target: activeObj });
+      }
+    },
+    /**
+     * 元素移至最下层
+     */
+    sendObjToBottom() {
+      const activeObj = this.canvas.getActiveObject();
+      if (activeObj) {
+        this.canvas.sendToBack(activeObj);
+        this.canvas.fire("object:modified", { target: activeObj });
       }
     },
     addElements() {
@@ -169,7 +200,7 @@ export default {
       const activObj = this.canvas.getActiveObject();
       if (activObj) {
         this.canvas.remove(activObj);
-        // todo 从elemetns中移除
+        this.emitter.emit("save-canvas");
       }
     },
     /**
@@ -187,14 +218,20 @@ export default {
      */
     initCanvas() {
       this.canvas = new this.fabric.Canvas(this.$refs.canvas);
-      console.log(100);
-      this.setCanvasSize(
-        this.constants.CANVAS_DEFAULT_WIDHT,
-        this.constants.CANVAS_DEFAULT_HEIGHT
-      );
-
-      // 画布必须设置初始颜色，不然下载下来的图片背景会是灰色;
-      this.canvas.setBackgroundColor(this.currBackgroundColor);
+      // 监听元素修改事件
+      this.canvas.on("object:modified", () => {
+        console.log("modified");
+        this.handleElementModified();
+      });
+    },
+    setDefaultCanvasInfo() {
+      const canvasInfo = {
+        width: this.constants.CANVAS_DEFAULT_WIDHT,
+        height: this.constants.CANVAS_DEFAULT_HEIGHT,
+        currColor: this.constants.CANVAS_DEFAULT_BACKGROUND_COLOR,
+        isFirstLoaded: true,
+      };
+      this.emitter.emit("canvasChange", { canvasInfo });
     },
     /**
      * 将画布转化为图片并下载
@@ -222,25 +259,26 @@ export default {
       const res = await getPostcard();
       if (res.code == "200") {
         const recentPostcard = res.data;
-        if (!recentPostcard || !recentPostcard.currContent) {
-          return;
+        if (!recentPostcard) {
+          this.setDefaultCanvasInfo();
         }
+        this.currPostcardId = recentPostcard.id;
         const contentObj = JSON.parse(recentPostcard.currContent);
-        const canvasObj = contentObj.canvas;
+        const canvasObj = JSON.parse(contentObj.canvas);
         const canvasInfo = {
           width: contentObj.width,
           height: contentObj.height,
           currColor: canvasObj.background,
+          isFirstLoaded: true,
         };
         this.emitter.emit("canvasChange", {
           canvasInfo,
-          isFirstLoaded: true,
         });
-
         this.fabric.util.enlivenObjects(canvasObj.objects, (objects) => {
           objects.forEach((obj) => this.canvas.add(obj));
           this.canvas.renderAll();
         });
+        this.restoreZoomFactor();
       } else {
         message.warn(res.message);
       }
@@ -250,6 +288,8 @@ export default {
      * 存储当前画布信息
      */
     async savePostcardContent() {
+      console.log("start saving postcard");
+      this.emitter.emit("canvas-saving-start");
       // 如果仅仅使用this.canvas，则不会存储画布的宽度和高度信息
       // JSON.stringify方法默认会忽略对象的函数和不可枚举的属性
       // 但使用下面方法也无法正确序列化出宽度和高度， canvas是特殊obj
@@ -264,27 +304,90 @@ export default {
       //   },
       // });
       const contentObj = {
-        canvas: this.canvas,
+        canvas: JSON.stringify(this.canvas),
         width: this.currDimension.width,
         height: this.currDimension.height,
       };
+      // 对于比较大的obj JSON.stringify会报栈溢出错误;
+      // const content = JSON.stringify(contentObj);
+      // 6/18
       const postcardContent = {
         content: JSON.stringify(contentObj),
+        postcardId: this.currPostcardId ? this.currPostcardId : null,
       };
       const res = await savePostcard(postcardContent);
       if (res.code == "200") {
-        console.log(res);
+        this.emitter.emit("canvas-saving-ok");
       } else {
         message.warn(res.message);
+        // todo save failed  how to deal with it
+      }
+    },
+    handleElementModified() {
+      this.emitter.emit("save-canvas");
+    },
+    /**
+     * 恢复上次的zoom效果
+     */
+    restoreZoomFactor() {
+      const zoomFactor = this.$store.getters.canvasZoomValue;
+      if (
+        zoomFactor &&
+        typeof zoomFactor === "number" &&
+        zoomFactor <= 2 &&
+        zoomFactor >= 0.25
+      ) {
+        this.zoomCanvas(zoomFactor);
+        // 反映到zoom bar上
+        this.emitter.emit("zoomValueChange", {
+          zoom: (zoomFactor * 100).toFixed(),
+        });
+      }
+    },
+    /**
+     * windo关闭前的操作
+     */
+    boforeUnloadHandler() {
+      // 保存上次的zoom数据
+      // 如果画布id是空白的（初始化未做元素操作的画布），那么不保存zoom数据
+      if (this.currPostcardId) {
+        this.$store.dispatch("updateZoomValue", +this.zoomFactor);
+      }
+    },
+    changeCanvasInfo(canvasInfo) {
+      this.currBackgroundColor = canvasInfo.currColor;
+      this.setCanvasSize(canvasInfo.width, canvasInfo.height);
+      this.canvas.setBackgroundColor(canvasInfo.currColor);
+      // 发送明信片更新请求
+      // 6/27 perf 在一开始空白画布和载入画布时不进行保存处理
+      if (!canvasInfo.isFirstLoaded) {
+        this.savePostcardContent();
+      } else {
+        this.emitter.emit("updateInfoValue", { canvasInfo });
       }
     },
   },
+  watch: {},
   mounted() {
     this.initCanvas();
-    // let prevZoom = 1.0;
     this.emitter.on("zoomCanvas", (args) => {
-      const zoomFactor = args.zoom / 100;
+      // 有时会出现0.0000000001这样的问题，所以保留2位小数
+      const zoomFactor = (args.zoom / 100).toFixed(2);
       this.zoomCanvas(zoomFactor);
+      this.zoomFactor = zoomFactor;
+    });
+    // 监听画布新建事件
+    this.emitter.on("initDefaultCanvas", () => {
+      this.initCanvas();
+      this.setDefaultCanvasInfo();
+      this.zoomCanvas(1);
+      this.emitter.emit("zoomValueChange", {
+        zoom: 100,
+      });
+    });
+    // 监听保存画布事件
+    this.emitter.on("save-canvas", () => {
+      this.savePostcardContent();
     });
     // 监听画布转图片事件
     this.emitter.on("convertCanvasToImage", () => {
@@ -308,6 +411,7 @@ export default {
           properties: {
             color: activeEle.fill,
             fontFamily: activeEle.fontFamily,
+            fontSize: activeEle.get("fontSize"),
           },
         });
         // todo 显示文字编辑框
@@ -328,60 +432,57 @@ export default {
       const ele = this.canvas.getActiveObject();
       if (ele && ele.fill) {
         // 这里直接用xx.fill = xx的话，虽然会改变属性值，但不起作用
+        // canvas监听modified事件，无法监听到此颜色变化
+        // 手动触发
         ele.set("fill", newColor);
+        this.canvas.fire("object:modified", { target: ele });
         this.canvas.renderAll();
       }
     });
     this.emitter.on("changeFont", (args) => {
       const ele = this.canvas.getActiveObject();
       ele.set("fontFamily", args.fontFamily);
+      this.canvas.fire("object:modified", { target: ele });
       ele.fontId = args.fontId;
       this.canvas.renderAll();
+    });
+
+    this.emitter.on("changeFontSize", (args) => {
+      console.log("change font size");
+      console.log(args.size);
+      const ele = this.canvas.getActiveObject();
+      ele.set("fontSize", args.size);
+      this.canvas.fire("object:modified", { target: ele });
+      this.canvas.renderAll();
+    });
+
+    // window监听unload
+    window.addEventListener("beforeunload", () => {
+      this.boforeUnloadHandler();
     });
   },
   created() {
     // 监听画布信息改变事件，改变画布设置
-    this.emitter.on("canvasChange", (arg) => {
-      const canvasInfo = arg.canvasInfo;
-      // this.currDimension.width = canvasInfo.width;
-      // this.currDimension.height = canvasInfo.height;
-      this.currBackgroundColor = canvasInfo.currColor;
-      this.setCanvasSize(canvasInfo.width, canvasInfo.height);
-      this.canvas.setBackgroundColor(canvasInfo.currColor);
-      // 发送明信片更新请求
-      if (!canvasInfo.isFirstLoaded) {
-        this.savePostcardContent();
-      }
+    this.emitter.on("canvasChange", (args) => {
+      this.changeCanvasInfo(args.canvasInfo);
     });
     // 监听插入图形事件，插入图形
     this.emitter.on("addShape", (args) => {
       const shape = args.shape;
-      this.pageElements.shapes.push(shape);
-      shape.on("modified", () => {
-        console.log(shape);
-      });
-      // this.elements.push(shape);
       this.canvas.add(shape);
+      this.emitter.emit("save-canvas");
     });
     // 监听文本框插入事件
     this.emitter.on("addTextBox", (args) => {
       const textBox = args.textBox;
-      this.pageElements.shapes.push(textBox);
-      textBox.on("modified", () => {
-        console.log("文本框发生改变");
-        console.log(textBox);
-      });
       this.canvas.add(textBox);
+      this.emitter.emit("save-canvas");
     });
     // 监听图片素材插入事件
     this.emitter.on("addImg", (args) => {
       const img = args.img;
-      this.pageElements.shapes.push(img);
-      img.on("modified", () => {
-        console.log("图片发生改变");
-        console.log(img);
-      });
       this.canvas.add(img);
+      this.emitter.emit("save-canvas");
     });
     this.getRecentPostcard();
   },

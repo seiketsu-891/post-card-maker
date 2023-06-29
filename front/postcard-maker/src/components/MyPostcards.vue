@@ -15,7 +15,7 @@
   </div>
 </template>
 <script>
-import { getProjects } from "@/service/projects";
+import { getProjects } from "@/service/postcard";
 export default {
   data() {
     return {
@@ -34,7 +34,6 @@ export default {
         if (res.data.list.length < 5) {
           $state.complete();
         }
-        console.log(res.data.total);
         this.projects.push(...res.data.list);
       }
       this.pageNum++;
