@@ -100,6 +100,7 @@ public class PostcardService {
 
         if (postcardId != null) {
             postcardDb = postcardDao.getByIdAndUserId(postcardId, userId);
+
         }
 
         if (postcardId == null || postcardDao == null) {
@@ -111,14 +112,14 @@ public class PostcardService {
             postcard.setCreateTime(now);
             postcard.setUpdateTime(now);
             postcard.setUserId(userId);
-            postcard.setCurrVersion(1);
+            postcard.setCurrVersion(1L);
             postcardDao.addPostcard(postcard);
             postcardContent.setPostcardId(postcard.getId());
-            postcardContent.setVersion(1);
+            postcardContent.setVersion(1L);
         } else {
             // update the existed postcard;
-            Integer maxVersion = postcardContentDao.getMaxVersionByPostcardId(postcardId);
-            Integer currVersion = maxVersion + 1;
+            Long maxVersion = postcardContentDao.getMaxVersionByPostcardId(postcardId);
+            Long currVersion = maxVersion + 1;
             postcardDb.setCurrVersion(currVersion);
             postcardDb.setUpdateTime(now);
             postcardDao.updatePostcard(postcardDb);
@@ -130,8 +131,7 @@ public class PostcardService {
         // todo snapshot
         postcardContentDao.addPostcardContent(postcardContent);
     }
-
-
+    
     public Postcard getPostcard(Long userId, Long id) {
         Integer count = postcardDao.getPostcardCountByUserId(userId);
         if (count == 0) {

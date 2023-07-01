@@ -7,5 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface PostcardContentDao {
     void addPostcardContent(PostcardContent postcardContent);
 
-    Integer getMaxVersionByPostcardId(Long postcardId);
+    Long getMaxVersionByPostcardId(Long postcardId);
 }

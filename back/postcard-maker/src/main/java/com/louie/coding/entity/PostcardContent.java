@@ -8,13 +8,13 @@ public class PostcardContent {
     private Date createTime;
     private String content;
     private String snapshot;
-    private Integer version;
+    private Long version;
 
-    public Integer getVersion() {
+    public Long getVersion() {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 
@@ -41,7 +41,7 @@ public class PostcardContent {
     public void setPostcardId(Long postcardId) {
         this.postcardId = postcardId;
     }
-    
+
     public Date getCreateTime() {
         return createTime;
     }

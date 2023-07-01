@@ -13,7 +13,7 @@
                 #{version},
                 #{snapshot})
     </insert>
-    <select id="getMaxVersionByPostcardId" parameterType="java.lang.Long">
+    <select id="getMaxVersionByPostcardId" parameterType="java.lang.Long" resultType="java.lang.Long">
         select max(version)
         from t_postcard_content
         where postcardId = #{postcardId}

@@ -12,8 +12,8 @@ public enum BusinessExceptionCode {
     ILLEGAL_ARGS("参数异常"),
     PROJECT_NOT_EXISTS("当前明信片不存在"),
     EMPTY_FILE("文件为空"),
-    FILE_UPLOAD_ERROR("文件上传失败");
-
+    FILE_UPLOAD_ERROR("文件上传失败"),
+    TOKEN_EXPIRED("登录状态已失效");
     private String desc;
 
     BusinessExceptionCode(String desc) {

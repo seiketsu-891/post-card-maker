@@ -9,7 +9,7 @@ public class Postcard {
     private Date createTime;
     private Date updateTime;
 
-    private Integer currVersion;
+    private Long currVersion;
     private String currContent;
 
     public Postcard() {
@@ -27,11 +27,11 @@ public class Postcard {
         this.currContent = currContent;
     }
 
-    public Integer getCurrVersion() {
+    public Long getCurrVersion() {
         return currVersion;
     }
 
-    public void setCurrVersion(Integer currVersion) {
+    public void setCurrVersion(Long currVersion) {
         this.currVersion = currVersion;
     }
 
