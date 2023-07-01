@@ -143,6 +143,7 @@ export default {
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px
     background:  rgba(255, 255, 255, 0.45)
     border-radius: 30px
+    z-index: 999
 .editor
     &__item
         margin-right: 20px
