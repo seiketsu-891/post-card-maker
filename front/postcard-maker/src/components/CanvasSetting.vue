@@ -24,6 +24,7 @@
   </div>
 </template>
 <script>
+import { shallowEqual, shallowCopy } from "@/assets/js/util.js";
 export default {
   data() {
     return {
@@ -32,9 +33,14 @@ export default {
         keepRatio: true,
       },
       canvasInfo: {
-        width: 300,
-        height: 300,
-        currColor: "#eb4165", // 画布背景色
+        width: "",
+        height: "",
+        currColor: "#fff", // 画布背景色
+      },
+      infoCopy: {
+        width: "",
+        height: "",
+        currColor: "#fff",
       },
     };
   },
@@ -43,18 +49,30 @@ export default {
      * 点击画布设置提交按钮的处理
      */
     handleSumbitBtnClicked() {
+      if (shallowEqual(this.canvasInfo, this.infoCopy)) {
+        return;
+      }
+
       // 传值给canvas组件以改变画布样式
       this.emitter.emit("canvasChange", {
         canvasInfo: this.canvasInfo,
       });
+      // 改变zoom bar上的值为100
+      this.emitter.emit("zoomValueChange", { zoom: 100 });
+
+      shallowCopy(this.infoCopy, this.canvasInfo);
     },
   },
-  mounted() {
+
+  created() {
     this.emitter.on("updateInfoValue", (args) => {
       const info = args.canvasInfo;
-      this.canvasInfo.width = info.width;
-      this.canvasInfo.height = info.height;
-      this.canvasInfo.currColor = info.currColor;
+      if (shallowEqual(info, this.canvasInfo)) {
+        return;
+      }
+
+      shallowCopy(this.canvasInfo, info);
+      shallowCopy(this.infoCopy, info);
     });
   },
 };

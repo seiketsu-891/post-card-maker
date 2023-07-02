@@ -208,10 +208,17 @@ export default {
      * @param {*} w 宽度
      * @param {*} h 高度
      */
-    setCanvasSize(w, h) {
+    setCanvasSize(w, h, zoomFactor) {
       this.currDimension.width = w;
       this.currDimension.height = h;
-      this.canvas.setDimensions({ width: w, height: h });
+      if (zoomFactor) {
+        this.canvas.setDimensions({
+          width: w * zoomFactor,
+          height: h * zoomFactor,
+        });
+      } else {
+        this.canvas.setDimensions({ width: w, height: h });
+      }
     },
     /**
      * 初始化画布
@@ -252,6 +259,9 @@ export default {
       link.click();
       document.body.removeChild(link);
     },
+    isLegalZoomFactorValue(z) {
+      return z && typeof z === "number" && z <= 2 && z >= 0.25;
+    },
     /**
      * 获取上一次编辑中的明信片相关信息
      */
@@ -261,24 +271,28 @@ export default {
         const recentPostcard = res.data;
         if (!recentPostcard) {
           this.setDefaultCanvasInfo();
+          return;
         }
         this.currPostcardId = recentPostcard.id;
         const contentObj = JSON.parse(recentPostcard.currContent);
         const canvasObj = JSON.parse(contentObj.canvas);
+        const zoomFactor = this.$store.getters.canvasZoomValue;
+
         const canvasInfo = {
           width: contentObj.width,
           height: contentObj.height,
           currColor: canvasObj.background,
           isFirstLoaded: true,
+          zoomFactor: this.isLegalZoomFactorValue(zoomFactor)
+            ? zoomFactor
+            : null,
         };
-        this.emitter.emit("canvasChange", {
-          canvasInfo,
-        });
+        this.changeCanvasInfo(canvasInfo);
+
         this.fabric.util.enlivenObjects(canvasObj.objects, (objects) => {
           objects.forEach((obj) => this.canvas.add(obj));
           this.canvas.renderAll();
         });
-        this.restoreZoomFactor();
       } else {
         message.warn(res.message);
       }
@@ -326,24 +340,7 @@ export default {
     handleElementModified() {
       this.emitter.emit("save-canvas");
     },
-    /**
-     * 恢复上次的zoom效果
-     */
-    restoreZoomFactor() {
-      const zoomFactor = this.$store.getters.canvasZoomValue;
-      if (
-        zoomFactor &&
-        typeof zoomFactor === "number" &&
-        zoomFactor <= 2 &&
-        zoomFactor >= 0.25
-      ) {
-        this.zoomCanvas(zoomFactor);
-        // 反映到zoom bar上
-        this.emitter.emit("zoomValueChange", {
-          zoom: (zoomFactor * 100).toFixed(),
-        });
-      }
-    },
+
     /**
      * windo关闭前的操作
      */
@@ -356,7 +353,11 @@ export default {
     },
     changeCanvasInfo(canvasInfo) {
       this.currBackgroundColor = canvasInfo.currColor;
-      this.setCanvasSize(canvasInfo.width, canvasInfo.height);
+      this.setCanvasSize(
+        canvasInfo.width,
+        canvasInfo.height,
+        canvasInfo.zoomFactor
+      );
       this.canvas.setBackgroundColor(canvasInfo.currColor);
       // 发送明信片更新请求
       // 6/27 perf 在一开始空白画布和载入画布时不进行保存处理
@@ -368,11 +369,13 @@ export default {
     },
   },
   watch: {},
+
   mounted() {
     this.initCanvas();
     this.emitter.on("zoomCanvas", (args) => {
       // 有时会出现0.0000000001这样的问题，所以保留2位小数
       const zoomFactor = (args.zoom / 100).toFixed(2);
+      console.log(zoomFactor);
       this.zoomCanvas(zoomFactor);
       this.zoomFactor = zoomFactor;
     });
