@@ -100,7 +100,6 @@ public class PostcardService {
 
         if (postcardId != null) {
             postcardDb = postcardDao.getByIdAndUserId(postcardId, userId);
-
         }
 
         if (postcardId == null || postcardDao == null) {
@@ -131,7 +130,7 @@ public class PostcardService {
         // todo snapshot
         postcardContentDao.addPostcardContent(postcardContent);
     }
-    
+
     public Postcard getPostcard(Long userId, Long id) {
         Integer count = postcardDao.getPostcardCountByUserId(userId);
         if (count == 0) {

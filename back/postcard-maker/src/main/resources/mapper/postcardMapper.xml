@@ -297,7 +297,7 @@
                  join t_postcard_content pc
                       on p.id = pc.postcardId and p.currVersion = pc.version
         where p.userId = #{userId}
-        order by p.updateTime
+        order by p.updateTime desc
         limit 1
     </select>
 
