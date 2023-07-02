@@ -200,7 +200,7 @@ export default {
       const activObj = this.canvas.getActiveObject();
       if (activObj) {
         this.canvas.remove(activObj);
-        this.emitter.emit("save-canvas");
+        this.savePostcardContent();
       }
     },
     /**
@@ -270,6 +270,7 @@ export default {
       if (res.code == "200") {
         const recentPostcard = res.data;
         if (!recentPostcard) {
+          console.log("new postcard");
           this.setDefaultCanvasInfo();
           return;
         }
@@ -302,7 +303,6 @@ export default {
      * 存储当前画布信息
      */
     async savePostcardContent() {
-      console.log("start saving postcard");
       this.emitter.emit("canvas-saving-start");
       // 如果仅仅使用this.canvas，则不会存储画布的宽度和高度信息
       // JSON.stringify方法默认会忽略对象的函数和不可枚举的属性
@@ -338,7 +338,7 @@ export default {
       }
     },
     handleElementModified() {
-      this.emitter.emit("save-canvas");
+      this.savePostcardContent();
     },
 
     /**
@@ -353,12 +353,20 @@ export default {
     },
     changeCanvasInfo(canvasInfo) {
       this.currBackgroundColor = canvasInfo.currColor;
-      this.setCanvasSize(
-        canvasInfo.width,
-        canvasInfo.height,
-        canvasInfo.zoomFactor
-      );
       this.canvas.setBackgroundColor(canvasInfo.currColor);
+
+      if (
+        canvasInfo.height !== this.currDimension.height ||
+        canvasInfo.width !== this.currDimension.width
+      ) {
+        this.setCanvasSize(
+          canvasInfo.width,
+          canvasInfo.height,
+          canvasInfo.zoomFactor
+        );
+      } else {
+        this.canvas.renderAll(); // !important 似乎设置尺寸会自动重新render，但是设置背景色不会
+      }
       // 发送明信片更新请求
       // 6/27 perf 在一开始空白画布和载入画布时不进行保存处理
       if (!canvasInfo.isFirstLoaded) {
@@ -473,19 +481,19 @@ export default {
     this.emitter.on("addShape", (args) => {
       const shape = args.shape;
       this.canvas.add(shape);
-      this.emitter.emit("save-canvas");
+      this.savePostcardContent();
     });
     // 监听文本框插入事件
     this.emitter.on("addTextBox", (args) => {
       const textBox = args.textBox;
       this.canvas.add(textBox);
-      this.emitter.emit("save-canvas");
+      this.savePostcardContent();
     });
     // 监听图片素材插入事件
     this.emitter.on("addImg", (args) => {
       const img = args.img;
       this.canvas.add(img);
-      this.emitter.emit("save-canvas");
+      this.savePostcardContent();
     });
     this.getRecentPostcard();
   },

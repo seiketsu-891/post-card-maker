@@ -52,14 +52,17 @@ export default {
       if (shallowEqual(this.canvasInfo, this.infoCopy)) {
         return;
       }
-
       // 传值给canvas组件以改变画布样式
       this.emitter.emit("canvasChange", {
         canvasInfo: this.canvasInfo,
       });
-      // 改变zoom bar上的值为100
-      this.emitter.emit("zoomValueChange", { zoom: 100 });
-
+      if (
+        this.canvasInfo.width !== this.infoCopy.width ||
+        this.canvasInfo.height !== this.infoCopy.height
+      ) {
+        // 改变zoom bar上的值为100
+        this.emitter.emit("zoomValueChange", { zoom: 100 });
+      }
       shallowCopy(this.infoCopy, this.canvasInfo);
     },
   },
@@ -70,7 +73,7 @@ export default {
       if (shallowEqual(info, this.canvasInfo)) {
         return;
       }
-
+      info.isFirstLoaded = false;
       shallowCopy(this.canvasInfo, info);
       shallowCopy(this.infoCopy, info);
     });

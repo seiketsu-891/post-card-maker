@@ -13,7 +13,7 @@
         <!-- 按钮 -->
         <div class="header__btns">
           <a-button
-            class="header_btn header_btn--new-postcard"
+            class="header__btn header__btn--new-postcard"
             @click="HandleNewPostcardBtnCliked"
             >新建明信片</a-button
           >
@@ -155,8 +155,8 @@
       <!-- 主要内容区 -->
       <a-layout-content class="main">
         <!-- 资源选择区域（可折叠） -->
-        <div class="resource" v-show="resourceAreaVisible">
-          <div class="resource__container">
+        <div class="resource">
+          <div class="resource__container" v-show="resourceAreaVisible">
             <!-- 画布设置 -->
             <CanvasSetting v-show="activeMenu == menus[0]" />
             <!-- 素材选择 -->
@@ -171,8 +171,9 @@
             <MyPostcards v-if="activeMenu == menus[5]" />
           </div>
           <!-- 折叠按钮 -->
-          <button class="resource__collapsebtn" @click="collapeResourceArea">
-            <LeftOutlined />
+          <button class="resource__collapsebtn" @click="toggleResourceArea">
+            <LeftOutlined v-show="resourceAreaVisible" />
+            <RightOutlined v-show="!resourceAreaVisible" />
           </button>
         </div>
 
@@ -223,6 +224,7 @@ import {
   CrownFilled,
   CloudDownloadOutlined,
   LeftOutlined,
+  RightOutlined,
   FileImageOutlined,
   LoadingOutlined,
 } from "@ant-design/icons-vue";
@@ -240,6 +242,7 @@ export default {
     FileImageOutlined,
     StarOutlined,
     LeftOutlined,
+    RightOutlined,
     CanvasSetting,
     ResourceLib,
     CustomResourceLib,
@@ -377,10 +380,10 @@ export default {
       }
     },
     /**
-     * 隐藏侧边可折叠菜单区
+     * 隐藏/显示侧边可折叠菜单区
      */
-    collapeResourceArea() {
-      this.resourceAreaVisible = false;
+    toggleResourceArea() {
+      this.resourceAreaVisible = !this.resourceAreaVisible;
     },
     /**
      * 点击侧边菜单项的处理
@@ -466,6 +469,9 @@ export default {
       margin-left: 20px
       padding: 0 20px
       color: #4A4A4A
+      &--new-postcard
+         margin-right: 20px
+         height: 30px
       &--get-premium
          color: #fff
          background-color: rgba(255,255,255,.2)
@@ -486,15 +492,14 @@ export default {
     display: flex
     .resource
       flex-shrink: 0
-      width: 300px
       height: 100%
       background-color: #fff
       // background-color: #343536
       position: relative
-      padding: 40px 25px
       box-shadow: 25px 0 20px -20px rgba(101, 138, 216, 0.2)
       &__container
-        width: 100%
+        margin: 40px 25px
+        width: 300px
         height: 100%
       &__collapsebtn
         z-index: 999
