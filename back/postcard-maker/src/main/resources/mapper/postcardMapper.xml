@@ -279,8 +279,8 @@
     </select>
 
     <insert id="addPostcard" parameterType="com.louie.coding.entity.Postcard" useGeneratedKeys="true" keyProperty="id">
-        insert into t_postcard (userId, `name`, createTime, updateTime, currVersion)
-        values (#{userId}, #{name}, #{createTime}, #{updateTime}, #{currVersion})
+        insert into t_postcard (userId, `name`, createTime, updateTime, currVersion, undoHistory, redoHistory)
+        values (#{userId}, #{name}, #{createTime}, #{updateTime}, #{currVersion}, #{undoHistory}, #{redoHistory})
     </insert>
 
     <resultMap id="postcardWithContentResultMap" type="com.louie.coding.entity.Postcard">
@@ -292,7 +292,9 @@
             resultMap="postcardWithContentResultMap">
         select p.id,
                p.`name`,
-               pc.content
+               pc.content,
+               p.redoHistory,
+               p.undoHistory
         from t_postcard p
                  join t_postcard_content pc
                       on p.id = pc.postcardId and p.currVersion = pc.version
@@ -301,11 +303,13 @@
         limit 1
     </select>
 
-    <select id="getPostcardWithContentByUserIdAndId" parameterType="java.util.Map"
+    <select id="getPostcardWithContentByUserIdAndId"
             resultMap="postcardWithContentResultMap">
         select p.id,
                p.`name`,
-               pc.content
+               pc.content,
+               p.redoHistory,
+               p.undoHistory
         from t_postcard p
                  join t_postcard_content pc
                       on p.id = pc.postcardId and p.currVersion = pc.version
@@ -313,7 +317,14 @@
           and p.id = #{id}
     </select>
     <select id="getByIdAndUserId" resultType="com.louie.coding.entity.Postcard">
-        select id, userId, `name`, createTime, updateTime, currVersion
+        select id,
+               userId,
+               `name`,
+               createTime,
+               updateTime,
+               currVersion,
+               undoHistory,
+               redoHistory
         from t_postcard
         where id = #{id}
           and userId = #{userId}
@@ -323,7 +334,22 @@
         update t_postcard
         set `name`      = #{name},
             updateTime  = #{updateTime},
-            currVersion = #{currVersion}
+            currVersion = #{currVersion},
+            undoHistory = #{undoHistory},
+            redoHistory = #{redoHistory}
         where id = #{id}
     </update>
+
+
+    <select id="getPostcardWithContentBySpecificVersion" resultMap="postcardWithContentResultMap">
+        select p.id,
+               p.`name`,
+               pc.content
+        from t_postcard p
+                 join t_postcard_content pc
+                      on p.id = pc.postcardId and p.currVersion = pc.version
+        where p.id = #{id}
+          and p.userId = #{userId}
+          and pc.version = #{version}
+    </select>
 </mapper>

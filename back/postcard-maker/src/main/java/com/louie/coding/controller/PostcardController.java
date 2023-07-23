@@ -1,5 +1,6 @@
 package com.louie.coding.controller;
 
+import com.louie.coding.constants.CanvasConstants;
 import com.louie.coding.controller.support.UserSupport;
 import com.louie.coding.entity.JsonResponse;
 import com.louie.coding.entity.Postcard;
@@ -36,10 +37,37 @@ public class PostcardController {
         Postcard postcard = postcardService.getPostcard(userId, id);
         return JsonResponse.success(postcard);
     }
+
+    /**
+     * 撤销操作
+     *
+     * @param id 明信片id
+     * @return 撤销后版本的内容
+     */
+    @PostMapping("/undo/{id}")
+    public JsonResponse<Postcard> undo(@PathVariable Long id) {
+        Long userId = userSupport.getCurrentUserId();
+        Postcard postcard = postcardService.performUndoRedo(userId, id, CanvasConstants.OPERATION_TYPE_UNDO);
+        return JsonResponse.success(postcard);
+    }
+
+    /**
+     * 重做操作
+     *
+     * @param id 明信片id
+     * @return 重做后版本的内容
+     */
+    @PostMapping("/redo/{id}")
+    public JsonResponse<Postcard> redo(@PathVariable Long id) {
+        Long userId = userSupport.getCurrentUserId();
+        Postcard postcard = postcardService.performUndoRedo(userId, id, CanvasConstants.OPERATION_TYPE_REDO);
+        return JsonResponse.success(postcard);
+    }
+
 //    /**
 //     * 更新画布
 //     */
-//    @PostMapping("/canvases")t
+//    @PostMapping("/canvases")
 //    public JsonResponse<String> updateCanvas(@RequestBody Canvas canvas) {
 //        Long userId = userSupport.getCurrentUserId();
 //        postcardService.updateCanvas(canvas, userId);

@@ -10,7 +10,7 @@ public enum BusinessExceptionCode {
     WRONG_VERIFICATION_CODE("验证码错误"),
     USER_EMAIL_NOT_EXISTS("该邮箱未注册"),
     ILLEGAL_ARGS("参数异常"),
-    PROJECT_NOT_EXISTS("当前明信片不存在"),
+    POSTCARD_NOT_EXISTS("当前明信片不存在"),
     EMPTY_FILE("文件为空"),
     FILE_UPLOAD_ERROR("文件上传失败"),
     TOKEN_EXPIRED("登录状态已失效");

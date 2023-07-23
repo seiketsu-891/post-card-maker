@@ -4,10 +4,10 @@ import com.louie.coding.entity.Postcard;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Map;
-
 @Mapper
 public interface PostcardDao {
+    Postcard getPostcardWithContentBySpecificVersion(@Param("id") Long id, @Param("userId") Long userId, @Param("version") Long version);
+
     void addPostcard(Postcard postcard);
 
     Postcard getRecentUpdatedPostcardWithContentByUserId(Long userId);
@@ -15,7 +15,7 @@ public interface PostcardDao {
     Integer getPostcardCountByUserId(Long userId);
 
     // todo change map to annotation
-    Postcard getPostcardWithContentByUserIdAndId(Map<String, Object> params);
+    Postcard getPostcardWithContentByUserIdAndId(@Param("id") Long postcardId, @Param("userId") Long userId);
 
     Postcard getByIdAndUserId(@Param("id") Long postcardId, @Param("userId") Long userId);
 

@@ -3,20 +3,39 @@ package com.louie.coding.entity;
 import java.util.Date;
 
 public class Postcard {
+    private Boolean undoFlag = true;
+    private Boolean redoFlag = true;
     private Long id;
     private Long userId;
     private String name;
     private Date createTime;
     private Date updateTime;
-
     private Long currVersion;
     private String currContent;
+    private String undoHistory;
+    private String redoHistory;
 
     public Postcard() {
     }
 
     public Postcard(Long id) {
         this.id = id;
+    }
+
+    public String getUndoHistory() {
+        return undoHistory;
+    }
+
+    public void setUndoHistory(String undoHistory) {
+        this.undoHistory = undoHistory;
+    }
+
+    public String getRedoHistory() {
+        return redoHistory;
+    }
+
+    public void setRedoHistory(String redoHistory) {
+        this.redoHistory = redoHistory;
     }
 
     public String getCurrContent() {
@@ -65,6 +84,22 @@ public class Postcard {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isUndoFlag() {
+        return undoFlag;
+    }
+
+    public void setUndoFlag(boolean undoFlag) {
+        this.undoFlag = undoFlag;
+    }
+
+    public boolean isRedoFlag() {
+        return redoFlag;
+    }
+
+    public void setRedoFlag(boolean redoFlag) {
+        this.redoFlag = redoFlag;
     }
 
     public Date getUpdateTime() {

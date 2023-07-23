@@ -8,6 +8,8 @@ public class PostcardContent {
     private Date createTime;
     private String content;
     private String snapshot;
+
+
     private Long version;
 
     public Long getVersion() {
