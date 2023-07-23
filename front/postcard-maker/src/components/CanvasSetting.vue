@@ -53,6 +53,7 @@ export default {
         return;
       }
       // 传值给canvas组件以改变画布样式
+      this.canvasInfo.notSave = false;
       this.emitter.emit("canvasChange", {
         canvasInfo: this.canvasInfo,
       });
