@@ -180,14 +180,30 @@
         <!-- 明信片编辑区 -->
         <div class="editor" @wheel.prevent="onWheelScrolledInEditor($event)">
           <!-- 自动存储提示区域 -->
-          <div class="auto-saving-status">
-            <span class="auto-saving-status__msg">{{ autoSavingMsg }}</span>
-            <a-spin class="auto-saving-status__spin" v-if="isSavingCanvas">
-              <LoadingOutlined spin />
-            </a-spin>
-            <span class="auto-saving-status__ok" v-else>
-              <CheckOutlined />
-            </span>
+          <div class="status">
+            <div class="redo-undo-buttons">
+              <a-button
+                type="link"
+                @click="HandleUndoOrRedoClicked('undo')"
+                :disabled="undoDisabled"
+                >撤销</a-button
+              >
+              <a-button
+                type="link"
+                @click="HandleUndoOrRedoClicked('redo')"
+                :disabled="redoDisabled"
+                >重做</a-button
+              >
+            </div>
+            <div class="auto-saving-status">
+              <span class="auto-saving-status__msg">{{ autoSavingMsg }}</span>
+              <a-spin class="auto-saving-status__spin" v-if="isSavingCanvas">
+                <LoadingOutlined spin />
+              </a-spin>
+              <span class="auto-saving-status__ok" v-else>
+                <CheckOutlined />
+              </span>
+            </div>
           </div>
           <EleEditorBar class="ele-editor-bar" />
           <div class="canvas-container">
@@ -255,6 +271,8 @@ export default {
   },
   data() {
     return {
+      undoDisabled: false,
+      redoDisabled: false,
       // todo 加上事件
       isSavingCanvas: false,
       TASK_ID_DOWNLOAD_POSTCARD: 2,
@@ -289,6 +307,12 @@ export default {
     this.checkIfPremium();
   },
   mounted() {
+    this.emitter.on("changeUndoStatus", (args) => {
+      this.undoDisabled = args.status;
+    });
+    this.emitter.on("changeRedoStatus", (args) => {
+      this.redoDisabled = args.status;
+    });
     // 监听画布自动保存状态
     this.emitter.on("canvas-saving-start", () => {
       this.isSavingCanvas = true;
@@ -431,6 +455,12 @@ export default {
     HandleNewPostcardBtnCliked() {
       this.emitter.emit("initDefaultCanvas");
     },
+    /**
+     * 撤销或重做
+     */
+    HandleUndoOrRedoClicked(type) {
+      this.emitter.emit("undoOrRedo", { type });
+    },
   },
 };
 </script>
@@ -561,7 +591,9 @@ export default {
     align-items: center
   &__disc
     margin: 0
-.auto-saving-status
+.status
+  display: flex
+  align-items: center
   color: #4A4A4A
   padding:5px 20px
   position: absolute
@@ -571,6 +603,10 @@ export default {
   top: 10px
   z-index: 999
   box-shadow: 20px 20px 21px -13px rgba(0,0,0,0.1)
+.redo-undo-buttons
+  color: #4A4A4A
+.auto-saving-status
+  height: min-content
   &__msg
     margin-right: 10px
   &__spin

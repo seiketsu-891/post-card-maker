@@ -20,7 +20,12 @@
   </div>
 </template>
 <script>
-import { savePostcard, getPostcard } from "@/service/postcard";
+import {
+  savePostcard,
+  getPostcard,
+  performRedo,
+  performUndo,
+} from "@/service/postcard";
 import { message } from "ant-design-vue";
 export default {
   data() {
@@ -236,7 +241,7 @@ export default {
         width: this.constants.CANVAS_DEFAULT_WIDHT,
         height: this.constants.CANVAS_DEFAULT_HEIGHT,
         currColor: this.constants.CANVAS_DEFAULT_BACKGROUND_COLOR,
-        isFirstLoaded: true,
+        notSave: true,
       };
       this.emitter.emit("canvasChange", { canvasInfo });
     },
@@ -262,6 +267,7 @@ export default {
     isLegalZoomFactorValue(z) {
       return z && typeof z === "number" && z <= 2 && z >= 0.25;
     },
+
     /**
      * 获取上一次编辑中的明信片相关信息
      */
@@ -270,7 +276,6 @@ export default {
       if (res.code == "200") {
         const recentPostcard = res.data;
         if (!recentPostcard) {
-          console.log("new postcard");
           this.setDefaultCanvasInfo();
           return;
         }
@@ -283,11 +288,19 @@ export default {
           width: contentObj.width,
           height: contentObj.height,
           currColor: canvasObj.background,
-          isFirstLoaded: true,
+          notSave: true,
           zoomFactor: this.isLegalZoomFactorValue(zoomFactor)
             ? zoomFactor
             : null,
         };
+
+        if (!recentPostcard.undoFlag) {
+          this.emitter.emit("changeUndoStatus", { status: true });
+        }
+        if (!recentPostcard.RedoFlag) {
+          this.emitter.emit("changeRedoStatus", { status: true });
+        }
+
         this.changeCanvasInfo(canvasInfo);
 
         this.fabric.util.enlivenObjects(canvasObj.objects, (objects) => {
@@ -295,7 +308,7 @@ export default {
           this.canvas.renderAll();
         });
       } else {
-        message.warn(res.message);
+        message.warn("读取数据失败");
       }
     },
 
@@ -331,6 +344,7 @@ export default {
       };
       const res = await savePostcard(postcardContent);
       if (res.code == "200") {
+        this.emitter.emit("changeUndoStatus", { status: false });
         this.emitter.emit("canvas-saving-ok");
       } else {
         message.warn(res.message);
@@ -369,10 +383,62 @@ export default {
       }
       // 发送明信片更新请求
       // 6/27 perf 在一开始空白画布和载入画布时不进行保存处理
-      if (!canvasInfo.isFirstLoaded) {
+      console.log("notSave?:" + canvasInfo.notSave);
+      if (!canvasInfo.notSave) {
         this.savePostcardContent();
       } else {
         this.emitter.emit("updateInfoValue", { canvasInfo });
+      }
+    },
+    /**
+     * 撤销或重做
+     */
+    async undoOrRedo(type) {
+      console.log("undo");
+      let res;
+      if (type === "undo") {
+        res = await performUndo(this.currPostcardId);
+      }
+      if (type === "redo") {
+        res = await performRedo(this.currPostcardId);
+      }
+      if (res && res.code == "200") {
+        const postcard = res.data;
+        if (!postcard) {
+          message.warn("操作失败");
+          return;
+        }
+        console.log(postcard);
+        if (type === "undo") {
+          this.emitter.emit("changeRedoStatus", { status: false });
+          if (!postcard.undoFlag)
+            this.emitter.emit("changeUndoStatus", { status: true });
+        }
+        if (type === "redo") {
+          this.emitter.emit("changeUndoStatus", { status: false });
+          if (!postcard.redoFlag) {
+            this.emitter.emit("changeRedoStatus", { status: true });
+          }
+        }
+
+        const contentObj = JSON.parse(postcard.currContent);
+        const canvasObj = JSON.parse(contentObj.canvas);
+        // const zoomFactor = this.$store.getters.canvasZoomValue;
+
+        const canvasInfo = {
+          width: contentObj.width,
+          height: contentObj.height,
+          currColor: canvasObj.background,
+          notSave: true,
+        };
+        this.canvas.clear();
+        this.changeCanvasInfo(canvasInfo);
+        this.fabric.util.enlivenObjects(canvasObj.objects, (objects) => {
+          objects.forEach((obj) => this.canvas.add(obj));
+          this.canvas.renderAll();
+        });
+      } else {
+        message.warn("操作失败");
       }
     },
   },
@@ -390,6 +456,7 @@ export default {
     // 监听画布新建事件
     this.emitter.on("initDefaultCanvas", () => {
       this.initCanvas();
+      this.currPostcardId = null;
       this.setDefaultCanvasInfo();
       this.zoomCanvas(1);
       this.emitter.emit("zoomValueChange", {
@@ -403,6 +470,13 @@ export default {
     // 监听画布转图片事件
     this.emitter.on("convertCanvasToImage", () => {
       this.convertCanvasToImage();
+    });
+    // 监听撤销/重做事件
+    this.emitter.on("undoOrRedo", (args) => {
+      if (!this.currPostcardId) {
+        return;
+      }
+      this.undoOrRedo(args.type);
     });
     // 加入上次编辑中的画布元素
     this.addElements();

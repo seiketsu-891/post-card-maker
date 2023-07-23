@@ -9,6 +9,15 @@ export function getPostcard(id) {
   const paramPath = id ? "/" + id : "";
   return get("/postcards" + paramPath);
 }
+
+export function performUndo(id) {
+  console.log(id);
+  return post("/undo/" + id);
+}
+
+export function performRedo(id) {
+  return post("/redo/" + id);
+}
 // export function getProjects(pageNum, pageSize) {
 //   return get("/postcards?pageNum=" + pageNum + "&pageSize=" + pageSize);
 // }
