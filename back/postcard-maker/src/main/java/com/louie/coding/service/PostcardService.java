@@ -191,8 +191,6 @@ public class PostcardService {
         String[] undoVersions = this.getVersionArrays(result.getUndoHistory());
         String[] redoVersions = this.getVersionArrays(result.getRedoHistory());
 
-        result.setUndoFlag(false);
-        result.setRedoFlag(false);
         for (String undoVersion : undoVersions) {
             if (!undoVersion.trim().equals("0")) {
                 result.setUndoFlag(true);
@@ -227,7 +225,6 @@ public class PostcardService {
         String[] undoVersions = this.getVersionArrays(postcardDb.getUndoHistory());
         String[] redoVersions = this.getVersionArrays(postcardDb.getRedoHistory());
 
-        boolean lastAllowableOperation = false;
 
         Long restoreVersionNo = null;
         Long currVersionNo = postcardDb.getCurrVersion();
@@ -237,9 +234,6 @@ public class PostcardService {
             if (Long.parseLong(targetArrs[i]) != 0) {
                 restoreVersionNo = Long.valueOf(targetArrs[i]);
                 targetArrs[i] = "0";
-                if (i == 0) {
-                    lastAllowableOperation = true;
-                }
                 break;
             }
         }
@@ -263,13 +257,19 @@ public class PostcardService {
 
         // 获取版本
         postcardResult = this.fetchHistoryPostcard(id, userId, restoreVersionNo);
-        if (lastAllowableOperation) {
-            if (operationType.equals(CanvasConstants.OPERATION_TYPE_UNDO)) {
-                postcardResult.setUndoFlag(false);
-            } else {
-                postcardResult.setRedoFlag(false);
+
+        for (String undoVersion : undoVersions) {
+            if (!undoVersion.trim().equals("0")) {
+                postcardResult.setUndoFlag(true);
             }
         }
+
+        for (String redoVersion : redoVersions) {
+            if (!redoVersion.trim().equals("0")) {
+                postcardResult.setRedoFlag(true);
+            }
+        }
+
         return postcardResult;
     }
 

@@ -408,17 +408,12 @@ export default {
           message.warn("操作失败");
           return;
         }
-        console.log(postcard);
-        if (type === "undo") {
-          this.emitter.emit("changeRedoStatus", { status: false });
-          if (!postcard.undoFlag)
-            this.emitter.emit("changeUndoStatus", { status: true });
-        }
-        if (type === "redo") {
-          this.emitter.emit("changeUndoStatus", { status: false });
-          if (!postcard.redoFlag) {
-            this.emitter.emit("changeRedoStatus", { status: true });
-          }
+
+        if (!postcard.undoFlag)
+          this.emitter.emit("changeUndoStatus", { status: true });
+
+        if (!postcard.redoFlag) {
+          this.emitter.emit("changeRedoStatus", { status: true });
         }
 
         const contentObj = JSON.parse(postcard.currContent);

@@ -454,6 +454,8 @@ export default {
      */
     HandleNewPostcardBtnCliked() {
       this.emitter.emit("initDefaultCanvas");
+      this.emitter.emit("changeUndoStatus", { status: true });
+      this.emitter.emit("changeUndoStatus", { status: true });
     },
     /**
      * 撤销或重做

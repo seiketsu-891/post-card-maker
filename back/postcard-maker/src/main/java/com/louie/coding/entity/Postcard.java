@@ -3,8 +3,8 @@ package com.louie.coding.entity;
 import java.util.Date;
 
 public class Postcard {
-    private Boolean undoFlag = true;
-    private Boolean redoFlag = true;
+    private Boolean undoFlag = false;
+    private Boolean redoFlag = false;
     private Long id;
     private Long userId;
     private String name;
