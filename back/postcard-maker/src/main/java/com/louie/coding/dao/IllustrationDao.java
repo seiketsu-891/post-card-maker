@@ -18,4 +18,6 @@ public interface IllustrationDao {
     Integer getUserPicCount(Long userId);
 
     List<UserIllustration> getUserPicsWithPagination(Map<String, Object> params);
+
+    Boolean ifIsVip(Long id);
 }

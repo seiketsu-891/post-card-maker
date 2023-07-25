@@ -16,7 +16,7 @@
     </select>
     <select id="getIllusWithPagination" parameterType="java.util.Map"
             resultType="com.louie.coding.entity.Illustration">
-        select id, url
+        select id, url, isVip, albumId
         from t_illustration
         where 1 = 1
         <if test="albumId != null and albumId !=''">
@@ -46,5 +46,11 @@
         select count(1)
         from t_user_illustration
         where userId = #{userId}
+    </select>
+
+    <select id="ifIsVip" parameterType="java.lang.Long" resultSets="java.lang.Boolean">
+        select isVip
+        from t_illustration
+        where id = #{id}
     </select>
 </mapper>

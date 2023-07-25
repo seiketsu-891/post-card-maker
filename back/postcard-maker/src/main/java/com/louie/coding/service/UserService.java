@@ -2,6 +2,7 @@ package com.louie.coding.service;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.louie.coding.constants.MailConstants;
+import com.louie.coding.constants.RedisConstants;
 import com.louie.coding.dao.UserDao;
 import com.louie.coding.entity.RefreshTokenDetail;
 import com.louie.coding.entity.User;
@@ -25,6 +26,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -48,7 +50,7 @@ public class UserService {
         // 核对验证码
         String code = userRegister.getCode();
         String redisKey = MailConstants.REDIS_KEY_MAIL_CODE_PREFIX + userRegister.getEmail();
-        String codeDb = redisService.getValue(redisKey);
+        String codeDb = redisService.getStringValue(redisKey);
         if (codeDb == null || !codeDb.equals(code)) {
             throw new BusinessException(BusinessExceptionCode.WRONG_VERIFICATION_CODE);
         }
@@ -68,6 +70,7 @@ public class UserService {
         user.setSalt(salt);
         user.setIsPremium(false);
         userDao.addUser(user);
+        redisService.setBooleanValue(user.getId() + RedisConstants.KEY_USER_IFVIP_SUFFIX, false);
     }
 
     public Map<String, Object> login(UserLogin user) {
@@ -98,6 +101,12 @@ public class UserService {
         refreshTokenDetail.setCreateTime(new Date());
         userDao.deleteRefreshTokenByUserId(userId);
         userDao.addRefreshToken(refreshTokenDetail);
+
+        String ifVipKey = userId + RedisConstants.KEY_USER_IFVIP_SUFFIX;
+        Boolean ifVip = redisService.getBooleanValue(ifVipKey);
+        if (!Objects.equals(ifVip, userDb.getIsPremium())) {
+            redisService.setBooleanValue(ifVipKey, userDb.getIsPremium());
+        }
 
         return tokens;
     }
@@ -140,11 +149,11 @@ public class UserService {
         // 生成验证码并发送邮件;
         String code = mailService.sendEmail(email);
         // 将验证码存入redis
-        redisService.setValue(redisKey, code, MailConstants.MAIL_CODE_VALID_TIME);
+        redisService.setStringValue(redisKey, code, MailConstants.MAIL_CODE_VALID_TIME);
     }
 
     public Boolean checkIfPremium(Long userId) {
-        return userDao.getIsPremiumByUserId(userId);
+        return redisService.getBooleanValue(userId + RedisConstants.KEY_USER_IFVIP_SUFFIX);
     }
 
     public String refreshToken(String refreshToken, Long userId) {
@@ -173,7 +182,7 @@ public class UserService {
         //校验验证码
         String code = userRestPassword.getCode();
         String redisKey = MailConstants.REDIS_KEY_MAIL_CODE_PREFIX + userRestPassword.getEmail();
-        String codeDb = redisService.getValue(redisKey);
+        String codeDb = redisService.getStringValue(redisKey);
         if (codeDb == null || !codeDb.equals(code)) {
             throw new BusinessException(BusinessExceptionCode.WRONG_VERIFICATION_CODE);
         }
@@ -194,6 +203,8 @@ public class UserService {
     }
 
     public void becomePremium(Long userId) {
+        //todo  need to check all the task has completed first
         userDao.updatePremiumStatus(userId, true);
+        redisService.setBooleanValue(userId + RedisConstants.KEY_USER_IFVIP_SUFFIX, true);
     }
 }

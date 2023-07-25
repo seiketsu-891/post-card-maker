@@ -13,6 +13,8 @@ import com.louie.coding.exception.BusinessExceptionCode;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TokenUtil {
     private static final String ISSUER = "LOUIE_CODING";
@@ -50,7 +52,7 @@ public class TokenUtil {
                 .sign(algorithm);
     }
 
-    public static Long verifyToken(String token) {
+    public static Map<String, Object> verifyToken(String token) {
         Algorithm algorithm;
         try {
             algorithm = Algorithm.RSA256(RSAUtil.getPublicKey(), RSAUtil.getPrivateKey());
@@ -58,7 +60,12 @@ public class TokenUtil {
                     .withIssuer(ISSUER)
                     .build();
             DecodedJWT decodedJWT = verifier.verify(token);
-            return Long.valueOf(decodedJWT.getKeyId());
+            Boolean isPremium = decodedJWT.getClaim("isPremium").asBoolean();
+            Long userId = Long.valueOf(decodedJWT.getKeyId());
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("isPremium", isPremium);
+            userInfo.put("id", userId);
+            return userInfo;
         } catch (TokenExpiredException e) {
             throw new AuthException(AuthExceptionCode.TOKEN_EXPIRED);
         } catch (Exception e) {

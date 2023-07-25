@@ -356,7 +356,7 @@ export default {
     },
 
     /**
-     * windo关闭前的操作
+     * window关闭前的操作
      */
     boforeUnloadHandler() {
       // 保存上次的zoom数据

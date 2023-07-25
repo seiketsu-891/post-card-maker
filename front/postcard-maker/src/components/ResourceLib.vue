@@ -33,9 +33,17 @@
           >
         </div>
         <div class="pics__empty" v-show="emptyState"><a-empty></a-empty></div>
-        <a class="pics__wrapper" v-for="pic in pictures" :key="pic.id">
-          <img :src="pic.url" class="pics__img" @click="addStock(pic.url)"
-        /></a>
+        <div class="pics__wrapper" v-for="pic in pictures" :key="pic.id">
+          <a>
+            <img
+              :src="pic.url"
+              class="pics__img"
+              @click="addStock(pic.albumId, pic.id, pic.url)"
+          /></a>
+          <div class="pics__vip-icon">
+            <CrownFilled class="icon--crown" v-show="pic.isVip" />
+          </div>
+        </div>
         <InfiniteLoading @infinite="getPicList" :key="loadingKey">
           <!-- 覆盖掉默认的提示信息-->
           <template #complete> <span></span> </template>
@@ -45,10 +53,14 @@
   </div>
 </template>
 <script>
-import { getAlbums } from "@/service/resources";
+import { CrownFilled } from "@ant-design/icons-vue";
+import { getAlbums, checkPicAuth } from "@/service/resources";
 import { getIllustrations } from "@/service/resources";
 import { message } from "ant-design-vue";
 export default {
+  components: {
+    CrownFilled,
+  },
   data() {
     return {
       loadingKey: 0,
@@ -112,6 +124,7 @@ export default {
         this.searchKeyword
       );
       if (res.code == 200) {
+        console.log(res.data);
         if (res.data.total < 1) {
           this.emptyState = true;
           $state.complete();
@@ -129,7 +142,20 @@ export default {
     /**
      * 在画布上插入所点击的图片素材
      */
-    addStock(url) {
+    async addStock(albumId, id, url) {
+      let hasAuth = false;
+      const res = await checkPicAuth(albumId, id);
+      if (res.code == 200) {
+        hasAuth = res.data;
+        console.log(res);
+      } else {
+        message.warn("未知错误");
+        return;
+      }
+
+      if (!hasAuth) {
+        message.warn("该图片仅限会员使用");
+      }
       const _this = this;
       // 这个函数是静态函数
       // 第二个参数是callback
@@ -187,6 +213,11 @@ export default {
       text-align: center
       width: 100%
       display: block
+      position: relative
+  &__vip-icon
+     position: absolute
+     top: 0
+     left:2px
   &__btn-wrapper
       width: 100%
       text-align: left
@@ -197,4 +228,7 @@ export default {
       width: 90%
       &:hover
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
+.icon--crown
+  color: #FFD039
+  font-size: 30px
 </style>

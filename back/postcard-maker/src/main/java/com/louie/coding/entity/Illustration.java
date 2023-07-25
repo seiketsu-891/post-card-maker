@@ -9,8 +9,17 @@ public class Illustration {
     private String description;
     private Date createTime;
     private Date updateTime;
-
     private String url;
+
+    private Boolean isVip;
+
+    public Boolean getIsVip() {
+        return isVip;
+    }
+
+    public void setIsVip(Boolean vip) {
+        isVip = vip;
+    }
 
     public Long getId() {
         return id;

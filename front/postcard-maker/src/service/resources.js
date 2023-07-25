@@ -45,3 +45,8 @@ export function uploadFile(file) {
 export function getUserPics(pageNum, pageSize) {
   return get("/user-pics?pageNum=" + pageNum + "&pageSize=" + pageSize);
 }
+
+// 获取图片权限信息
+export function checkPicAuth(albumId, picId) {
+  return get("/pic-auth/" + albumId + "/" + picId);
+}

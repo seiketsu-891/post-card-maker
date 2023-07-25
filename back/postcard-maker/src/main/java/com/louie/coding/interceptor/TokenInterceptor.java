@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class TokenInterceptor implements HandlerInterceptor {
@@ -44,9 +45,9 @@ public class TokenInterceptor implements HandlerInterceptor {
         }
 
         if (token != null) {
-            Long userId;
+            Map<String, Object> userInfo = null; //
             try {
-                userId = TokenUtil.verifyToken(token);
+                userInfo = TokenUtil.verifyToken(token);
             } catch (Exception e) {
                 // 如果是刷新token的请求，则不进行直接401的处理，否则前端还是会进行token的刷新请求
                 if (isRefreshingTokenRequest(uri, request)) {
@@ -56,7 +57,8 @@ public class TokenInterceptor implements HandlerInterceptor {
                 response.setStatus(401);
                 return false;
             }
-            request.setAttribute("userId", userId);
+            request.setAttribute("userId", userInfo.get("id"));
+//            request.setAttribute("isPremium", userInfo.get("isPremium"));
             return true;
         }
         response.setStatus(401);

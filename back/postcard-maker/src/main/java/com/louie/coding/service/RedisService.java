@@ -2,6 +2,7 @@ package com.louie.coding.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,10 @@ public class RedisService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
-    public void setValue(String key, String value, Long timeSeconds) {
+    @Resource
+    private RedisTemplate<String, Boolean> booleanRedisTemplate;
+
+    public void setStringValue(String key, String value, Long timeSeconds) {
         try {
             ValueOperations<String, String> vo = stringRedisTemplate.opsForValue();
             vo.set(key, value, timeSeconds, TimeUnit.SECONDS);
@@ -25,7 +29,22 @@ public class RedisService {
         }
     }
 
-    public String getValue(String key) {
+    public void setBooleanValue(String key, Boolean value) {
+        try {
+            ValueOperations<String, Boolean> vo = booleanRedisTemplate.opsForValue();
+            vo.set(key, value);
+        } catch (Exception e) {
+            LOGGER.info("redis存入失败, e={}", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public Boolean getBooleanValue(String key) {
+        ValueOperations<String, Boolean> vo = booleanRedisTemplate.opsForValue();
+        return vo.get(key);
+    }
+
+    public String getStringValue(String key) {
         ValueOperations<String, String> vo = stringRedisTemplate.opsForValue();
         return vo.get(key);
     }

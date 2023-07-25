@@ -7,10 +7,7 @@ import com.louie.coding.entity.UserIllustration;
 import com.louie.coding.entity.entityResp.IllustrationResp;
 import com.louie.coding.service.IllustrationService;
 import com.louie.coding.util.Base64Util;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -53,5 +50,12 @@ public class IllustrationController {
         }
         illustrationService.uploadUserIllustration(multipartFile, 1L);
         return JsonResponse.success();
+    }
+
+
+    @GetMapping("/pic-auth/{albumId}/{picId}")
+    public JsonResponse<Boolean> ifPicAccessable(@PathVariable String albumId, @PathVariable String picId) {
+        boolean hasAuth = illustrationService.checkIfResourceAccessable(Long.valueOf(albumId), Long.valueOf(picId));
+        return JsonResponse.success(hasAuth);
     }
 }
