@@ -347,8 +347,7 @@ export default {
         this.emitter.emit("changeUndoStatus", { status: false });
         this.emitter.emit("canvas-saving-ok");
       } else {
-        message.warn(res.message);
-        // todo save failed  how to deal with it
+        message.warn("未知错误");
       }
     },
     handleElementModified() {
@@ -561,6 +560,7 @@ export default {
     // 监听图片素材插入事件
     this.emitter.on("addImg", (args) => {
       const img = args.img;
+
       this.canvas.add(img);
       this.savePostcardContent();
     });

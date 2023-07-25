@@ -20,8 +20,6 @@ public class AlbumService {
         params.put("start", start);
         params.put("size", pageSize);
 
-        List<Album> albums = albumDao.getAlbumsWithPagination(params);
-        // todo set count
-        return albums;
+        return albumDao.getAlbumsWithPagination(params);
     }
 }

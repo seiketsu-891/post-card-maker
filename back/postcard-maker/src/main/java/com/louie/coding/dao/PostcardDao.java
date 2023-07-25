@@ -14,7 +14,6 @@ public interface PostcardDao {
 
     Integer getPostcardCountByUserId(Long userId);
 
-    // todo change map to annotation
     Postcard getPostcardWithContentByUserIdAndId(@Param("id") Long postcardId, @Param("userId") Long userId);
 
     Postcard getByIdAndUserId(@Param("id") Long postcardId, @Param("userId") Long userId);

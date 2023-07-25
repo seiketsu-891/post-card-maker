@@ -163,6 +163,7 @@ export default {
       this.fabric.Image.fromURL(
         url,
         function (img) {
+          console.log(img);
           _this.emitter.emit("addImg", { img });
         },
         {

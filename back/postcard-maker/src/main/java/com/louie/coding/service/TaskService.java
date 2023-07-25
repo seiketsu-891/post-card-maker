@@ -21,7 +21,7 @@ public class TaskService {
 
     public Map<String, Object> getTasks(Long userId) {
         List<TaskResp> tasks = taskDao.getTasks(userId);
-        Boolean allCompleted = true;
+        boolean allCompleted = true;
         for (TaskResp task : tasks) {
             if (!task.isCompleted()) {
                 allCompleted = false;

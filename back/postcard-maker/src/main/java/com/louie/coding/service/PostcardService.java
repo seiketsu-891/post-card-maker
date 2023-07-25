@@ -48,7 +48,6 @@ public class PostcardService {
 //
 //            postcardDao.addCanvas(canvas);
 //
-//            // todo 参数校验
 //            // 新增elements
 //            List<Element> elements = postcard.getElements();
 //            for (Element ele : elements) {
@@ -64,7 +63,6 @@ public class PostcardService {
 
 
 //    public void updateProjectInfo(Postcard postcard, Long userId) {
-//        // todo 除了校验外，需要验证project id是否存在
 //        Date now = new Date();
 //        postcard.setUserId(userId);
 //        postcard.setUpdateTime(now);
@@ -141,7 +139,7 @@ public class PostcardService {
 
         postcardContent.setSnapshot("placeholder");
         postcardContent.setCreateTime(now);
-
+        
         // todo snapshot
         postcardContentDao.addPostcardContent(postcardContent);
     }

@@ -39,6 +39,9 @@ public class UserService {
     @Resource
     private MailService mailService;
 
+    @Resource
+    private TaskService taskService;
+
     public void addUser(UserRegister userRegister) {
         // 这里要不要再次验证邮箱唯一性？
         // 问题可以转换成：是否存在情况：用户发送验证码到提交前，在别处又用这个邮箱注册成功了？
@@ -203,7 +206,13 @@ public class UserService {
     }
 
     public void becomePremium(Long userId) {
-        //todo  need to check all the task has completed first
+        // check if all the tasks has  been completed first
+        Map<String, Object> tasks = taskService.getTasks(userId);
+        boolean allCompleted = (boolean) tasks.get("allCompleted");
+        if (!allCompleted) {
+            throw new BusinessException(BusinessExceptionCode.ILLEGAL_ARGS);
+        }
+
         userDao.updatePremiumStatus(userId, true);
         redisService.setBooleanValue(userId + RedisConstants.KEY_USER_IFVIP_SUFFIX, true);
     }
