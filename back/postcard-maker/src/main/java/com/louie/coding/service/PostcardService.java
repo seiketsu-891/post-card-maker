@@ -7,8 +7,10 @@ import com.louie.coding.entity.Postcard;
 import com.louie.coding.entity.PostcardContent;
 import com.louie.coding.exception.BusinessException;
 import com.louie.coding.exception.BusinessExceptionCode;
+import com.louie.coding.util.Base64Util;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -21,6 +23,8 @@ import java.util.Objects;
 public class PostcardService {
     final Integer MAX_HISTORY_VERSION_NUMBER = 5;
 
+    @Resource
+    private FileService fileService;
     @Resource
     private PostcardDao postcardDao;
     @Resource
@@ -88,7 +92,23 @@ public class PostcardService {
 //        return res;
 //    }
 
+    private String uploadSnapshot(String base64File, Long userId) {
+        MultipartFile multipartFile = null;
+        try {
+            multipartFile = Base64Util.base64PNGToMultipartFile(base64File);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String directory = userId + "/";
+        return fileService.uploadFile(multipartFile, directory);
+    }
+
     public void addOrUpdatePostcard(Long userId, PostcardContent postcardContent) {
+        // upload snapshot
+        String snapshotBase64 = postcardContent.getSnapshot();
+        String snapshotUrl = this.uploadSnapshot(snapshotBase64, userId);
+        postcardContent.setSnapshot(snapshotUrl);
+
         Long postcardId = postcardContent.getPostcardId();
         Date now = new Date();
         Postcard postcardDb = null;
@@ -123,7 +143,6 @@ public class PostcardService {
 
             postcardContent.setPostcardId(postcard.getId());
             postcardContent.setVersion(1L);
-
         } else {
             // update the existed postcard;
             Long maxVersion = postcardContentDao.getMaxVersionByPostcardId(postcardId);
@@ -137,10 +156,7 @@ public class PostcardService {
             postcardContent.setVersion(currVersion);
         }
 
-        postcardContent.setSnapshot("placeholder");
         postcardContent.setCreateTime(now);
-        
-        // todo snapshot
         postcardContentDao.addPostcardContent(postcardContent);
     }
 

@@ -10,19 +10,24 @@
       @change="changeFont"
     ></a-select>
     <!-- 改变字号 -->
-    <a-input-group compact class="editor__item" v-show="isEditingText">
-      <a-button @click="changeFontSize(-1)"> -</a-button>
-      <a-input-number
+    <a-input-group compact v-show="isEditingText" class="editor__fontsize">
+      <a-tooltip>
+        <a-button @click="changeFontSize(-1)"> -</a-button>
+      </a-tooltip>
+      <a-input
+        class="editor__input"
         :controls="false"
-        min="1"
-        max="500"
+        :max-length="3"
+        style="width: 80px"
         v-model:value="currSize"
         @pressEnter="onFontSizeInputChanged"
       />
-      <a-button @click="changeFontSize(1)"> + </a-button>
+      <a-tooltip>
+        <a-button @click="changeFontSize(1)"> + </a-button>
+      </a-tooltip>
     </a-input-group>
+
     <!-- 颜色 -->
-    <!-- todo 手动输入字号按回车后可以改变字号 -->
     <div>
       <color-picker
         v-model:pureColor="currColor"
@@ -62,6 +67,16 @@ export default {
       this.currSize = eleProperties.fontSize;
     });
     this.getFontList();
+  },
+  watch: {
+    currSize(val, preVal) {
+      const reg = /^\d{0,3}$/;
+      if ((!isNaN(+val) && reg.test(val)) || val === "") {
+        this.currSize = val;
+      } else {
+        this.currSize = preVal;
+      }
+    },
   },
   methods: {
     onFontSizeInputChanged() {
@@ -145,7 +160,6 @@ export default {
     border-radius: 30px
     z-index: 999
 .editor
-    &__item
-        margin-right: 20px
-        width: 189px
+    &__fontsize
+      margin: 0 20px
 </style>

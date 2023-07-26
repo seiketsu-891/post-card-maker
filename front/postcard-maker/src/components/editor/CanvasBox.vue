@@ -330,6 +330,7 @@ export default {
       //     enumerable: true,
       //   },
       // });
+
       const contentObj = {
         canvas: JSON.stringify(this.canvas),
         width: this.currDimension.width,
@@ -338,10 +339,13 @@ export default {
       // 对于比较大的obj JSON.stringify会报栈溢出错误;
       // const content = JSON.stringify(contentObj);
       // 6/18
+      const snapshot = this.canvas.toDataURL();
       const postcardContent = {
         content: JSON.stringify(contentObj),
         postcardId: this.currPostcardId ? this.currPostcardId : null,
+        snapshot,
       };
+      console.log("snapshot:" + snapshot);
       const res = await savePostcard(postcardContent);
       if (res.code == "200") {
         this.emitter.emit("changeUndoStatus", { status: false });
