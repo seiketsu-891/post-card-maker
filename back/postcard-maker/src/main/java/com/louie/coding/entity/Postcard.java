@@ -28,16 +28,8 @@ public class Postcard {
         return undoFlag;
     }
 
-    public void setUndoFlag(Boolean undoFlag) {
-        this.undoFlag = undoFlag;
-    }
-
     public Boolean getRedoFlag() {
         return redoFlag;
-    }
-
-    public void setRedoFlag(Boolean redoFlag) {
-        this.redoFlag = redoFlag;
     }
 
     public String getUndoHistory() {
@@ -108,20 +100,28 @@ public class Postcard {
         return undoFlag;
     }
 
-    public String getSnapshot() {
-        return snapshot;
+    public void setUndoFlag(Boolean undoFlag) {
+        this.undoFlag = undoFlag;
     }
 
     public void setUndoFlag(boolean undoFlag) {
         this.undoFlag = undoFlag;
     }
 
-    public boolean isRedoFlag() {
-        return redoFlag;
+    public String getSnapshot() {
+        return snapshot;
     }
 
     public void setSnapshot(String snapshot) {
         this.snapshot = snapshot;
+    }
+
+    public boolean isRedoFlag() {
+        return redoFlag;
+    }
+
+    public void setRedoFlag(Boolean redoFlag) {
+        this.redoFlag = redoFlag;
     }
 
     public void setRedoFlag(boolean redoFlag) {
