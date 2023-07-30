@@ -3,6 +3,7 @@ package com.louie.coding.controller;
 import com.louie.coding.constants.CanvasConstants;
 import com.louie.coding.controller.support.UserSupport;
 import com.louie.coding.entity.JsonResponse;
+import com.louie.coding.entity.PageResult;
 import com.louie.coding.entity.Postcard;
 import com.louie.coding.entity.PostcardContent;
 import com.louie.coding.service.PostcardService;
@@ -84,13 +85,13 @@ public class PostcardController {
 //        return JsonResponse.success();
 //    }
 
-//    /**
-//     * 获取当前用户的所有明信片信息（分页获取）
-//     */
-//    @GetMapping("/postcards")
-//    public JsonResponse<PageResult<Postcard>> projectList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-//        Long userId = userSupport.getCurrentUserId();
-//        PageResult<Postcard> res = postcardService.getPostcardList(pageNum, pageSize, userId);
-//        return JsonResponse.success(res);
-//    }
+    /**
+     * 获取当前用户的所有明信片信息（分页获取）
+     */
+    @GetMapping("/postcards/list")
+    public JsonResponse<PageResult<Postcard>> projectList(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+        Long userId = userSupport.getCurrentUserId();
+        PageResult<Postcard> res = postcardService.getPostcardList(pageNum, pageSize, userId);
+        return JsonResponse.success(res);
+    }
 }

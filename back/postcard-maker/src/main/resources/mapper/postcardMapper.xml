@@ -271,8 +271,9 @@
     </select>
 
     <select id="getPostCardsWithPagination" parameterType="java.util.Map" resultType="com.louie.coding.entity.Postcard">
-        select id, userId, `name`, createTime, updateTime
-        from t_postcard
+        select tp.id, tp.`name`, tp.createTime, tp.updateTime, tpc.snapshot
+        from t_postcard tp
+                 left join t_postcard_content tpc on tp.id = tpc.postcardId and tp.currVersion = tpc.version
         where userId = #{userId}
         order by updateTime desc
         limit #{start}, #{size}
@@ -313,7 +314,7 @@
         from t_postcard p
                  join t_postcard_content pc
                       on p.id = pc.postcardId and p.currVersion = pc.version
-        where p.userId = #{userid}
+        where p.userId = #{userId}
           and p.id = #{id}
     </select>
     <select id="getByIdAndUserId" resultType="com.louie.coding.entity.Postcard">

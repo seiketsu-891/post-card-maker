@@ -1,26 +1,36 @@
 <template>
   <div class="my-postcards">
-    <!-- 明信片项目展示区 -->
     <div class="scrollable">
       <div class="postcards__container">
-        <a class="postcards__wrapper" v-for="card in projects" :key="card.id">
-          <img :src="card.snapshot" class="postcards__img" />
-          <span class="postcards__name">{{ card.name }}</span>
-        </a>
-        <InfiniteLoading @infinite="getUserPostCards" :key="loadingKey">
-          <template #complete> <span></span> </template>
+        <div>
+          <div class="pics__empty" v-show="emptyState"><a-empty></a-empty></div>
+          <a
+            class="postcards__wrapper"
+            v-for="card in projects"
+            :key="card.id"
+            @click="loadPostcard(card.id)"
+          >
+            <img :src="card.snapshot" class="postcards__img" />
+            <span class="postcards__name">{{ card.name }}</span>
+          </a>
+        </div>
+        <InfiniteLoading @infinite="getUserPostCards">
+          <template #complete>
+            <span></span>
+          </template>
         </InfiniteLoading>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { getProjects } from "@/service/postcard";
+import { getProjects, getPostcard } from "@/service/postcard";
+import { message } from "ant-design-vue";
 export default {
   data() {
     return {
+      emptyState: false,
       projects: [],
-      loadingKey: 0,
       pageNum: 1,
     };
   },
@@ -31,12 +41,31 @@ export default {
     async getUserPostCards($state) {
       const res = await getProjects(this.pageNum, 5);
       if (res.code == 200) {
-        if (res.data.list.length < 5) {
+        const postcards = res.data.list;
+        if (res.data.total < 1) {
+          this.emptyState = true;
           $state.complete();
+        } else if (postcards.length < 5) {
+          this.projects.push(...postcards);
+          $state.complete();
+        } else {
+          this.projects.push(...postcards);
+          $state.loaded();
         }
-        this.projects.push(...res.data.list);
+        this.pageNum++;
+      } else {
+        message.warn("获取数据失败");
       }
-      this.pageNum++;
+    },
+    async loadPostcard(id) {
+      const res = await getPostcard(id);
+      if (res.code == 200) {
+        this.emitter.emit("loadSpecificPostcard", {
+          data: res.data,
+        });
+      } else {
+        message.warn("载入明信片失败");
+      }
     },
   },
 };
@@ -46,13 +75,11 @@ export default {
   height: 100%
 .scrollable
    height: 100%
-   overflow-y: auto
 .postcards
   &__container
       width: 100%
       text-align: center
       padding: 20px
-      padding-bottom: 0
   &__wrapper
       display: block
       padding: 10px

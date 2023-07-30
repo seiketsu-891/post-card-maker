@@ -13,8 +13,6 @@ export default createStore({
       token: null,
       refreshToken: null,
       canvasZoomValue: null,
-      // 1. 当更换或新建明信片时，不需要保持上次的zoom数据，所以还需要一个clearZoom的方法
-      // todo： 还需要一个新建按钮；
     };
   },
   getters: {

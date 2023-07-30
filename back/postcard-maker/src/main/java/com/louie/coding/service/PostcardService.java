@@ -3,25 +3,26 @@ package com.louie.coding.service;
 import com.louie.coding.constants.CanvasConstants;
 import com.louie.coding.dao.PostcardContentDao;
 import com.louie.coding.dao.PostcardDao;
+import com.louie.coding.entity.PageResult;
 import com.louie.coding.entity.Postcard;
 import com.louie.coding.entity.PostcardContent;
 import com.louie.coding.exception.BusinessException;
 import com.louie.coding.exception.BusinessExceptionCode;
 import com.louie.coding.util.Base64Util;
+import com.louie.coding.util.FileCompressUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Transactional
 public class PostcardService {
     final Integer MAX_HISTORY_VERSION_NUMBER = 5;
+    final Integer COMPRESSED_SNAPSHOT_WIDTH = 300;
 
     @Resource
     private FileService fileService;
@@ -73,24 +74,24 @@ public class PostcardService {
 //        postcardDao.updateProjectInfoByProjectIdAndUserId(postcard);
 //    }
 
-//    public PageResult<Postcard> getPostcardList(Integer pageNum, Integer pageSize, Long userId) {
-//        Integer start = (pageNum - 1) * pageSize;
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("start", start);
-//        params.put("size", pageSize);
-//        params.put("userId", userId);
-//
-//        List<Postcard> list = new ArrayList<>();
-//        Integer count = postcardDao.getPostcardCount(userId);
-//        if (count > 0) {
-//            list = postcardDao.getPostCardsWithPagination(params);
-//        }
-//
-//        PageResult<Postcard> res = new PageResult<>();
-//        res.setList(list);
-//        res.setTotal(count);
-//        return res;
-//    }
+    public PageResult<Postcard> getPostcardList(Integer pageNum, Integer pageSize, Long userId) {
+        Integer start = (pageNum - 1) * pageSize;
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", start);
+        params.put("size", pageSize);
+        params.put("userId", userId);
+
+        List<Postcard> list = new ArrayList<>();
+        Integer count = postcardDao.getPostcardCountByUserId(userId);
+        if (count > 0) {
+            list = postcardDao.getPostCardsWithPagination(params);
+        }
+
+        PageResult<Postcard> res = new PageResult<>();
+        res.setList(list);
+        res.setTotal(count);
+        return res;
+    }
 
     private String uploadSnapshot(String base64File, Long userId) {
         MultipartFile multipartFile = null;
@@ -105,8 +106,8 @@ public class PostcardService {
 
     public void addOrUpdatePostcard(Long userId, PostcardContent postcardContent) {
         // upload snapshot
-        String snapshotBase64 = postcardContent.getSnapshot();
-        String snapshotUrl = this.uploadSnapshot(snapshotBase64, userId);
+        String compressedSnapshot = FileCompressUtil.compressBase64Img(postcardContent.getSnapshot(), COMPRESSED_SNAPSHOT_WIDTH);
+        String snapshotUrl = this.uploadSnapshot(compressedSnapshot, userId);
         postcardContent.setSnapshot(snapshotUrl);
 
         Long postcardId = postcardContent.getPostcardId();
@@ -191,7 +192,7 @@ public class PostcardService {
     }
 
     public Postcard getPostcard(Long userId, Long id) {
-        Postcard result = null;
+        Postcard result;
         Integer count = postcardDao.getPostcardCountByUserId(userId);
         if (count == 0) {
             return null;
@@ -200,7 +201,7 @@ public class PostcardService {
             // get RecentPostcard
             result = postcardDao.getRecentUpdatedPostcardWithContentByUserId(userId);
         } else {
-            result = postcardDao.getPostcardWithContentByUserIdAndId(id, userId);
+            result = postcardDao.getPostcardWithContentByUserIdAndId(userId, id);
         }
         String[] undoVersions = this.getVersionArrays(result.getUndoHistory());
         String[] redoVersions = this.getVersionArrays(result.getRedoHistory());

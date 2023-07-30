@@ -17,17 +17,14 @@ import java.util.*;
 
 @Service
 public class IllustrationService {
-
     @Resource
     private IllustrationDao illustrationDao;
     @Resource
     private FileService fileService;
     @Resource
     private TaskService taskService;
-
     @Resource
     private RedisService redisService;
-
     @Resource
     private UserSupport userSupport;
 

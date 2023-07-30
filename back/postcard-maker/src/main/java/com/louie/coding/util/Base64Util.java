@@ -16,7 +16,9 @@ public class Base64Util {
      */
     public static MultipartFile base64PNGToMultipartFile(String base64Str) throws IOException {
         // 去掉data:image/png;base64,部分
-        base64Str = base64Str.split(",")[1];
+        if (base64Str.startsWith("data:")) {
+            base64Str = base64Str.split(",")[1];
+        }
         byte[] bytes = Base64.getDecoder().decode(base64Str);
         DiskFileItem fileItem = new DiskFileItem("file", "image/png", false, "temp.png", SIZE_THRESHOLD_1_MB, null);
         OutputStream os = fileItem.getOutputStream();

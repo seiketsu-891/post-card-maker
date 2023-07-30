@@ -124,18 +124,20 @@ export default {
         this.searchKeyword
       );
       if (res.code == 200) {
-        console.log(res.data);
         if (res.data.total < 1) {
           this.emptyState = true;
           $state.complete();
+        } else {
+          this.pictures.push(...res.data.list);
+          if (res.data.list.length < 5) {
+            $state.complete();
+          } else {
+            this.pageNum++;
+            $state.loaded();
+          }
         }
-        if (res.data.list.length < 5) {
-          $state.complete();
-        }
-        this.pictures.push(...res.data.list);
-        this.pageNum++;
       } else {
-        message.warn(res.message);
+        message.warn("获取资源失败");
       }
     },
     onSearch() {},
@@ -182,7 +184,6 @@ export default {
    height: 100%
 .scrollable
    height: 100%
-   overflow-y: auto
 .search-bar
     margin-bottom: 20px
 .album

@@ -268,6 +268,35 @@ export default {
       return z && typeof z === "number" && z <= 2 && z >= 0.25;
     },
 
+    loadPostcardContent(card) {
+      this.canvas.clear();
+      this.currPostcardId = card.id;
+      const contentObj = JSON.parse(card.currContent);
+      const canvasObj = JSON.parse(contentObj.canvas);
+      const zoomFactor = this.$store.getters.canvasZoomValue;
+
+      const canvasInfo = {
+        width: contentObj.width,
+        height: contentObj.height,
+        currColor: canvasObj.background,
+        notSave: true,
+        zoomFactor: this.isLegalZoomFactorValue(zoomFactor) ? zoomFactor : null,
+      };
+
+      if (!card.undoFlag) {
+        this.emitter.emit("changeUndoStatus", { status: true });
+      }
+      if (!card.RedoFlag) {
+        this.emitter.emit("changeRedoStatus", { status: true });
+      }
+
+      this.changeCanvasInfo(canvasInfo);
+
+      this.fabric.util.enlivenObjects(canvasObj.objects, (objects) => {
+        objects.forEach((obj) => this.canvas.add(obj));
+        this.canvas.renderAll();
+      });
+    },
     /**
      * 获取上一次编辑中的明信片相关信息
      */
@@ -279,34 +308,7 @@ export default {
           this.setDefaultCanvasInfo();
           return;
         }
-        this.currPostcardId = recentPostcard.id;
-        const contentObj = JSON.parse(recentPostcard.currContent);
-        const canvasObj = JSON.parse(contentObj.canvas);
-        const zoomFactor = this.$store.getters.canvasZoomValue;
-
-        const canvasInfo = {
-          width: contentObj.width,
-          height: contentObj.height,
-          currColor: canvasObj.background,
-          notSave: true,
-          zoomFactor: this.isLegalZoomFactorValue(zoomFactor)
-            ? zoomFactor
-            : null,
-        };
-
-        if (!recentPostcard.undoFlag) {
-          this.emitter.emit("changeUndoStatus", { status: true });
-        }
-        if (!recentPostcard.RedoFlag) {
-          this.emitter.emit("changeRedoStatus", { status: true });
-        }
-
-        this.changeCanvasInfo(canvasInfo);
-
-        this.fabric.util.enlivenObjects(canvasObj.objects, (objects) => {
-          objects.forEach((obj) => this.canvas.add(obj));
-          this.canvas.renderAll();
-        });
+        this.loadPostcardContent(recentPostcard);
       } else {
         message.warn("读取数据失败");
       }
@@ -386,7 +388,6 @@ export default {
       }
       // 发送明信片更新请求
       // 6/27 perf 在一开始空白画布和载入画布时不进行保存处理
-      console.log("notSave?:" + canvasInfo.notSave);
       if (!canvasInfo.notSave) {
         this.savePostcardContent();
       } else {
@@ -444,6 +445,10 @@ export default {
 
   mounted() {
     this.initCanvas();
+    this.emitter.on("loadSpecificPostcard", (args) => {
+      const postcard = args.data;
+      this.loadPostcardContent(postcard);
+    });
     this.emitter.on("zoomCanvas", (args) => {
       // 有时会出现0.0000000001这样的问题，所以保留2位小数
       const zoomFactor = (args.zoom / 100).toFixed(2);

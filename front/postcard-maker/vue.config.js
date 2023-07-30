@@ -1,5 +1,10 @@
 // const { defineConfig } = require("@vue/cli-service");
 module.exports = {
+  //  give a try to solve the debugging problem
+  productionSourceMap: true,
+  configureWebpack: {
+    devtool: "source-map",
+  },
   css: {
     loaderOptions: {
       less: {

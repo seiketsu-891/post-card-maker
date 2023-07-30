@@ -155,28 +155,29 @@
       <!-- 主要内容区 -->
       <a-layout-content class="main">
         <!-- 资源选择区域（可折叠） -->
-        <div class="resource">
-          <div class="resource__container" v-show="resourceAreaVisible">
-            <!-- 画布设置 -->
-            <CanvasSetting v-show="activeMenu == menus[0]" />
-            <!-- 素材选择 -->
-            <ResourceLib v-show="activeMenu == menus[1]" />
-            <!-- 形状选择 -->
-            <ShapeLib v-show="activeMenu == menus[2]" />
-            <!-- 文字框选择 -->
-            <TextInsertion v-show="activeMenu == menus[3]" />
-            <!-- 自定义上传素材 -->
-            <CustomResourceLib v-if="activeMenu == menus[4]" />
-            <!-- 已保存的文件 -->
-            <MyPostcards v-if="activeMenu == menus[5]" />
+        <div class="resource__box">
+          <div class="resource">
+            <div class="resource__container" v-show="resourceAreaVisible">
+              <!-- 画布设置 -->
+              <CanvasSetting v-show="activeMenu == menus[0]" />
+              <!-- 素材选择 -->
+              <ResourceLib v-show="activeMenu == menus[1]" />
+              <!-- 形状选择 -->
+              <ShapeLib v-show="activeMenu == menus[2]" />
+              <!-- 文字框选择 -->
+              <TextInsertion v-show="activeMenu == menus[3]" />
+              <!-- 自定义上传素材 -->
+              <CustomResourceLib v-if="activeMenu == menus[4]" />
+              <!-- 已保存的文件 -->
+              <MyPostcards v-if="activeMenu == menus[5]" />
+            </div>
+            <!-- 折叠按钮 -->
+            <button class="resource__collapsebtn" @click="toggleResourceArea">
+              <LeftOutlined v-show="resourceAreaVisible" />
+              <RightOutlined v-show="!resourceAreaVisible" />
+            </button>
           </div>
-          <!-- 折叠按钮 -->
-          <button class="resource__collapsebtn" @click="toggleResourceArea">
-            <LeftOutlined v-show="resourceAreaVisible" />
-            <RightOutlined v-show="!resourceAreaVisible" />
-          </button>
         </div>
-
         <!-- 明信片编辑区 -->
         <div class="editor" @wheel.prevent="onWheelScrolledInEditor($event)">
           <!-- 自动存储提示区域 -->
@@ -524,15 +525,22 @@ export default {
     display: flex
     .resource
       flex-shrink: 0
+      // 要让infinite scroll发挥作用的关键魔法！
+      overflow-y: auto
+      overflow-x: visible
+      z-index: 999
       height: 100%
       background-color: #fff
       // background-color: #343536
-      position: relative
       box-shadow: 25px 0 20px -20px rgba(101, 138, 216, 0.2)
+      &__box
+        position: relative
       &__container
         margin: 40px 25px
         width: 300px
-        height: 100%
+        // 前面overflow-y: auto加了后，这里不可以 height: 100%
+        // 不然会让scroll bar
+        // height: 100%
       &__collapsebtn
         z-index: 999
         background-color: rgba(101, 138, 216, 1)

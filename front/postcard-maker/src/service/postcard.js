@@ -18,6 +18,6 @@ export function performUndo(id) {
 export function performRedo(id) {
   return post("/redo/" + id);
 }
-// export function getProjects(pageNum, pageSize) {
-//   return get("/postcards?pageNum=" + pageNum + "&pageSize=" + pageSize);
-// }
+export function getProjects(pageNum, pageSize) {
+  return get("/postcards/list?pageNum=" + pageNum + "&pageSize=" + pageSize);
+}

@@ -4,6 +4,9 @@ import com.louie.coding.entity.Postcard;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Map;
+
 @Mapper
 public interface PostcardDao {
     Postcard getPostcardWithContentBySpecificVersion(@Param("id") Long id, @Param("userId") Long userId, @Param("version") Long version);
@@ -14,12 +17,13 @@ public interface PostcardDao {
 
     Integer getPostcardCountByUserId(Long userId);
 
-    Postcard getPostcardWithContentByUserIdAndId(@Param("id") Long postcardId, @Param("userId") Long userId);
+    Postcard getPostcardWithContentByUserIdAndId(@Param("userId") Long userId, @Param("id") Long postcardId);
 
     Postcard getByIdAndUserId(@Param("id") Long postcardId, @Param("userId") Long userId);
 
     void updatePostcard(Postcard postcardDb);
-//    Postcard getRecentProjectByUserId(Long userId);
+
+    //    Postcard getRecentProjectByUserId(Long userId);
 //
 //    void addProject(Postcard postcard);
 //
@@ -37,6 +41,6 @@ public interface PostcardDao {
 //
 //    void updateProjectInfoByProjectIdAndUserId(Postcard postcard);
 //
-//    List<Postcard> getPostCardsWithPagination(Map<String, Object> params);
+    List<Postcard> getPostCardsWithPagination(Map<String, Object> params);
 
 }
