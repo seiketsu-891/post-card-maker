@@ -1,0 +1,57 @@
+-- MySQL dump 10.13  Distrib 8.0.31, for macos12 (x86_64)
+--
+-- Host: localhost    Database: postcard_maker
+-- ------------------------------------------------------
+-- Server version	8.0.18
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `t_postcard`
+--
+
+DROP TABLE IF EXISTS `t_postcard`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_postcard` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `userId` bigint(20) NOT NULL,
+  `name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `createTime` datetime NOT NULL,
+  `updateTime` datetime DEFAULT NULL,
+  `currVersion` bigint(20) DEFAULT NULL,
+  `undoHistory` varchar(45) DEFAULT NULL,
+  `redoHistory` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=438 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_postcard`
+--
+
+LOCK TABLES `t_postcard` WRITE;
+/*!40000 ALTER TABLE `t_postcard` DISABLE KEYS */;
+INSERT INTO `t_postcard` VALUES (1,111,'Projects1','2023-02-14 15:18:35','2023-06-18 21:57:06',2,NULL,NULL),(11,11,'未命名明信片2023-02-25','2023-02-25 22:30:39','2023-02-25 22:30:39',1,NULL,NULL),(12,11,'未命名明信片2023-02-25','2023-02-25 22:33:05','2023-02-25 22:33:05',2,NULL,NULL),(13,11,'未命名明信片2023-02-25','2023-02-25 22:35:55','2023-02-25 22:35:55',3,NULL,NULL),(24,11,'新画布','2023-02-25 23:12:30','2023-02-26 10:54:56',14,NULL,NULL),(431,10,'未命名明信片2023-07-28','2023-07-28 20:28:32','2023-07-30 16:39:11',33,'[29, 30, 31, 32, 33]','[7, 0, 0, 0, 0]'),(434,10,'未命名明信片2023-07-28','2023-07-28 20:31:01','2023-07-30 14:42:55',32,'[28, 29, 30, 31, 32]','[3, 2 0, 0, 0]'),(435,10,'未命名明信片2023-07-30','2023-07-30 14:39:00','2023-07-30 14:39:00',1,'[1, 0, 0, 0, 0]','[0, 0, 0, 0, 0]'),(436,10,'未命名明信片2023-07-30','2023-07-30 14:40:11','2023-07-30 14:40:11',1,'[1, 0, 0, 0, 0]','[0, 0, 0, 0, 0]'),(437,10,'未命名明信片2023-07-30','2023-07-30 14:42:54','2023-07-30 14:42:54',1,'[1, 0, 0, 0, 0]','[0, 0, 0, 0, 0]');
+/*!40000 ALTER TABLE `t_postcard` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2023-07-30 16:52:33
